@@ -1,11 +1,8 @@
-#ifndef __EMIR_OPS_INPUT_HPP_
-#define __EMIR_OPS_INPUT_HPP_
+#ifndef _EMIR_OPS_INPUT_HPP_
+#define _EMIR_OPS_INPUT_HPP_
 
 #include "OPS_instance_t.hpp"
 #include "matrix.hpp"
-
-
-#define INF_SP 999999
 
 namespace emir {
 
@@ -153,4 +150,4 @@ namespace emir {
 
 } // namespace emir
 
-#endif // __EMIR_OPS_INPUT_HPP_
+#endif // _EMIR_OPS_INPUT_HPP_

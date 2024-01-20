@@ -1,7 +1,7 @@
 #ifndef _EMOR_OPS_TIKZ_HPP_
 #define _EMOR_OPS_TIKZ_HPP_
 
-#define NODE_STYLE 1
+#define NODE_STYLE 1 // unused(?)
 
 namespace emir {
 

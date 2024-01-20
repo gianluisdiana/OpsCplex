@@ -96,8 +96,10 @@ public:
 
     bool check(void);
 
-protected:
-
+// protected:
+    private:
+    // Maximum time margin for checking the feasibility of the solution
+    static const double kMaxTimeMargin;
 };
 
 } // namespace emir

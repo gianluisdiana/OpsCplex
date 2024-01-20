@@ -6,9 +6,9 @@
 
 #include <set>
 
-#define O_EPS 1E-2
-
 namespace emir {
+
+const double OPS_output_t::kMaxTimeMargin = 1.0e-2;
 
 OPS_output_t::OPS_output_t(const OPS_input_t& I)
   : I_(I)
@@ -208,16 +208,16 @@ OPS_output_t::init_t_cost(void)
 			t_cost_(i, j) = I_.instance_.get_T()(i, j);
 		    }
 		else
-		    t_cost_(i, j) = INF_SP;
+		    t_cost_(i, j) = OPS_instance_t::kInfiniteTime;
 	}
 
     t_cost_(1, n) = 0;
 
     for(int j = 1; j <= n - 1; j++)
-	t_cost_(n, j) = INF_SP;
+	t_cost_(n, j) = OPS_instance_t::kInfiniteTime;
 
     for(int i = 1; i <= n; i++)
-	t_cost_(i, 1) = INF_SP;
+	t_cost_(i, 1) = OPS_instance_t::kInfiniteTime;
 }
 
 int
@@ -617,7 +617,7 @@ OPS_output_t::check(void)
 
     for(int i = 0; i < n; i++)
 	{
-	    if(s_[i] > rL + O_EPS)
+	    if(s_[i] > rL + OPS_output_t::kMaxTimeMargin)
 		{
 
 		    found_ = false;
@@ -629,7 +629,7 @@ OPS_output_t::check(void)
 			     << " -> " << std::setw(8) << std::fixed << std::setprecision(1) << rL << '\n';
 		    std::cout << '\n';
 
-		    assert(s_[i] <= rL + O_EPS);
+		    assert(s_[i] <= rL + OPS_output_t::kMaxTimeMargin);
 		    exit(1);
 		}
 	}

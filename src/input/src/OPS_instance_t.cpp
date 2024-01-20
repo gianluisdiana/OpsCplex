@@ -7,6 +7,7 @@
 
 namespace emir {
 
+const unsigned int OPS_instance_t::kInfiniteTime = 999'999;
 
 OPS_instance_t::OPS_instance_t(void):
     id_(N_ITEM),
@@ -80,7 +81,7 @@ std::istream& OPS_instance_t::read(std::istream& is)
 	for(int i = 1; i <= m; i++)
 		for(int j = 1; j <= n; j++)
 			if (T_(i,j) >= L_)
-				T_(i,j) = INF_SPP + 1;
+				T_(i,j) = OPS_instance_t::kInfiniteTime + 1;
 
     return is;
 }

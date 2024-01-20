@@ -185,17 +185,17 @@ void OPS_input_t::init_t_cost(void)
 
                 t_cost_(i, j) = get_T(i,j);
             } else
-                t_cost_(i, j) = INF_SP;
+                t_cost_(i, j) = OPS_instance_t::kInfiniteTime;
 
     }
 
     t_cost_(1, n) = 0;
 
     for(int j = 1; j <= n; j++)
-        t_cost_(n, j) = INF_SP;
+        t_cost_(n, j) = OPS_instance_t::kInfiniteTime;
 
     for(int i = 1; i <= n; i++)
-        t_cost_(i, 1) = INF_SP;
+        t_cost_(i, 1) = OPS_instance_t::kInfiniteTime;
         
     //t_cost_.write_raw(std::cout);
 
@@ -235,7 +235,7 @@ void OPS_input_t::make_structures(void) // AQUÍ!!!!!!!!!
         std::vector<int> nodes(n, 0);
 
         for(auto j: Jk) {
-			if (t_cost_(1, j + 1) < INF_SP)
+			if (t_cost_(1, j + 1) < OPS_instance_t::kInfiniteTime)
 				update_structures(k, 0, j, l, A_inv, arcs_k,  nodes);			
 		}
 
@@ -250,7 +250,7 @@ void OPS_input_t::make_structures(void) // AQUÍ!!!!!!!!!
 
                     const int Jj = Jk[j];
 
-					if (t_cost_(Ji + 1, Jj + 1) < INF_SP)
+					if (t_cost_(Ji + 1, Jj + 1) < OPS_instance_t::kInfiniteTime)
 						update_structures(k, Ji, Jj, l, A_inv, arcs_k, nodes);
                 }
 
@@ -624,7 +624,7 @@ void OPS_input_t::shortest_path(const GOMA::matrix<int>& M, int source, int* dis
 
         if ( i != source ) {
 
-            dist[i] = INF_SP;
+            dist[i] = OPS_instance_t::kInfiniteTime;
             prev[i] = -1;
         }
         Q.insert( i );
@@ -635,7 +635,7 @@ void OPS_input_t::shortest_path(const GOMA::matrix<int>& M, int source, int* dis
 
 
         int u = -1;
-        int best_val = INF_SP + 1;
+        int best_val = OPS_instance_t::kInfiniteTime + 1;
 
         for ( int i = 0; i < n; i++ )
             if ( (Q.find( i ) != Q.end()) && ( dist[i] < best_val ) ) {

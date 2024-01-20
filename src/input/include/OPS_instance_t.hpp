@@ -12,8 +12,6 @@ using json = nlohmann::json;
 
 #define N_ITEM 2
 
-#define INF_SPP 999999
-
 namespace emir {
 
     enum
@@ -48,6 +46,9 @@ namespace emir {
         double scal_factor_;
 
     public:
+        // Constant to represent an infinite time to process an object and go to another
+        static const unsigned int kInfiniteTime;
+
         OPS_instance_t(void);
         virtual ~OPS_instance_t(void);
 
