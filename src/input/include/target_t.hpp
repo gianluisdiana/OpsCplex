@@ -7,7 +7,6 @@
 #include "json.hpp"
 
 using json = nlohmann::json;
-using namespace std;
 
 namespace emir {
 
@@ -50,8 +49,8 @@ public:
 
     virtual ~target_t(void) {}
 
-    ostream& write(ostream& os) const;
-    istream& read(istream& is);
+    std::ostream& write(std::ostream& os) const;
+    std::istream& read(std::istream& is);
 
     void get_json(json& target) const;
     void set_json(const json& target);

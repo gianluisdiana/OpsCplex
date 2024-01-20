@@ -6,7 +6,6 @@
 
 #include <cassert>
 #include <iostream>
-using namespace std;
 
 
 namespace emir {
@@ -29,7 +28,7 @@ public:
     
     virtual ~OPS_solver_t( void ) {}
 
-    virtual void solve(ostream& r_os, double ub = 1E10, bool root_node = false) = 0;
+    virtual void solve(std::ostream& r_os, double ub = 1E10, bool root_node = false) = 0;
     
 
 };

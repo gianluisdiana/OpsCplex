@@ -5,10 +5,9 @@
 	#include <cassert>
 	#include <iostream>
 	#include <iomanip>
-	#include <cstring>
+	#include <string>
 	
-	using namespace std;
-	
+		
     #define IT_PER_LINE 8	
 	#define WIDE_OUTPUT 9
 #endif 

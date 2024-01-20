@@ -93,7 +93,7 @@ OPS_output_t::set(const OPS_output_t& O)
 			x_(k * n + 1, n) = 1;
 	}
 
-	vector<double> x;
+	std::vector<double> x;
 
     set(x, y_);
 
@@ -122,7 +122,7 @@ OPS_output_t::setADD(const OPS_output_t& O)
 	    }
 	}
 
-	vector<double> x;
+	std::vector<double> x;
 
     set(x, y_);
 
@@ -138,7 +138,7 @@ OPS_output_t::setADD(const OPS_output_t& O)
 }
 
 void
-OPS_output_t::set(vector<double>& x, vector<int>& y)
+OPS_output_t::set(std::vector<double>& x, std::vector<int>& y)
 {
     const int mz = I_.get_A_succ_sz();
     x.resize(mz);
@@ -263,7 +263,7 @@ OPS_output_t::slack(void) const
 }
 
 bool
-OPS_output_t::set(const vector<double>& x, const vector<double>& y, const vector<double>& s, bool optimal)
+OPS_output_t::set(const std::vector<double>& x, const std::vector<double>& y, const std::vector<double>& s, bool optimal)
 {
 
     found_ = true;
@@ -331,7 +331,7 @@ OPS_output_t::set(const vector<double>& x, const vector<double>& y, const vector
     for(int i = 0; i < n; i++)
 	s_[i] /= I_.get_scal_factor();
 
-    // x_.write_raw(cout);
+    // x_.write_raw(std::cout);
 
     check();
 
@@ -339,11 +339,11 @@ OPS_output_t::set(const vector<double>& x, const vector<double>& y, const vector
 }
 
 void
-OPS_output_t::get_Jk(vector<int>& Jk, int k) const
+OPS_output_t::get_Jk(std::vector<int>& Jk, int k) const
 {
     Jk.clear();
 
-    const vector<int>& J = I_.get_Jk(k);
+    const std::vector<int>& J = I_.get_Jk(k);
 
     for(int j : J) {
 	if(y_[j] > 0)
@@ -352,7 +352,7 @@ OPS_output_t::get_Jk(vector<int>& Jk, int k) const
 }
 
 bool
-OPS_output_t::set(const vector<double>& x, const vector<double>& y, bool optimal)
+OPS_output_t::set(const std::vector<double>& x, const std::vector<double>& y, bool optimal)
 {
 
     found_ = true;
@@ -424,55 +424,55 @@ OPS_output_t::set(const vector<double>& x, const vector<double>& y, bool optimal
 
 
 void
-OPS_output_t::write_statistics(ostream& os) const
+OPS_output_t::write_statistics(std::ostream& os) const
 {
-    os << setw(4) << n_customers() << "\t";
+    os << std::setw(4) << n_customers() << "\t";
 
     if(found_)
-	os << setw(10) << get_obj() << "\t";
+	os << std::setw(10) << get_obj() << "\t";
     else
-	os << setw(10) << 99999999 << "\t";
+	os << std::setw(10) << 99999999 << "\t";
 
     if(found_)
-	os << setw(10) << fixed << setprecision(1) << length() * 10 << "\t";
+	os << std::setw(10) << std::fixed << std::setprecision(1) << length() * 10 << "\t";
     else
-	os << setw(10) << 0 << "\t";
+	os << std::setw(10) << 0 << "\t";
 
     if(found_)
-	os << setw(4) << 1 << "\t";
+	os << std::setw(4) << 1 << "\t";
     else
-	os << setw(4) << 0 << "\t";
+	os << std::setw(4) << 0 << "\t";
 
     if(optimal_)
-	os << setw(4) << 1 << "\t";
+	os << std::setw(4) << 1 << "\t";
     else
-	os << setw(4) << 0 << "\t";
+	os << std::setw(4) << 0 << "\t";
 }
 
-ostream&
-OPS_output_t::write(ostream& os) const
+std::ostream&
+OPS_output_t::write(std::ostream& os) const
 {
     /* x_.write_raw(os);
 
-    os << endl;*/
-    vector<int> r;
+    os << '\n';*/
+    std::vector<int> r;
     I_.get_r(r);
 
     const int n = get_n();
 
     /*for(int i = 0; i < n; i++)
-        os << setw(5) << y_[i];
+        os << std::setw(5) << y_[i];
 
-    os << endl;
-    os << endl; */
+    os << '\n';
+    os << '\n'; */
 
     for(int i = 0; i < n; i++)
 	if(fabs(s_[i] > 0.0001))
-	    os << setw(4) << i << " " << setw(9) << fixed << setprecision(2) << s_[i] << " " << setw(9) << fixed
-	       << setprecision(2) << h_[i] << " " << endl;
+	    os << std::setw(4) << i << " " << std::setw(9) << std::fixed << std::setprecision(2) << s_[i] << " " << std::setw(9) << std::fixed
+	       << std::setprecision(2) << h_[i] << " " << '\n';
 
-    os << endl;
-    os << endl;
+    os << '\n';
+    os << '\n';
 
     return os;
 }
@@ -574,8 +574,8 @@ OPS_output_t::check(void)
     const int K = get_m();
     const int L = I_.get_L();
 
-    vector<int> i_degree(n);
-    vector<int> o_degree(n);
+    std::vector<int> i_degree(n);
+    std::vector<int> o_degree(n);
 
     for(int i = 0; i < n; i++)
 	{
@@ -611,9 +611,9 @@ OPS_output_t::check(void)
     const double rL = (double)(L) / I_.get_scal_factor();
 
     /*for(int j = 0; j < n; j++)
-                    cout << "Nodo: " << setw(3) << j << ": " << setw(8) << fixed << setprecision(1) << s_[j]
-                         << " -> " << setw(8) << fixed << setprecision(1) << rL << endl;
-    cout << endl; */
+                    std::cout << "Nodo: " << std::setw(3) << j << ": " << std::setw(8) << std::fixed << std::setprecision(1) << s_[j]
+                         << " -> " << std::setw(8) << std::fixed << std::setprecision(1) << rL << '\n';
+    std::cout << '\n'; */
 
     for(int i = 0; i < n; i++)
 	{
@@ -622,23 +622,23 @@ OPS_output_t::check(void)
 
 		    found_ = false;
 
-		    cout << "Nodo: " << i << ": " << s_[i] << " -> " << rL << endl;
+		    std::cout << "Nodo: " << i << ": " << s_[i] << " -> " << rL << '\n';
 
 		    for(int j = 0; j < n; j++)
-			cout << "Nodo: " << setw(3) << j << ": " << setw(8) << fixed << setprecision(1) << s_[j]
-			     << " -> " << setw(8) << fixed << setprecision(1) << rL << endl;
-		    cout << endl;
+			std::cout << "Nodo: " << std::setw(3) << j << ": " << std::setw(8) << std::fixed << std::setprecision(1) << s_[j]
+			     << " -> " << std::setw(8) << std::fixed << std::setprecision(1) << rL << '\n';
+		    std::cout << '\n';
 
 		    assert(s_[i] <= rL + O_EPS);
 		    exit(1);
 		}
 	}
 
-    /*cout << endl;
+    /*std::cout << '\n';
 
     for(int j = 0; j < n; j ++)
-       cout << "Nodo: "<< setw(3)<< j << ": " << setw(8) << fixed << setprecision(1) <<  s_[j] << " -> " << setw(8) <<
-    fixed << setprecision(1) << rL << endl; cout << endl;     */
+       std::cout << "Nodo: "<< std::setw(3)<< j << ": " << std::setw(8) << std::fixed << std::setprecision(1) <<  s_[j] << " -> " << std::setw(8) <<
+    std::fixed << std::setprecision(1) << rL << '\n'; std::cout << '\n';     */
 
     return found_;
 }

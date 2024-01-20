@@ -8,7 +8,6 @@
 #include "json.hpp"
 using json = nlohmann::json;
 
-using namespace std;
 
 namespace emir {
 
@@ -23,7 +22,7 @@ public:
 
     virtual ~point_t(void) {}
 
-    ostream& write(ostream& os) const;
+    std::ostream& write(std::ostream& os) const;
     
     inline const double get_x(void) const {return first;}
     inline const double get_y(void) const {return second;}

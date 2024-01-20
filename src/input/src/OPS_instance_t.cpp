@@ -4,7 +4,6 @@
 #include <cstdio>
 #include <cassert>
 
-using namespace std;
 
 namespace emir {
 
@@ -25,12 +24,12 @@ OPS_instance_t::OPS_instance_t(void):
 OPS_instance_t::~OPS_instance_t(void)
 {}
 
-void OPS_instance_t::write_statistics_hdr(ostream& os) const
+void OPS_instance_t::write_statistics_hdr(std::ostream& os) const
 {
     os << "ID" << "\t";
 }
 
-void OPS_instance_t::write_statistics(ostream& os) const
+void OPS_instance_t::write_statistics(std::ostream& os) const
 {
     os << id_[NAME] << "\t";
 }
@@ -57,16 +56,16 @@ void OPS_instance_t::set_json(const json& instance)
 
     T_.set_json(jT);
 
-    id_   = instance["id"].get<vector<string> >();
+    id_   = instance["id"].get<std::vector<std::string> >();
     type_ = instance["type"].get<int>();
-    Jk_   = instance["Jk"].get<vector<vector<int> > >();
-    //b_    = instance["b"].get<vector<int> >();
-    b_    = instance["b"].get<vector<int> >();
+    Jk_   = instance["Jk"].get<std::vector<std::vector<int> > >();
+    //b_    = instance["b"].get<std::vector<int> >();
+    b_    = instance["b"].get<std::vector<int> >();
     alpha_= instance["alpha"].get<double>();
     L_    = instance["L"].get<int>();        
 }
 
-istream& OPS_instance_t::read(istream& is)
+std::istream& OPS_instance_t::read(std::istream& is)
 {
     json instance;
     is >> instance;
@@ -86,7 +85,7 @@ istream& OPS_instance_t::read(istream& is)
     return is;
 }
 
-void OPS_instance_t::set(const string& name, const string& stamp, const string& desc)
+void OPS_instance_t::set(const std::string& name, const std::string& stamp, const std::string& desc)
 {
     id_[NAME] = name;
     id_[STAMP]= stamp;
@@ -109,7 +108,7 @@ void OPS_instance_t::set_L(double alpha, int L)
     L_     = L;
 }
 
-void OPS_instance_t::set(const string& tar_name, const string& tar_stamp, const string& tar_desc, int type, const vector<vector<int> >& Jk, const GOMA::matrix<int>& T, const vector<int>& b)
+void OPS_instance_t::set(const std::string& tar_name, const std::string& tar_stamp, const std::string& tar_desc, int type, const std::vector<std::vector<int> >& Jk, const GOMA::matrix<int>& T, const std::vector<int>& b)
 {
 
     id_[NAME] = tar_name;
@@ -148,30 +147,30 @@ void OPS_instance_t::make_Kj(void)
 
     for(int k = 0; k < K; k++) {
 
-        const vector<int>& Jk = get_Jk(k);
+        const std::vector<int>& Jk = get_Jk(k);
 
         for(int i: Jk)
             Kj_[i].push_back(k);
     }
 }
 
-ostream& OPS_instance_t::write(ostream& os) const
+std::ostream& OPS_instance_t::write(std::ostream& os) const
 {
     json instance;
     get_json(instance);
 
-    os << setw(2) << instance;
+    os << std::setw(2) << instance;
 
     return os;
 }
 
-istream& operator>>(istream& is, OPS_instance_t& I)
+std::istream& operator>>(std::istream& is, OPS_instance_t& I)
 {
     I.read(is);
     return is;
 }
 
-ostream& operator<<(ostream& os, const OPS_instance_t& I)
+std::ostream& operator<<(std::ostream& os, const OPS_instance_t& I)
 {
     I.write(os);
     return os;

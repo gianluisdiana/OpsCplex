@@ -4,11 +4,10 @@
 #include <vector>
 #include "target_t.hpp"
 
-using namespace std;
 
 namespace emir {
 
-	typedef vector<target_t> target_set_t;
+	typedef std::vector<target_t> target_set_t;
 
 } // namespace emir
 
