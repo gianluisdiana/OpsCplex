@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_OPS_INSTANCE_HPP_
+#define _EMIR_OPS_INSTANCE_HPP_
 
 #include <vector>
 #include <iostream>
@@ -115,3 +116,5 @@ namespace emir {
 
 istream &operator>>(istream &is, emir::OPS_instance_t &input);
 ostream &operator<<(ostream &os, const emir::OPS_instance_t &input);
+
+#endif // _EMIR_OPS_INSTANCE_HPP_

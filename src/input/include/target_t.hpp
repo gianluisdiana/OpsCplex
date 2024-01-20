@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_TARGET_HPP_
+#define _EMIR_TARGET_HPP_
 
 #include <iostream>
 #include "point_t.hpp"
@@ -9,7 +10,6 @@ using json = nlohmann::json;
 using namespace std;
 
 namespace emir {
-
 
 class target_t: public point_t
 {
@@ -57,6 +57,6 @@ public:
     void set_json(const json& target);
 };
 
+} // namespace emir
 
-
-}
+#endif // _EMIR_TARGET_HPP_

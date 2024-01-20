@@ -1,16 +1,13 @@
-#pragma once
+#ifndef _EMIR_OPS_OUTPUT_HPP_
+#define _EMIR_OPS_OUTPUT_HPP_
 
 #include "OPS_input_t.hpp"
 #include <vector>
 #include "matrix.hpp"
 
-
 using namespace std;
 
-
 namespace emir {
-
-
 
 class OPS_output_t
 {
@@ -104,5 +101,6 @@ protected:
 
 };
 
+} // namespace emir
 
-}
+#endif // _EMIR_OPS_OUTPUT_HPP_

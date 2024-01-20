@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_GANTT_TIKZ_HPP_
+#define _EMIR_GANTT_TIKZ_HPP_
 
 #include "input/OPS_input_t.hpp"
 #include "output/OPS_output_t.hpp"
@@ -365,5 +366,6 @@ public:
     }
 };
 
+} // namespace emir
 
-}
+#endif // _EMIR_GANTT_TIKZ_HPP_

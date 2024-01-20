@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_TIMER_HPP_
+#define _EMIR_TIMER_HPP_
 
 #ifdef _DEBUG
 	#include <cassert>
@@ -34,5 +35,7 @@ namespace emir {
 
 		double seconds(void) const;
 	};
-	
-}
+
+} // namespace emir
+
+#endif // _EMIR_TIMER_HPP_

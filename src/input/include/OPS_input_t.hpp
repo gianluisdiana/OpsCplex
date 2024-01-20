@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __EMIR_OPS_INPUT_HPP_
+#define __EMIR_OPS_INPUT_HPP_
 
 #include "OPS_instance_t.hpp"
 #include "matrix.hpp"
@@ -152,3 +153,5 @@ namespace emir {
     };
 
 } // namespace emir
+
+#endif // __EMIR_OPS_INPUT_HPP_

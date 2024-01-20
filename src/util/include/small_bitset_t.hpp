@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_SMALL_BITSET_HPP_
+#define _EMIR_SMALL_BITSET_HPP_
 
 #include <iostream>
 #include <string>
@@ -169,5 +170,6 @@ class small_bitset_t
 		 }
 };
 
+} // namespace emir
 
-}
+#endif // _EMIR_SMALL_BITSET_HPP_

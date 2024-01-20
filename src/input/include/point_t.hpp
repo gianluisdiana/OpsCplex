@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_POINT_HPP_
+#define _EMIR_POINT_HPP_
 
 #include <utility>
 #include <iostream>
@@ -31,7 +32,6 @@ public:
     void set_json(const json& point);
 };
 
+} // namespace emir
 
-}
-
-
+#endif // _EMIR_POINT_HPP_

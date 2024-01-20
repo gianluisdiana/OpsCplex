@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_BITSET_HPP_
+#define _EMIR_BITSET_HPP_
 
 #include <cstring>
 #include <cassert>
@@ -6,7 +7,6 @@
 using namespace std;
 
 #define N_BITS_WORD (8 * sizeof(T))
-
 
 namespace emir {
 
@@ -227,8 +227,6 @@ class bitset_t
 		 }
 };
 
+} // namespace emir
 
-
-
-}
-
+#endif // _EMIR_BITSET_HPP_

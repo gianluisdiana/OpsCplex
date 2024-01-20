@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef _GOMA_MATRIX_HPP_
+#define _GOMA_MATRIX_HPP_
 
 #include <vector>
 #include <iostream>
@@ -236,3 +237,5 @@ ostream& operator<<(ostream& os, const GOMA::matrix<T>& M)
 	M.write_raw(os);
 	return os;
 }
+
+#endif //  _GOMA_MATRIX_HPP_
