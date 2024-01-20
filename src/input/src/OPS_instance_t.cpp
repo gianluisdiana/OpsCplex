@@ -78,8 +78,8 @@ std::istream& OPS_instance_t::read(std::istream& is)
 	const int m = T_.get_m();
 	const int n = T_.get_n();
 	
-	for(int i = 1; i <= m; i++)
-		for(int j = 1; j <= n; j++)
+	for (int i = 1; i <= m; i++)
+		for (int j = 1; j <= n; j++)
 			if (T_(i,j) >= L_)
 				T_(i,j) = OPS_instance_t::kInfiniteTime + 1;
 
@@ -96,7 +96,7 @@ int OPS_instance_t::get_max_Jk(void) const
 {
     int max = 0;
 
-    for(auto Jk: Jk_)
+    for (auto Jk: Jk_)
         if ((int)(Jk.size()) > max)
             max = Jk.size();
 
@@ -146,11 +146,11 @@ void OPS_instance_t::make_Kj(void)
 
     Kj_.resize(get_n());
 
-    for(int k = 0; k < K; k++) {
+    for (int k = 0; k < K; k++) {
 
         const std::vector<int>& Jk = get_Jk(k);
 
-        for(int i: Jk)
+        for (int i: Jk)
             Kj_[i].push_back(k);
     }
 }

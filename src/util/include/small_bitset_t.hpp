@@ -22,7 +22,7 @@ class small_bitset_t
 	
 	public:
 		small_bitset_t(void):
-			block_(0x0){
+			block_(0x0) {
 
             clear();
 		};
@@ -38,7 +38,7 @@ class small_bitset_t
         small_bitset_t(const std::vector<int>& b):
 		block_(0x0)
 		{
-            for(int i: b)
+            for (int i: b)
                 insert(i);
         } 
 
@@ -57,7 +57,7 @@ class small_bitset_t
 				block_ = 0x0;                       
         }
 
-		void insert(unsigned int i){
+		void insert(unsigned int i) {
 
 			assert(i <= N);
 			assert(i >= 1);
@@ -77,7 +77,7 @@ class small_bitset_t
             return block_ == bs.block_;
         }
 
-		void remove(unsigned int i){
+		void remove(unsigned int i) {
 
 			assert(i <= N);
 			assert(i >= 1);
@@ -160,7 +160,7 @@ class small_bitset_t
 
             block_type block = block_;	
 
-            for(size_t i = 0; i < N; i++)
+            for (size_t i = 0; i < N; i++)
             {
                 const char c = '0' + (block & block_type(0x1));
                 s.insert(s.begin(),c); 

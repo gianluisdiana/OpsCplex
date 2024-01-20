@@ -131,7 +131,7 @@ public:
                 pos ++;
             }
 
-        } while(pos != std::string::npos);
+        } while (pos != std::string::npos);
 
         const std::string stam = I_.get_instance().get_instance_stamp();
 
@@ -147,7 +147,7 @@ public:
 
         std::vector<int> Jk;
 
-        for(int k = 0; k < K; k++) {
+        for (int k = 0; k < K; k++) {
 
             O.get_Jk(Jk, k);
 
@@ -160,7 +160,7 @@ public:
 
                 current = next;
 
-                while(current != n - 1) {
+                while (current != n - 1) {
 
                     next = O.get_next(current, k);
 
@@ -259,7 +259,7 @@ public:
         os << "\\draw[slit] (1.center) to (0.center);" << '\n';
         os << "\\draw[slit, ->, >=latex] (0.center) to (2.center);" << '\n';
 
-        for(int k = 0; k < K; k++) {
+        for (int k = 0; k < K; k++) {
 
             const double yk  = (k - K + 1) * task_h_ - (task_h_ - slit_gap_) * 0.5;
             const double xk  = - 0.5;
@@ -269,7 +269,7 @@ public:
 
         const double x_scal = gantt_w_ / (rL + axis_x_gap_);
 
-        /*for(int i = 1; i < n - 1; i++) {
+        /*for (int i = 1; i < n - 1; i++) {
             const double si = O.s_[i];
             const double xs = si * x_scal + 0.1;
             const double ys = y - 0.3;
@@ -310,7 +310,7 @@ public:
         os << '\n';
 
         /*
-        for(int i = 1; i < n - 1; i++) {
+        for (int i = 1; i < n - 1; i++) {
 
             const double si = O.s_[i];
             const double xi = si * x_scal;

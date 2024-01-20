@@ -18,7 +18,7 @@ class bitset_t
 	public:
 		bitset_t(void):
 			block_(NULL),
-			sz_(N/N_BITS_WORD){
+			sz_(N/N_BITS_WORD) {
 
 			if ((N % N_BITS_WORD) != 0)
 				sz_ ++;
@@ -34,7 +34,7 @@ class bitset_t
 		{
 			block_ = new T[bs.sz_];	
 
-			for(int i = 0; i < sz_; i++)
+			for (int i = 0; i < sz_; i++)
 				block_[i] = bs.block_[i];		
 		}
 
@@ -45,7 +45,7 @@ class bitset_t
 
 		const bitset_t& operator=(const bitset_t& bs)
 		{
-			for(int i = 0; i < sz_; i++)
+			for (int i = 0; i < sz_; i++)
 				block_[i] = bs.block_[i];		
                 
             return bs;
@@ -53,11 +53,11 @@ class bitset_t
         
         void clear(void) {
             
- 			for(int i = 0; i < sz_; i++)
+ 			for (int i = 0; i < sz_; i++)
 				block_[i] = 0;                       
         }
 
-		void insert(unsigned int i){
+		void insert(unsigned int i) {
 
 			assert(i <= N);
 			assert(i >= 1);
@@ -70,7 +70,7 @@ class bitset_t
 			block_[pos] |= (T(0x1) << offset);
 		}
 
-		void remove(unsigned int i){
+		void remove(unsigned int i) {
 
 			assert(i <= N);
 			assert(i >= 1);
@@ -99,13 +99,13 @@ class bitset_t
 
 		void insert(const bitset_t& bs)
 		{
-			for(int i = 0; i < sz_; i++)
+			for (int i = 0; i < sz_; i++)
 				block_[i] |= bs.block_[i];
 		}
 
 		void remove(const bitset_t& bs)
 		{
-			for(int i = 0; i < sz_; i++)
+			for (int i = 0; i < sz_; i++)
 				block_[i] &= ~bs.block_[i];
 		}
 
@@ -115,7 +115,7 @@ class bitset_t
 
 			int i = 0;
 
-			while ((i < sz_) && (contains_set)){
+			while ((i < sz_) && (contains_set)) {
 				contains_set = contains_set && ((block_[i] & bs.block_[i]) == bs.block_[i]);
 				i++;
 			}
@@ -127,7 +127,7 @@ class bitset_t
 		{			
 			int sm = -1;
 
-			for(int i = 0; (i < sz_) && (sm == -1);i++)
+			for (int i = 0; (i < sz_) && (sm == -1);i++)
 			{
 				if (block_[i] != 0)
 					sm = first_item(block_[i]) + N_BITS_WORD * i;
@@ -141,7 +141,7 @@ class bitset_t
 		{		
 			int bg = -1;
 
-			for(int i = sz_ - 1; (i >= 0) && (bg == -1);i--)
+			for (int i = sz_ - 1; (i >= 0) && (bg == -1);i--)
 			{
 				if (block_[i] != 0)
 					bg = last_item(block_[i]) + N_BITS_WORD * i;
@@ -155,7 +155,7 @@ class bitset_t
 		{
 			int card = 0;
 
-			for(int i = 0; i < sz_; i++)
+			for (int i = 0; i < sz_; i++)
 				card += cardinality(block_[i]);
 
 			return card;
@@ -174,19 +174,19 @@ class bitset_t
 
 		void union_set(const bitset_t&  B, bitset_t& C) const
 		{
-			for(int j = 0; j < sz_; j++)				
+			for (int j = 0; j < sz_; j++)				
 				C.block_[j] = block_[j] | B.block_[j];						
 		}	
 
 		void intersec_set(const bitset_t&  B, bitset_t& C) const
 		{
-			for(int j = 0; j < sz_; j++)				
+			for (int j = 0; j < sz_; j++)				
 				C.block_[j] = block_[j] & B.block_[j];						
 		}
 
 		void diff_set(const bitset_t&  B, bitset_t& C) const
 		{
-			for(int j = 0; j < sz_; j++)				
+			for (int j = 0; j < sz_; j++)				
 				C.block_[j] = block_[j] & ~B.block_[j];						
 		}
 
@@ -209,13 +209,13 @@ class bitset_t
 	
 		 void to_std::string(std::string& s) const 
 		 {
-			for(int j = 0; j < sz_; j++){
+			for (int j = 0; j < sz_; j++) {
 
 				const int sz = min(N_BITS_WORD, N - j * N_BITS_WORD);
 
 				T block = block_[j];		
 
-				for(int i = 0; i < sz; i++)
+				for (int i = 0; i < sz; i++)
 				{
 					const char c = '0' + (block & T(0x1));
 					s.insert(s.begin(),c); 

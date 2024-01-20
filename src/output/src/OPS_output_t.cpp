@@ -26,17 +26,17 @@ OPS_output_t::OPS_output_t(const OPS_input_t& I)
     const int n = get_n();
     const int K = get_m();
 
-    for(int k = 0; k < K; k++)
+    for (int k = 0; k < K; k++)
 	x_(1 + k * n, n) = 1;
 
     const int sz_y = y_.size();
 
-    for(int i = 0; i < sz_y; i++)
+    for (int i = 0; i < sz_y; i++)
 	y_[i] = 0;
 
     const int sz_s = s_.size();
 
-    for(int i = 0; i < sz_s; i++)
+    for (int i = 0; i < sz_s; i++)
 	s_[i] = 0;
 
     const int sz_h = h_.size();
@@ -44,7 +44,7 @@ OPS_output_t::OPS_output_t(const OPS_input_t& I)
     const int L = I.get_L();
     const double scal_factor = I.get_scal_factor();
 
-    for(int i = 0; i < sz_h; i++)
+    for (int i = 0; i < sz_h; i++)
 	h_[i] = L / scal_factor;
 
     init_t_cost();
@@ -77,15 +77,15 @@ OPS_output_t::set(const OPS_output_t& O)
 
     x_.init(0);
 
-    for(int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
 	{
 	    s_[i] = 0;
 	    h_[i] = 0;
 	}
 
-    for(int k = 0; k < K; k++)
+    for (int k = 0; k < K; k++)
 	{
-	    if(!O.idle(k))
+	    if (!O.idle(k))
 		{
 		    set(O, k);
 		}
@@ -109,14 +109,14 @@ OPS_output_t::setADD(const OPS_output_t& O)
     const int K = get_m();
     const int n = get_n();
 
-    for(int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
 	{
 	    s_[i] = 0;
 	    h_[i] = 0;
 	}
 
-    for(int k = 0; k < K; k++){
-	if(!O.idle(k))
+    for (int k = 0; k < K; k++) {
+	if (!O.idle(k))
 	    {
 		set(O, k);
 	    }
@@ -143,28 +143,28 @@ OPS_output_t::set(std::vector<double>& x, std::vector<int>& y)
     const int mz = I_.get_A_succ_sz();
     x.resize(mz);
 
-    for(int i = 0; i < mz; i++)
+    for (int i = 0; i < mz; i++)
 	x[i] = 0;
 
     const int n = get_n();
 	
 	y.resize(n);
-	for(int i = 0; i < n; i++)
+	for (int i = 0; i < n; i++)
 		y[i] = 0;
 	y[0] = 1;
 	y[n - 1] = 1;
 	
     const int m = get_m();
 
-    for(int k = 0; k < m; k++)
+    for (int k = 0; k < m; k++)
 	{
-	    for(int i = 1; i <= n; i++)
+	    for (int i = 1; i <= n; i++)
 		{
-		    for(int j = 1; j <= n; j++)
+		    for (int j = 1; j <= n; j++)
 			{
 			    const int val = x_(k * n + i, j);
 
-			    if(val == 1)
+			    if (val == 1)
 				{
 				    y_[i - 1] = 1;
 				    y_[j - 1] = 1;
@@ -184,9 +184,9 @@ OPS_output_t::set(const OPS_output_t& O, int k)
 
     std::set<int> S;
 
-    for(int i = 1; i <= n; i++)
+    for (int i = 1; i <= n; i++)
 	{
-	    for(int j = 1; j <= n; j++)
+	    for (int j = 1; j <= n; j++)
 		{
 		    x_(k * n + i, j) = O.x_(k * n + i, j);
 		}
@@ -198,11 +198,11 @@ OPS_output_t::init_t_cost(void)
 {
     const int n = get_n();
 
-    for(int i = 1; i <= n - 1; i++)
+    for (int i = 1; i <= n - 1; i++)
 	{
 
-	    for(int j = 2; j <= n; j++)
-		if((i != j) && !((i == 1) && (j == n)))
+	    for (int j = 2; j <= n; j++)
+		if ((i != j) && !((i == 1) && (j == n)))
 		    {
 
 			t_cost_(i, j) = I_.instance_.get_T()(i, j);
@@ -213,10 +213,10 @@ OPS_output_t::init_t_cost(void)
 
     t_cost_(1, n) = 0;
 
-    for(int j = 1; j <= n - 1; j++)
+    for (int j = 1; j <= n - 1; j++)
 	t_cost_(n, j) = OPS_instance_t::kInfiniteTime;
 
-    for(int i = 1; i <= n; i++)
+    for (int i = 1; i <= n; i++)
 	t_cost_(i, 1) = OPS_instance_t::kInfiniteTime;
 }
 
@@ -226,8 +226,8 @@ OPS_output_t::get_next(int i, int k) const
     const int n = get_n();
     const int i_pos = i + 1 + k * n;
 
-    for(int j = 1; j <= n; j++)
-	if(x_(i_pos, j) > 0)
+    for (int j = 1; j <= n; j++)
+	if (x_(i_pos, j) > 0)
 	    return j - 1;
 
     assert(false);
@@ -240,8 +240,8 @@ OPS_output_t::get_prev(int i, int k) const
     const int n = get_n();
     const int i_pos = i + 1;
 
-    for(int j = 1; j <= n; j++)
-	if(x_(j + k * n, i_pos) > 0)
+    for (int j = 1; j <= n; j++)
+	if (x_(j + k * n, i_pos) > 0)
 	    return j - 1;
 
     assert(false);
@@ -275,7 +275,7 @@ OPS_output_t::set(const std::vector<double>& x, const std::vector<double>& y, co
 
     const int x_sz = x.size();
 
-    for(int l = 0; l < x_sz; l++)
+    for (int l = 0; l < x_sz; l++)
 	{
 	    const int arc = I_.get_A_succ(l);
 
@@ -290,17 +290,17 @@ OPS_output_t::set(const std::vector<double>& x, const std::vector<double>& y, co
 	    assert(val <= 1);
 	    assert(val >= 0);
 
-	    if(val == 1)
+	    if (val == 1)
 		set_x(k, i, j) = 1;
 	}
 
     y_[0] = 1;
     y_[n - 1] = 1;
 
-    if(y.size() > 0)
+    if (y.size() > 0)
 	{
 
-	    for(int i = 1; i < n - 1; i++)
+	    for (int i = 1; i < n - 1; i++)
 		{
 
 		    const int val = round(y[i - 1]);
@@ -314,10 +314,10 @@ OPS_output_t::set(const std::vector<double>& x, const std::vector<double>& y, co
 
     s_[0] = 0;
 
-    if(s.size() > 0)
+    if (s.size() > 0)
 	{
 
-	    for(int i = 1; i < n; i++)
+	    for (int i = 1; i < n; i++)
 		{
 
 		    const int val = s[i - 1];
@@ -328,7 +328,7 @@ OPS_output_t::set(const std::vector<double>& x, const std::vector<double>& y, co
 		}
 	}
 
-    for(int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
 	s_[i] /= I_.get_scal_factor();
 
     // x_.write_raw(std::cout);
@@ -345,8 +345,8 @@ OPS_output_t::get_Jk(std::vector<int>& Jk, int k) const
 
     const std::vector<int>& J = I_.get_Jk(k);
 
-    for(int j : J) {
-	if(y_[j] > 0)
+    for (int j : J) {
+	if (y_[j] > 0)
 	    Jk.push_back(j);
 	}
 }
@@ -367,14 +367,14 @@ OPS_output_t::set(const std::vector<double>& x, const std::vector<double>& y, bo
     GOMA::matrix<int> new_x(n * K, n);
     new_x.init(0);
 
-    for(int k = 0; k < K; k++)
+    for (int k = 0; k < K; k++)
 	{
 	    x_(1 + k * n, n) = 1;
 	}
 
     const int x_sz = x.size();
 
-    for(int l = 0; l < x_sz; l++)
+    for (int l = 0; l < x_sz; l++)
 	{
 
 	    const int arc = I_.get_A_succ(l);
@@ -390,7 +390,7 @@ OPS_output_t::set(const std::vector<double>& x, const std::vector<double>& y, bo
 	    assert(val <= 1);
 	    assert(val >= 0);
 
-	    if(val == 1)
+	    if (val == 1)
 		{
 		    set_x(k, 0, In - 1) = 0;
 		    set_x(k, i, j) = 1;
@@ -400,13 +400,13 @@ OPS_output_t::set(const std::vector<double>& x, const std::vector<double>& y, bo
     y_[0] = 1;
     y_[n - 1] = 1;
 
-    for(int i = 1; i < n - 2; i++)
+    for (int i = 1; i < n - 2; i++)
 	y_[i] = 0;
 
-    if(y.size() > 0)
+    if (y.size() > 0)
 	{
 
-	    for(int i = 1; i < In - 1; i++)
+	    for (int i = 1; i < In - 1; i++)
 		{
 
 		    const int val = round(y[i - 1]);
@@ -428,22 +428,22 @@ OPS_output_t::write_statistics(std::ostream& os) const
 {
     os << std::setw(4) << n_customers() << "\t";
 
-    if(found_)
+    if (found_)
 	os << std::setw(10) << get_obj() << "\t";
     else
 	os << std::setw(10) << 99999999 << "\t";
 
-    if(found_)
+    if (found_)
 	os << std::setw(10) << std::fixed << std::setprecision(1) << length() * 10 << "\t";
     else
 	os << std::setw(10) << 0 << "\t";
 
-    if(found_)
+    if (found_)
 	os << std::setw(4) << 1 << "\t";
     else
 	os << std::setw(4) << 0 << "\t";
 
-    if(optimal_)
+    if (optimal_)
 	os << std::setw(4) << 1 << "\t";
     else
 	os << std::setw(4) << 0 << "\t";
@@ -460,14 +460,14 @@ OPS_output_t::write(std::ostream& os) const
 
     const int n = get_n();
 
-    /*for(int i = 0; i < n; i++)
+    /*for (int i = 0; i < n; i++)
         os << std::setw(5) << y_[i];
 
     os << '\n';
     os << '\n'; */
 
-    for(int i = 0; i < n; i++)
-	if(fabs(s_[i] > 0.0001))
+    for (int i = 0; i < n; i++)
+	if (fabs(s_[i] > 0.0001))
 	    os << std::setw(4) << i << " " << std::setw(9) << std::fixed << std::setprecision(2) << s_[i] << " " << std::setw(9) << std::fixed
 	       << std::setprecision(2) << h_[i] << " " << '\n';
 
@@ -520,8 +520,8 @@ OPS_output_t::get_obj(void) const
 
     int obj = 0;
 
-    for(int j = y_.size() - 1; j >= 0; j--)
-	if(y_[j] > 0)
+    for (int j = y_.size() - 1; j >= 0; j--)
+	if (y_[j] > 0)
 	    {
 
 		const double b = I_.OPS_input_t::get_b(j);
@@ -537,8 +537,8 @@ OPS_output_t::n_customers(void) const
     int cnt = 0;
     const int nc = y_.size() - 1;
 
-    for(int i = 1; i < nc; i++)
-	if(y_[i] > 0)
+    for (int i = 1; i < nc; i++)
+	if (y_[i] > 0)
 	    cnt++;
 
     return cnt;
@@ -558,8 +558,8 @@ OPS_output_t::length(int k) const
     double len = 0;
     const int n = get_n();
 
-    for(int i = 0; i < n; i++)
-	for(int j = 0; j < n; j++)
+    for (int i = 0; i < n; i++)
+	for (int j = 0; j < n; j++)
 	    len += get_x(k, i, j);
 
     return len;
@@ -577,18 +577,18 @@ OPS_output_t::check(void)
     std::vector<int> i_degree(n);
     std::vector<int> o_degree(n);
 
-    for(int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
 	{
 	    i_degree[i] = 0;
 	    o_degree[i] = 0;
 	}
 
-    for(int k = 0; k < K; k++)
-	for(int i = 0; i < n; i++)
-	    for(int j = 0; j < n; j++)
+    for (int k = 0; k < K; k++)
+	for (int i = 0; i < n; i++)
+	    for (int j = 0; j < n; j++)
 		{
 
-		    if(get_x(k, i, j) == 1)
+		    if (get_x(k, i, j) == 1)
 			{
 
 			    i_degree[j]++;
@@ -599,32 +599,32 @@ OPS_output_t::check(void)
     assert(o_degree[0] == K);
     assert(i_degree[n - 1] == K);
 
-    for(int i = 1; i < n - 1; i++)
+    for (int i = 1; i < n - 1; i++)
 	assert((o_degree[i] - i_degree[i]) == 0);
 
-    for(int i = 1; i < n - 1; i++)
-	if(i_degree[i] > 0)
+    for (int i = 1; i < n - 1; i++)
+	if (i_degree[i] > 0)
 	    assert(y_[i] == 1);
 	else
 	    assert(y_[i] == 0);
 
     const double rL = (double)(L) / I_.get_scal_factor();
 
-    /*for(int j = 0; j < n; j++)
+    /*for (int j = 0; j < n; j++)
                     std::cout << "Nodo: " << std::setw(3) << j << ": " << std::setw(8) << std::fixed << std::setprecision(1) << s_[j]
                          << " -> " << std::setw(8) << std::fixed << std::setprecision(1) << rL << '\n';
     std::cout << '\n'; */
 
-    for(int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
 	{
-	    if(s_[i] > rL + OPS_output_t::kMaxTimeMargin)
+	    if (s_[i] > rL + OPS_output_t::kMaxTimeMargin)
 		{
 
 		    found_ = false;
 
 		    std::cout << "Nodo: " << i << ": " << s_[i] << " -> " << rL << '\n';
 
-		    for(int j = 0; j < n; j++)
+		    for (int j = 0; j < n; j++)
 			std::cout << "Nodo: " << std::setw(3) << j << ": " << std::setw(8) << std::fixed << std::setprecision(1) << s_[j]
 			     << " -> " << std::setw(8) << std::fixed << std::setprecision(1) << rL << '\n';
 		    std::cout << '\n';
@@ -636,7 +636,7 @@ OPS_output_t::check(void)
 
     /*std::cout << '\n';
 
-    for(int j = 0; j < n; j ++)
+    for (int j = 0; j < n; j ++)
        std::cout << "Nodo: "<< std::setw(3)<< j << ": " << std::setw(8) << std::fixed << std::setprecision(1) <<  s_[j] << " -> " << std::setw(8) <<
     std::fixed << std::setprecision(1) << rL << '\n'; std::cout << '\n';     */
 

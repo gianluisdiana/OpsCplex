@@ -114,7 +114,7 @@ public:
     const char* TIKZ_TEX_BOX_HDR = {
         "\\noindent\\begin{minipage}[c]{10cm}                                \n \
       \\begin{tikzpicture}                                              \n \
-        \\node [mybox] (box){                                          \n \
+        \\node [mybox] (box) {                                          \n \
         \\begin{minipage}{0.75\\textwidth}                              \n "
     };
 

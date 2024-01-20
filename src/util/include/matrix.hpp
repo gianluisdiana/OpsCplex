@@ -49,11 +49,11 @@ public:
             build();
         }
         
-        void init(T data){
+        void init(T data) {
             
             const int sz = m_ * n_;
             
-            for(int i = 0; i < sz; i++)
+            for (int i = 0; i < sz; i++)
                 v_[i] = data;
             
         }
@@ -133,8 +133,8 @@ public:
         std::istream& read_raw(std::istream& is)
         {
             
-             for(int i = 1; i <= m_; i++)
-                 for(int j = 1; j <= n_; j++)
+             for (int i = 1; i <= m_; i++)
+                 for (int j = 1; j <= n_; j++)
                         is >> v_[pos(i, j)];
             
             return is;
@@ -143,8 +143,8 @@ public:
         std::ostream& write_raw(std::ostream& os) const
         {
             
-             for(int i = 1; i <= m_; i++){
-                 for(int j = 1; j <= n_; j++)
+             for (int i = 1; i <= m_; i++) {
+                 for (int j = 1; j <= n_; j++)
                         os << std::setw(WIDE) << std::scientific << std::setprecision(6) << v_[pos(i, j)] << " ";
                 os << '\n';
              }
@@ -163,11 +163,11 @@ public:
             
             M.resize(m_);
             
-            for(int i = 0; i < m_; i++){
+            for (int i = 0; i < m_; i++) {
                 
                 std::vector<T>& v = M[i];
                 
-                for(int j = 0; j < n_; j++)
+                for (int j = 0; j < n_; j++)
                     v.push_back(v_[pos(i + 1, j + 1)]);                
             }
 
@@ -186,11 +186,11 @@ public:
             
             build();
             
-            for(int i = 0; i < m_; i++){
+            for (int i = 0; i < m_; i++) {
                 
                 const std::vector<T>& v = M[i];
                 
-                for(int j = 0; j < n_; j ++)
+                for (int j = 0; j < n_; j ++)
                     v_[pos(i + 1, j + 1)] = v[j];
             }
         }
