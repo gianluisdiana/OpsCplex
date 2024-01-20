@@ -6,8 +6,7 @@
 
 using namespace std;
 
-namespace EMIR
-{
+namespace emir {
 
 
 OPS_instance_t::OPS_instance_t(void):
@@ -136,7 +135,8 @@ void OPS_instance_t::set(const OPS_instance_t& O)
     T_            = O.T_;
     b_            = O.b_;
 	
-	make_Kj();	}
+	make_Kj();	
+}
 
 void OPS_instance_t::make_Kj(void)
 {

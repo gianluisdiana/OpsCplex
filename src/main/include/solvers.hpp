@@ -12,7 +12,7 @@
 
 
 using namespace std;
-using namespace EMIR;
+using namespace emir;
 
 typedef void (*solver_ptr)(const OPS_input_t* I, double tol, OPS_output_t &O, ostream &os1, ostream &os2);
 

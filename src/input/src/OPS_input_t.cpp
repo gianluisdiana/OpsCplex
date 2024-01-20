@@ -3,8 +3,7 @@
 #include <set>
 #include "matrix.hpp"
 
-namespace EMIR
-{
+namespace emir {
 
 /*OPS_input_t::OPS_input_t(const OPS_instance_t& instance, const vector<int>& nJ, const vector<int>& nK):
     instance_(instance),

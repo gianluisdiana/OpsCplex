@@ -11,8 +11,7 @@
 
 using namespace std;
 
-namespace EMIR
-{
+namespace emir {
 
 class gantt_TIKZ_t
 {

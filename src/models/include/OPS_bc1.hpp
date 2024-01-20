@@ -13,8 +13,7 @@
 
 using namespace std;
 
-namespace EMIR
-{
+namespace emir {
 
     class OPS_cplex_solver1 : public OPS_solver_t
     {

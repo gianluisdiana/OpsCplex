@@ -12,7 +12,7 @@
 #include "solvers.hpp"
 
 using namespace std;
-using namespace EMIR;
+using namespace emir;
 
 void read(const string &file_name, OPS_instance_t &instance)
 {

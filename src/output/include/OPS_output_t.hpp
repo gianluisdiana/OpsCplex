@@ -8,8 +8,7 @@
 using namespace std;
 
 
-namespace EMIR
-{
+namespace emir {
 
 
 

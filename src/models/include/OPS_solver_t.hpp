@@ -8,8 +8,7 @@
 using namespace std;
 
 
-namespace EMIR
-{
+namespace emir {
 
 class OPS_solver_t
 {

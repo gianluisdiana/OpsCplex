@@ -5,8 +5,7 @@
 
 using namespace std;
 
-namespace EMIR
-{
+namespace emir {
 
 	typedef vector<target_t> target_set_t;
 

@@ -2,8 +2,7 @@
 
 #define NODE_STYLE 1
 
-namespace EMIR
-{
+namespace emir {
 
 class OPS_TIKZ
 {

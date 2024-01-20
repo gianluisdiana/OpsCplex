@@ -8,8 +8,7 @@
 using json = nlohmann::json;
 using namespace std;
 
-namespace EMIR
-{
+namespace emir {
 
 
 class target_t: public point_t

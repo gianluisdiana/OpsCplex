@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace EMIR {
+namespace emir {
 
 typedef unsigned long block_type;
 

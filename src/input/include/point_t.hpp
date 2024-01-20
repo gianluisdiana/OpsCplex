@@ -9,8 +9,7 @@ using json = nlohmann::json;
 
 using namespace std;
 
-namespace EMIR
-{
+namespace emir {
 
 class point_t: public pair<double,double>
 {

@@ -8,8 +8,7 @@
 
 #define O_EPS 1E-2
 
-namespace EMIR
-{
+namespace emir {
 
 OPS_output_t::OPS_output_t(const OPS_input_t& I)
   : I_(I)

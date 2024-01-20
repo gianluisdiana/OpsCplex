@@ -7,8 +7,7 @@ using namespace std;
 
 #define INF_SP 999999
 
-namespace EMIR
-{
+namespace emir {
 
     class OPS_input_t
     {
@@ -152,4 +151,4 @@ namespace EMIR
         void make_prev(void);
     };
 
-}
+} // namespace emir

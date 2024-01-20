@@ -14,8 +14,7 @@ using namespace std;
 
 #define INF_SPP 999999
 
-namespace EMIR
-{
+namespace emir {
 
     enum
     {
@@ -111,7 +110,8 @@ namespace EMIR
 
         void make_Kj(void);
     };
-}
 
-istream &operator>>(istream &is, EMIR::OPS_instance_t &input);
-ostream &operator<<(ostream &os, const EMIR::OPS_instance_t &input);
+} // namespace emir
+
+istream &operator>>(istream &is, emir::OPS_instance_t &input);
+ostream &operator<<(ostream &os, const emir::OPS_instance_t &input);

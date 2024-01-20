@@ -8,7 +8,7 @@ using namespace std;
 #define N_BITS_WORD (8 * sizeof(T))
 
 
-namespace EMIR {
+namespace emir {
 
 template <class T, size_t N>
 class bitset_t
