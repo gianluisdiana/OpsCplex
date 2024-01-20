@@ -1,17 +1,12 @@
-#pragma once
+#ifndef _EMIR_OPS_OUTPUT_HPP_
+#define _EMIR_OPS_OUTPUT_HPP_
 
 #include "OPS_input_t.hpp"
 #include <vector>
 #include "matrix.hpp"
 
 
-using namespace std;
-
-
-namespace EMIR
-{
-
-
+namespace emir {
 
 class OPS_output_t
 {
@@ -19,9 +14,9 @@ public:
     const OPS_input_t& I_;
 
     GOMA::matrix<int>      x_;
-    vector<int>      y_;
-    vector<double>   s_;
-    vector<double>   h_;
+    std::vector<int>      y_;
+    std::vector<double>   s_;
+    std::vector<double>   h_;
 
     GOMA::matrix<int>      t_cost_;
 
@@ -44,9 +39,9 @@ public:
         return I_.get_m();
     }
 
-    bool set(const vector<double>& x, const vector<double>& y, const vector<double>& s, bool optimal = true);
-    bool set(const vector<double>& x, const vector<double>& y, bool optimal = true);
-	void set(vector<double>& x, vector<int>& y);
+    bool set(const std::vector<double>& x, const std::vector<double>& y, const std::vector<double>& s, bool optimal = true);
+    bool set(const std::vector<double>& x, const std::vector<double>& y, bool optimal = true);
+	void set(std::vector<double>& x, std::vector<int>& y);
 
     int  get_x(int k, int i, int j) const;
     virtual int& set_x(int k, int i, int j);
@@ -55,7 +50,7 @@ public:
     virtual int& set_y(int i);
     double  get_s(int j) const;
 
-    void get_Jk(vector<int>& Jk, int k) const;
+    void get_Jk(std::vector<int>& Jk, int k) const;
 
     int get_obj(void) const;
     double length(int k) const;
@@ -80,9 +75,9 @@ public:
         return I_;
     }
 
-    ostream& write(ostream& os) const;
+    std::ostream& write(std::ostream& os) const;
 
-    void write_statistics(ostream& os) const;
+    void write_statistics(std::ostream& os) const;
 
     int get_next(int i, int k) const;
     int get_prev(int i, int k) const;
@@ -105,5 +100,6 @@ protected:
 
 };
 
+} // namespace emir
 
-}
+#endif // _EMIR_OPS_OUTPUT_HPP_

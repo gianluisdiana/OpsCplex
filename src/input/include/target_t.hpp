@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_TARGET_HPP_
+#define _EMIR_TARGET_HPP_
 
 #include <iostream>
 #include "point_t.hpp"
@@ -6,11 +7,8 @@
 #include "json.hpp"
 
 using json = nlohmann::json;
-using namespace std;
 
-namespace EMIR
-{
-
+namespace emir {
 
 class target_t: public point_t
 {
@@ -51,13 +49,13 @@ public:
 
     virtual ~target_t(void) {}
 
-    ostream& write(ostream& os) const;
-    istream& read(istream& is);
+    std::ostream& write(std::ostream& os) const;
+    std::istream& read(std::istream& is);
 
     void get_json(json& target) const;
     void set_json(const json& target);
 };
 
+} // namespace emir
 
-
-}
+#endif // _EMIR_TARGET_HPP_

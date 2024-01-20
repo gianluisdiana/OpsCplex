@@ -1,14 +1,14 @@
-#pragma once
+#ifndef _EMIR_SMALL_BITSET_HPP_
+#define _EMIR_SMALL_BITSET_HPP_
 
 #include <iostream>
 #include <string>
-#include <cstring>
+#include <string>
 #include <cassert>
 #include <vector>
 
-using namespace std;
 
-namespace EMIR {
+namespace emir {
 
 typedef unsigned long block_type;
 
@@ -35,7 +35,7 @@ class small_bitset_t
 		block_(b)
 		{}        
 
-        small_bitset_t(const vector<int>& b):
+        small_bitset_t(const std::vector<int>& b):
 		block_(0x0)
 		{
             for(int i: b)
@@ -113,11 +113,11 @@ class small_bitset_t
 			return ((block_ & bs.block_) == bs.block_);		
 		}
 
-		ostream& write(ostream& os) const 
+		std::ostream& write(std::ostream& os) const 
 		{
 
-			string s;
-			to_string(s);
+			std::string s;
+			to_std::string(s);
 			os << s;
 
 			return os;
@@ -155,7 +155,7 @@ class small_bitset_t
             return __builtin_popcountl(block_);
 		}
 	
-		 void to_string(string& s) const 
+		 void to_std::string(std::string& s) const 
 		 {
 
             block_type block = block_;	
@@ -169,5 +169,6 @@ class small_bitset_t
 		 }
 };
 
+} // namespace emir
 
-}
+#endif // _EMIR_SMALL_BITSET_HPP_

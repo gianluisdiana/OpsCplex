@@ -1,9 +1,9 @@
-#pragma once
+#ifndef _EMOR_OPS_TIKZ_HPP_
+#define _EMOR_OPS_TIKZ_HPP_
 
 #define NODE_STYLE 1
 
-namespace EMIR
-{
+namespace emir {
 
 class OPS_TIKZ
 {
@@ -134,6 +134,6 @@ public:
 
 };
 
+} // namespace emir
 
-
-}
+#endif // _EMOR_OPS_TIKZ_HPP_

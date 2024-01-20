@@ -11,39 +11,37 @@
 
 #include "solvers.hpp"
 
-using namespace std;
-using namespace EMIR;
 
-void read(const string &file_name, OPS_instance_t &instance)
+void read(const std::string &file_name, emir::OPS_instance_t &instance)
 {
-    ifstream input_file(file_name);
+    std::ifstream input_file(file_name);
 
     instance.read(input_file);
     input_file.close();
 }
 
-int processor(const string &ins_file,
-              const string &sta_file,
-              const string &log_file,
+int processor(const std::string &ins_file,
+              const std::string &sta_file,
+              const std::string &log_file,
               const int id)
 {
-    OPS_instance_t I; 
+    emir::OPS_instance_t I; 
     read(ins_file, I);
 
-    OPS_input_t In(I);
+    emir::OPS_input_t In(I);
     const double tol = 1E-4;
 
-    OPS_output_t Out(In);
+    emir::OPS_output_t Out(In);
 
-    ofstream O_file(sta_file, std::ios_base::app);
-    ofstream L_file(log_file);
+    std::ofstream O_file(sta_file, std::ios_base::app);
+    std::ofstream L_file(log_file);
 
     (*solver_array[id])(&In, tol, Out, L_file, O_file);
 
-    O_file << endl;
+    O_file << '\n';
     O_file.close();
 
-    L_file << endl;
+    L_file << '\n';
     L_file.close();
 
     return 0;
@@ -65,15 +63,15 @@ int main(int argc, char **argv)
          *  argv[6]       Solver ID
          */
 
-        /*const string sta_file(argv[1]);
-        const string ins_file(argv[2]);
-        const string log_file(argv[3]);
+        /*const std::string sta_file(argv[1]);
+        const std::string ins_file(argv[2]);
+        const std::string log_file(argv[3]);
         
         const int id = atoi(argv[4]) - 1;*/
 
-        const string sta_file("tmp.txt");
-        const string ins_file("/home/riera/Dropbox/Trabajos_en_curso/OPS/OPS_CPX/test_ins.txt");
-        const string log_file("test_log.txt");
+        const std::string sta_file("tmp.txt");
+        const std::string ins_file("/home/riera/Dropbox/Trabajos_en_curso/OPS/OPS_CPX/test_ins.txt");
+        const std::string log_file("test_log.txt");
         const int id = 0;
 
         exit_code = processor(ins_file,

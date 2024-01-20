@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_POINT_HPP_
+#define _EMIR_POINT_HPP_
 
 #include <utility>
 #include <iostream>
@@ -7,10 +8,8 @@
 #include "json.hpp"
 using json = nlohmann::json;
 
-using namespace std;
 
-namespace EMIR
-{
+namespace emir {
 
 class point_t: public pair<double,double>
 {
@@ -23,7 +22,7 @@ public:
 
     virtual ~point_t(void) {}
 
-    ostream& write(ostream& os) const;
+    std::ostream& write(std::ostream& os) const;
     
     inline const double get_x(void) const {return first;}
     inline const double get_y(void) const {return second;}
@@ -32,7 +31,6 @@ public:
     void set_json(const json& point);
 };
 
+} // namespace emir
 
-}
-
-
+#endif // _EMIR_POINT_HPP_

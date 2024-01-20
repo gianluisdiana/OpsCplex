@@ -1,13 +1,13 @@
-#pragma once
+#ifndef _EMIR_TIMER_HPP_
+#define _EMIR_TIMER_HPP_
 
 #ifdef _DEBUG
 	#include <cassert>
 	#include <iostream>
 	#include <iomanip>
-	#include <cstring>
+	#include <string>
 	
-	using namespace std;
-	
+		
     #define IT_PER_LINE 8	
 	#define WIDE_OUTPUT 9
 #endif 
@@ -34,5 +34,7 @@ namespace emir {
 
 		double seconds(void) const;
 	};
-	
-}
+
+} // namespace emir
+
+#endif // _EMIR_TIMER_HPP_

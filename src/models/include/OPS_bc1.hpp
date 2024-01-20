@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _EMIR_OPS_BC1_HPP_
+#define _EMIR_OPS_BC1_HPP_
 
 #include "OPS_input_t.hpp"
 #include "OPS_output_t.hpp"
@@ -11,10 +12,8 @@
 #define IL_STD
 #include <ilcplex/ilocplex.h>
 
-using namespace std;
 
-namespace EMIR
-{
+namespace emir {
 
     class OPS_cplex_solver1 : public OPS_solver_t
     {
@@ -31,13 +30,15 @@ namespace EMIR
         OPS_cplex_solver1(const OPS_input_t *I, OPS_output_t &O, double eps);
         virtual ~OPS_cplex_solver1(void);
 
-        virtual void set_param(ostream &r_os);
+        virtual void set_param(std::ostream &r_os);
 
-        virtual void solve(ostream &r_os, double ub = 1E10, bool root_node = false);
+        virtual void solve(std::ostream &r_os, double ub = 1E10, bool root_node = false);
 
         void set_output(OPS_output_t &output);
 
         void makeModel(IloModel &model);
     };
 
-}
+} // namespace emir
+
+#endif // _EMIR_OPS_BC1_HPP_

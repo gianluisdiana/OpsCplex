@@ -1,7 +1,6 @@
 #include "OPS_bc1.hpp"
 
-namespace EMIR
-{
+namespace emir {
 
     OPS_cplex_solver1::OPS_cplex_solver1(const OPS_input_t *I, OPS_output_t &O, double eps) : OPS_solver_t(I, O, eps),
                                                                                                                                                    env_(),
@@ -17,7 +16,7 @@ namespace EMIR
         env_.end();
     }
 
-    void OPS_cplex_solver1::set_param(ostream &r_os)
+    void OPS_cplex_solver1::set_param(std::ostream &r_os)
     {
 
         cplex_.setParam(IloCplex::Param::TimeLimit, 3600);
@@ -28,7 +27,7 @@ namespace EMIR
         cplex_.setOut(r_os);
     }
 
-    void OPS_cplex_solver1::solve(ostream &r_os, double ub, bool root_node)
+    void OPS_cplex_solver1::solve(std::ostream &r_os, double ub, bool root_node)
     {
 
         try
@@ -45,12 +44,12 @@ namespace EMIR
         }
         catch (IloException &ex)
         {
-            cerr << "Error: " << ex << endl;
+            std::cerr << "Error: " << ex << '\n';
             return;
         }
         catch (...)
         {
-            cerr << "Error" << endl;
+            std::cerr << "Error" << '\n';
             return;
         }
 
@@ -68,17 +67,17 @@ namespace EMIR
         IloNumArray s(env_);
         cplex_.getValues(s_, s);
 
-        vector<double> xv(x.getSize());
+        std::vector<double> xv(x.getSize());
 
         for (int i = x.getSize() - 1; i >= 0; i--)
             xv[i] = x[i];
 
-        vector<double> yv(y.getSize());
+        std::vector<double> yv(y.getSize());
 
         for (int i = y.getSize() - 1; i >= 0; i--)
             yv[i] = y[i];
 
-        vector<double> sv(s.getSize());
+        std::vector<double> sv(s.getSize());
 
         sv[0] = s[0];
         sv[s.getSize() - 1] = s[s.getSize() - 1];
@@ -275,7 +274,7 @@ namespace EMIR
 
             sprintf(aux, "MTZ_%d_%d_%d", i, j, k + 1);
 
-            // cout << "( "<< i << ", " << j << " ): " << I_->get_t(i,j) << endl;
+            // std::cout << "( "<< i << ", " << j << " ): " << I_->get_t(i,j) << '\n';
 
             constraints.add(IloRange(env_, -IloInfinity, cut, big_m - I_->get_t(i, j), aux));
             cut.end();
@@ -306,7 +305,7 @@ namespace EMIR
         model.add(constraints);
         constraints.end();
 
-        // cout << model << endl;
+        // std::cout << model << '\n';
     }
 
 }

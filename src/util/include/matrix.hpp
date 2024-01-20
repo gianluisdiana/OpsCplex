@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef _GOMA_MATRIX_HPP_
+#define _GOMA_MATRIX_HPP_
 
 #include <vector>
 #include <iostream>
@@ -11,7 +12,6 @@ using json = nlohmann::json;
 
 #define WIDE 20
 
-using namespace std;
 
 namespace GOMA {
 
@@ -22,7 +22,7 @@ private:
         int m_;
         int n_;
         
-        vector<T> v_;
+        std::vector<T> v_;
         
 public:
         matrix(void):
@@ -130,7 +130,7 @@ public:
         }
    
 
-        istream& read_raw(istream& is)
+        std::istream& read_raw(std::istream& is)
         {
             
              for(int i = 1; i <= m_; i++)
@@ -140,13 +140,13 @@ public:
             return is;
         } 
 
-        ostream& write_raw(ostream& os) const
+        std::ostream& write_raw(std::ostream& os) const
         {
             
              for(int i = 1; i <= m_; i++){
                  for(int j = 1; j <= n_; j++)
-                        os << setw(WIDE) << scientific << setprecision(6) << v_[pos(i, j)] << " ";
-                os << endl;
+                        os << std::setw(WIDE) << std::scientific << std::setprecision(6) << v_[pos(i, j)] << " ";
+                os << '\n';
              }
             
             return os;
@@ -159,13 +159,13 @@ public:
     
        void get_json(json& Mat) const
         {
-            vector<vector<T> > M;
+            std::vector<std::vector<T> > M;
             
             M.resize(m_);
             
             for(int i = 0; i < m_; i++){
                 
-                vector<T>& v = M[i];
+                std::vector<T>& v = M[i];
                 
                 for(int j = 0; j < n_; j++)
                     v.push_back(v_[pos(i + 1, j + 1)]);                
@@ -178,7 +178,7 @@ public:
         {
             v_.clear();
             
-            vector<vector<T> > M = Mat.get<vector<vector<T> > >();
+            std::vector<std::vector<T> > M = Mat.get<std::vector<std::vector<T> > >();
             
             m_ = M.size();            
             assert(m_ >= 1);            
@@ -188,7 +188,7 @@ public:
             
             for(int i = 0; i < m_; i++){
                 
-                const vector<T>& v = M[i];
+                const std::vector<T>& v = M[i];
                 
                 for(int j = 0; j < n_; j ++)
                     v_[pos(i + 1, j + 1)] = v[j];
@@ -224,15 +224,17 @@ private:
 
 
 template <class T>
-istream& operator>>(istream& is, GOMA::matrix<T>& M)
+std::istream& operator>>(std::istream& is, GOMA::matrix<T>& M)
 {
 	M.read_raw(is);
 	return is;
 }
 
 template <class T>
-ostream& operator<<(ostream& os, const GOMA::matrix<T>& M)
+std::ostream& operator<<(std::ostream& os, const GOMA::matrix<T>& M)
 {
 	M.write_raw(os);
 	return os;
 }
+
+#endif //  _GOMA_MATRIX_HPP_

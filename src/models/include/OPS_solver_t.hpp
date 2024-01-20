@@ -1,15 +1,14 @@
-#pragma once 
+#ifndef _EMIR_OPS_SOLVER_HPP_
+#define _EMIR_OPS_SOLVER_HPP_
 
 #include "OPS_input_t.hpp"
 #include "OPS_output_t.hpp"
 
 #include <cassert>
 #include <iostream>
-using namespace std;
 
 
-namespace EMIR
-{
+namespace emir {
 
 class OPS_solver_t
 {
@@ -29,11 +28,11 @@ public:
     
     virtual ~OPS_solver_t( void ) {}
 
-    virtual void solve(ostream& r_os, double ub = 1E10, bool root_node = false) = 0;
+    virtual void solve(std::ostream& r_os, double ub = 1E10, bool root_node = false) = 0;
     
 
 };
 
+} // namespace emir
 
-
-}
+#endif //  _EMIR_OPS_SOLVER_HPP_

@@ -1,14 +1,12 @@
-#pragma once
+#ifndef _EMIR_BITSET_HPP_
+#define _EMIR_BITSET_HPP_
 
-#include <cstring>
+#include <string>
 #include <cassert>
-
-using namespace std;
 
 #define N_BITS_WORD (8 * sizeof(T))
 
-
-namespace EMIR {
+namespace emir {
 
 template <class T, size_t N>
 class bitset_t
@@ -163,11 +161,11 @@ class bitset_t
 			return card;
 		}
 
-		ostream& write(ostream& os) const 
+		std::ostream& write(std::ostream& os) const 
 		{
 
-			string s;
-			to_string(s);
+			std::string s;
+			to_std::string(s);
 			os << s;
 
 			return os;
@@ -209,7 +207,7 @@ class bitset_t
             return __builtin_popcount(block);
 		}
 	
-		 void to_string(string& s) const 
+		 void to_std::string(std::string& s) const 
 		 {
 			for(int j = 0; j < sz_; j++){
 
@@ -227,8 +225,6 @@ class bitset_t
 		 }
 };
 
+} // namespace emir
 
-
-
-}
-
+#endif // _EMIR_BITSET_HPP_
