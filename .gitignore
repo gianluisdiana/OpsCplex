@@ -1,2 +1,5 @@
-# Cmake directory for the project
+# VSCode settings
+.vscode
+
+# Cmake directory
 build
