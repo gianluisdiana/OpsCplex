@@ -11,9 +11,8 @@
 
 #include "solvers.hpp"
 
-using namespace emir;
 
-void read(const std::string &file_name, OPS_instance_t &instance)
+void read(const std::string &file_name, emir::OPS_instance_t &instance)
 {
     std::ifstream input_file(file_name);
 
@@ -26,13 +25,13 @@ int processor(const std::string &ins_file,
               const std::string &log_file,
               const int id)
 {
-    OPS_instance_t I; 
+    emir::OPS_instance_t I; 
     read(ins_file, I);
 
-    OPS_input_t In(I);
+    emir::OPS_input_t In(I);
     const double tol = 1E-4;
 
-    OPS_output_t Out(In);
+    emir::OPS_output_t Out(In);
 
     std::ofstream O_file(sta_file, std::ios_base::app);
     std::ofstream L_file(log_file);

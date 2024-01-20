@@ -11,13 +11,12 @@
 
 #include "OPS_bc1.hpp"
 
-using namespace emir;
 
-typedef void (*solver_ptr)(const OPS_input_t* I, double tol, OPS_output_t &O, std::ostream &os1, std::ostream &os2);
+typedef void (*solver_ptr)(const emir::OPS_input_t* I, double tol, emir::OPS_output_t &O, std::ostream &os1, std::ostream &os2);
 
-void solver1(const OPS_input_t* I, double tol, OPS_output_t &O, std::ostream &os1, std::ostream &os2)
+void solver1(const emir::OPS_input_t* I, double tol, emir::OPS_output_t &O, std::ostream &os1, std::ostream &os2)
 {
-    OPS_cplex_solver1 solver_bc(I, O, tol);
+    emir::OPS_cplex_solver1 solver_bc(I, O, tol);
 
     solver_bc.solve(os1);
 }
