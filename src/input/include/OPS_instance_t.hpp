@@ -1,12 +1,34 @@
+/**
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
+ *
+ * @file OPS_instance_t.hpp
+ * @author Gian Luis Bolivar Diana
+ * @version 0.1.1
+ * @date January 21, 2024
+ * @copyright Copyright (c) 2024
+ *
+ * @brief File containing the basic description of an instance for the O.P.S.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
+ * @see Selective routing problem with synchronization @link https://www.sciencedirect.com/science/article/pii/S0305054821002161?ref=cra_js_challenge&fr=RR-1 @endlink
+ * @see EMIR Telescope @link https://www.gtc.iac.es/instruments/emir/ @endlink
+ * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
+ */
+
 #ifndef _EMIR_OPS_INSTANCE_HPP_
 #define _EMIR_OPS_INSTANCE_HPP_
 
-#include <vector>
 #include <iostream>
 #include <string>
+#include <vector>
 
-#include "matrix.hpp"
-#include "json.hpp"
+#include <json.hpp>
+#include <matrix.hpp>
 
 using json = nlohmann::json;
 
