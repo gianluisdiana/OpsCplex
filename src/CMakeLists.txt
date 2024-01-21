@@ -1,8 +1,16 @@
-cmake_minimum_required (VERSION 3.5)
+# CMake minimum version
+cmake_minimum_required(VERSION 3.22)
 
-project(emir)
+# Set project basic information
+project(emir_cplex
+  VERSION 0.1.0
+  DESCRIPTION "Exact algorithm for the optimization of the use of the astronomical instrument EMIR"
+  HOMEPAGE_URL "https://github.com/gianluisdiana/OpsCplex"
+  LANGUAGES CXX
+)
 
-# Add sub directories
+# ----------------------------- Subdirectories ----------------------------- #
+
 add_subdirectory(main)
 add_subdirectory(util)
 add_subdirectory(json)
