@@ -9,6 +9,6 @@ namespace emir {
 
 typedef std::vector<target_t> target_set_t;
 
-} // namespace emir
+}  // namespace emir
 
-#endif // _EMIR_TARGET_SET_HPP_
+#endif  // _EMIR_TARGET_SET_HPP_

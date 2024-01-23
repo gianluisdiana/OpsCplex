@@ -1,17 +1,13 @@
 #ifndef _EMOR_OPS_TIKZ_HPP_
 #define _EMOR_OPS_TIKZ_HPP_
 
-#define NODE_STYLE 1 // unused(?)
+#define NODE_STYLE 1  // unused(?)
 
 namespace emir {
 
-class OPS_TIKZ
-{
-
-public:
-
-    const char* TIKZ_HEADER = {
-        "\\documentclass{standalone}               \n\n \
+class OPS_TIKZ {
+ public:
+  const char *TIKZ_HEADER = {"\\documentclass{standalone}               \n\n \
 \\usepackage{tikz}                       \n \
                                                     \n \
 \\usetikzlibrary{arrows,positioning}     \n \
@@ -20,31 +16,22 @@ public:
                                                     \n \
 \\pgfdeclarelayer{nodelayer}             \n \
 \\pgfdeclarelayer{edgelayer}             \n \
-\\pgfsetlayers{edgelayer,nodelayer,main} \n \n"
-    };
+\\pgfsetlayers{edgelayer,nodelayer,main} \n \n"};
 
-    const char* TIKZ_OPENING = {
-        "\\begin{document} \n\n"
-    };
+  const char *TIKZ_OPENING = {"\\begin{document} \n\n"};
 
+  const char *TIKZ_CLOSING = {"\n\\end{document} \n"};
 
-    const char* TIKZ_CLOSING = {
-        "\n\\end{document} \n"
-    };
-
-
-    const char* TIKZ_FIG_HEADER = {
-        "\\begin{tikzpicture}                                 \n\n \
+  const char *TIKZ_FIG_HEADER = {
+    "\\begin{tikzpicture}                                 \n\n \
 \\tikzstyle{nosty} = [draw=none,fill=none,right] \n \
-\\tikzstyle{slit}  = [thick]                     \n \n"
-    };
+\\tikzstyle{slit}  = [thick]                     \n \n"};
 
-    const char* TIKZ_FIG_CLOSING = {
-        "\n\\end{tikzpicture}                                   \n"
-    };
+  const char *TIKZ_FIG_CLOSING = {"\n\\end{tikzpicture}                        "
+                                  "           \n"};
 
-    const char* TIKZ_GANTT_HEADER = {
-        "\\newcommand{\\openslit}[2]{                                        \n \
+  const char *TIKZ_GANTT_HEADER = {
+    "\\newcommand{\\openslit}[2]{                                        \n \
                                                                                \n \
                     \\node [nosty] (0) at (-4.5, 3 - #1) {};                    \n \
                     \\node [nosty] (1) at (-3.5, 3 - #1) {};                    \n \
@@ -102,38 +89,30 @@ public:
                     \\draw[slit] (1.center) to (2.center);                      \n \
                     \\draw[slit] (2.center) to (3.center);                      \n \
                     \\draw[slit] (3.center) to (0.center);	                   \n \
-            }                                                                  \n "
-    };
+            }                                                                  \n "};
 
-    const char* TIKZ_TEX_BOX_STY = {
-        "\\tikzstyle{mybox} = [draw=black, fill=white,                  \n \
+  const char *TIKZ_TEX_BOX_STY = {
+    "\\tikzstyle{mybox} = [draw=black, fill=white,                  \n \
          rectangle, rounded corners, inner sep=10pt, inner ysep=20pt]  \n \
-         \\tikzstyle{fancytitle} =[fill=white, text=black]              \n"
-    };
+         \\tikzstyle{fancytitle} =[fill=white, text=black]              \n"};
 
-    const char* TIKZ_TEX_BOX_HDR = {
-        "\\noindent\\begin{minipage}[c]{10cm}                                \n \
+  const char *TIKZ_TEX_BOX_HDR = {
+    "\\noindent\\begin{minipage}[c]{10cm}                                \n \
       \\begin{tikzpicture}                                              \n \
         \\node [mybox] (box) {                                          \n \
-        \\begin{minipage}{0.75\\textwidth}                              \n "
-    };
+        \\begin{minipage}{0.75\\textwidth}                              \n "};
 
-    const char* TIKZ_TEX_BOX_FT = {
-        "\\end{minipage}                                                  \n \
-     };                                                              \n"
-    };
+  const char *TIKZ_TEX_BOX_FT = {
+    "\\end{minipage}                                                  \n \
+     };                                                              \n"};
 
-    const char* TIKZ_END_MINI = {
-        "\\end{minipage}                                                  \n"
-    };
+  const char *TIKZ_END_MINI = {"\\end{minipage}                                "
+                               "                  \n"};
 
-    const char* TIKZ_TEX_BOX_TTL = {
-        "\\node[fancytitle, right=10pt] at (box.north west) "
-    };
-
-
+  const char *TIKZ_TEX_BOX_TTL = {"\\node[fancytitle, right=10pt] at "
+                                  "(box.north west) "};
 };
 
-} // namespace emir
+}  // namespace emir
 
-#endif // _EMOR_OPS_TIKZ_HPP_
+#endif  // _EMOR_OPS_TIKZ_HPP_

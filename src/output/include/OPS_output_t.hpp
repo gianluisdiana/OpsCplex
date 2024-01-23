@@ -2,106 +2,107 @@
 #define _EMIR_OPS_OUTPUT_HPP_
 
 #include "OPS_input_t.hpp"
-#include <vector>
 #include "matrix.hpp"
-
+#include <vector>
 
 namespace emir {
 
-class OPS_output_t
-{
-public:
-    const OPS_input_t& I_;
+class OPS_output_t {
+ public:
+  const OPS_input_t &I_;
 
-    GOMA::matrix<int>      x_;
-    std::vector<int>      y_;
-    std::vector<double>   s_;
-    std::vector<double>   h_;
+  GOMA::matrix<int> x_;
+  std::vector<int> y_;
+  std::vector<double> s_;
+  std::vector<double> h_;
 
-    GOMA::matrix<int>      t_cost_;
+  GOMA::matrix<int> t_cost_;
 
-    bool optimal_;
-    bool found_;
+  bool optimal_;
+  bool found_;
 
-public:
-    OPS_output_t(const OPS_input_t& I);
-    
-    OPS_output_t(const OPS_output_t& O);
-    
-    virtual ~OPS_output_t(void);
+ public:
+  OPS_output_t(const OPS_input_t &I);
 
-    virtual int get_n() const
-    {
-        return I_.get_n();
-    }
-    virtual int get_m() const
-    {
-        return I_.get_m();
-    }
+  OPS_output_t(const OPS_output_t &O);
 
-    bool set(const std::vector<double>& x, const std::vector<double>& y, const std::vector<double>& s, bool optimal = true);
-    bool set(const std::vector<double>& x, const std::vector<double>& y, bool optimal = true);
-	void set(std::vector<double>& x, std::vector<int>& y);
+  virtual ~OPS_output_t(void);
 
-    int  get_x(int k, int i, int j) const;
-    virtual int& set_x(int k, int i, int j);
-    virtual int& set_x(GOMA::matrix<int>& M, int k, int i, int j) const;
-    int  get_y(int j) const;
-    virtual int& set_y(int i);
-    double  get_s(int j) const;
+  virtual int get_n() const {
+    return I_.get_n();
+  }
 
-    void get_Jk(std::vector<int>& Jk, int k) const;
+  virtual int get_m() const {
+    return I_.get_m();
+  }
 
-    int get_obj(void) const;
-    double length(int k) const;
-    double length(void) const;
+  bool set(
+    const std::vector<double> &x, const std::vector<double> &y,
+    const std::vector<double> &s, bool optimal = true
+  );
+  bool set(
+    const std::vector<double> &x, const std::vector<double> &y,
+    bool optimal = true
+  );
+  void set(std::vector<double> &x, std::vector<int> &y);
 
-    double slack(int i) const;
-    double slack(void) const;
+  int get_x(int k, int i, int j) const;
+  virtual int &set_x(int k, int i, int j);
+  virtual int &set_x(GOMA::matrix<int> &M, int k, int i, int j) const;
+  int get_y(int j) const;
+  virtual int &set_y(int i);
+  double get_s(int j) const;
 
-    bool found(void) const
-    {
-        return found_;
-    }
-    bool optimal(void) const
-    {
-        return optimal_;
-    }
+  void get_Jk(std::vector<int> &Jk, int k) const;
 
-    int n_customers(void) const;
+  int get_obj(void) const;
+  double length(int k) const;
+  double length(void) const;
 
-    const OPS_input_t& get_input(void) const
-    {
-        return I_;
-    }
+  double slack(int i) const;
+  double slack(void) const;
 
-    std::ostream& write(std::ostream& os) const;
+  bool found(void) const {
+    return found_;
+  }
 
-    void write_statistics(std::ostream& os) const;
+  bool optimal(void) const {
+    return optimal_;
+  }
 
-    int get_next(int i, int k) const;
-    int get_prev(int i, int k) const;
+  int n_customers(void) const;
 
-    void init_t_cost(void);
+  const OPS_input_t &get_input(void) const {
+    return I_;
+  }
 
-    void set(const OPS_output_t& O, int k);    
-    void set(const OPS_output_t& O);
-	void setADD(const OPS_output_t& O);
+  std::ostream &write(std::ostream &os) const;
 
-    bool idle(int k) const
-    {
-        const int n = get_n();
-        return (x_(1 + k * n, n) == 1);
-    }
+  void write_statistics(std::ostream &os) const;
 
-    bool check(void);
+  int get_next(int i, int k) const;
+  int get_prev(int i, int k) const;
 
-// protected:
-    private:
-    // Maximum time margin for checking the feasibility of the solution
-    static const double kMaxTimeMargin;
+  void init_t_cost(void);
+
+  void set(const OPS_output_t &O, int k);
+  void set(const OPS_output_t &O);
+  void setADD(const OPS_output_t &O);
+
+  bool idle(int k) const {
+    const int n = get_n();
+    return (x_(1 + k * n, n) == 1);
+  }
+
+  bool check(void);
+
+  // protected:
+
+ private:
+  // Maximum time margin for checking the feasibility of the solution
+  static const double kMaxTimeMargin;
 };
 
-} // namespace emir
+}  // namespace emir
 
-#endif // _EMIR_OPS_OUTPUT_HPP_
+#endif  // _EMIR_OPS_OUTPUT_HPP_

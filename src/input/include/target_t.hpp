@@ -15,10 +15,14 @@
  * @brief File containing the description of a 2 dimensional point with a
  * certain exposure time and priority.
  *
- * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
- * @see Selective routing problem with synchronization @link https://www.sciencedirect.com/science/article/pii/S0305054821002161?ref=cra_js_challenge&fr=RR-1 @endlink
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex
+ * @endlink
+ * @see Selective routing problem with synchronization @link
+ * https://www.sciencedirect.com/science/article/pii/S0305054821002161?ref=cra_js_challenge&fr=RR-1
+ * @endlink
  * @see EMIR Telescope @link https://www.gtc.iac.es/instruments/emir/ @endlink
- * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
+ * @see Google style guide: @link
+ * https://google.github.io/styleguide/cppguide.html @endlink
  */
 
 #ifndef _EMIR_TARGET_HPP_
@@ -33,52 +37,40 @@ using json = nlohmann::json;
 
 namespace emir {
 
-class target_t: public point_t
-{
-private:
-    double	p_;         /**< Exposure time */
-    double	b_;         /**< Priority value */
+class target_t : public point_t {
+ private:
+  double p_; /**< Exposure time */
+  double b_; /**< Priority value */
 
-public:
+ public:
+  target_t(void) : point_t(), p_(0), b_(-1) {}
 
-    target_t(void):
-        point_t(),
-        p_(0),
-        b_(-1) {}
+  target_t(const point_t &coord, double p, double b) :
+    point_t(coord), p_(p), b_(b) {}
 
-    target_t(const point_t& coord, double p, double b):
-        point_t(coord),
-        p_(p),
-        b_(b) {}
-        
-    target_t(const point_t& coord):
-        point_t(coord),
-        p_(0),
-        b_(-1) {} 
+  target_t(const point_t &coord) : point_t(coord), p_(0), b_(-1) {}
 
+  inline double get_p(void) const {
+    return p_;
+  }
 
-    inline double  get_p(void) const
-    {
-        return p_;
-    }
-    inline double  get_b(void) const
-    {
-        return b_;
-    }
-    inline const point_t& get_coord(void) const
-    {
-        return *this;
-    }
+  inline double get_b(void) const {
+    return b_;
+  }
 
-    virtual ~target_t(void) {}
+  inline const point_t &get_coord(void) const {
+    return *this;
+  }
 
-    std::ostream& write(std::ostream& os) const;
-    std::istream& read(std::istream& is);
+  virtual ~target_t(void) {}
 
-    void get_json(json& target) const;
-    void set_json(const json& target);
+  std::ostream &write(std::ostream &os) const;
+  std::istream &read(std::istream &is);
+
+  void get_json(json &target) const;
+  void set_json(const json &target);
 };
 
-} // namespace emir
+}  // namespace emir
 
-#endif // _EMIR_TARGET_HPP_
+#endif  // _EMIR_TARGET_HPP_
