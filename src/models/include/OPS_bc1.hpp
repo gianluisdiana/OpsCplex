@@ -1,10 +1,11 @@
 #ifndef _EMIR_OPS_BC1_HPP_
 #define _EMIR_OPS_BC1_HPP_
 
-#include "OPS_input_t.hpp"
-#include "OPS_output_t.hpp"
-#include "OPS_solver_t.hpp"
 #include <iostream>
+
+#include <OPS_input_t.hpp>
+#include <OPS_output_t.hpp>
+#include <OPS_solver_t.hpp>
 
 #define IL_STD
 #include <ilcplex/ilocplex.h>

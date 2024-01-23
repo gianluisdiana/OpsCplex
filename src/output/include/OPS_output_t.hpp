@@ -1,9 +1,10 @@
 #ifndef _EMIR_OPS_OUTPUT_HPP_
 #define _EMIR_OPS_OUTPUT_HPP_
 
-#include "OPS_input_t.hpp"
-#include "matrix.hpp"
 #include <vector>
+
+#include <OPS_input_t.hpp>
+#include <matrix.hpp>
 
 namespace emir {
 

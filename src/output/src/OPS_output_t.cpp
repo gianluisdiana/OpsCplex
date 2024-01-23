@@ -1,9 +1,9 @@
-#include "OPS_output_t.hpp"
-
 #include <cassert>
 #include <cmath>
 #include <iomanip>
 #include <set>
+
+#include <OPS_output_t.hpp>
 
 namespace emir {
 

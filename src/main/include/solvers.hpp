@@ -1,13 +1,14 @@
 #ifndef _SOLVERS_HPP_
 #define _SOLVERS_HPP_
 
-#include "OPS_bc1.hpp"
-#include "OPS_input_t.hpp"
-#include "OPS_instance_t.hpp"
-#include "OPS_output_t.hpp"
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+
+#include <OPS_bc1.hpp>
+#include <OPS_input_t.hpp>
+#include <OPS_instance_t.hpp>
+#include <OPS_output_t.hpp>
 
 typedef void (*solver_ptr
 )(const emir::OPS_input_t *I, double tol, emir::OPS_output_t &O,

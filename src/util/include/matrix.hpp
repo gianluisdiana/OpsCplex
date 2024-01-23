@@ -1,11 +1,12 @@
 #ifndef _GOMA_MATRIX_HPP_
 #define _GOMA_MATRIX_HPP_
 
-#include "json.hpp"
 #include <cassert>
 #include <iomanip>
 #include <iostream>
 #include <vector>
+
+#include <json.hpp>
 using json = nlohmann::json;
 
 #define WIDE 20

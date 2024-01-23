@@ -1,7 +1,7 @@
-#include "OPS_input_t.hpp"
-
-#include "matrix.hpp"
 #include <set>
+
+#include <OPS_input_t.hpp>
+#include <matrix.hpp>
 
 namespace emir {
 

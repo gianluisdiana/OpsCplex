@@ -1,8 +1,8 @@
-#include "OPS_instance_t.hpp"
-
 #include <cassert>
 #include <cstdio>
 #include <iomanip>
+
+#include <OPS_instance_t.hpp>
 
 namespace emir {
 

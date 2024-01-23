@@ -3,8 +3,8 @@
 
 #ifdef _DEBUG
 #include <cassert>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <string>
 
 #define IT_PER_LINE 8
