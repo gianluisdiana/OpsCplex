@@ -38,13 +38,13 @@ using json = nlohmann::json;
 
 namespace emir {
 
-class point_t : public std::pair<double, double> {
+class Point : public std::pair<double, double> {
  public:
-  point_t(void) : std::pair<double, double>(0, 0) {}
+  Point(void) : std::pair<double, double>(0, 0) {}
 
-  point_t(double a, double b) : std::pair<double, double>(a, b) {}
+  Point(double a, double b) : std::pair<double, double>(a, b) {}
 
-  virtual ~point_t(void) {}
+  virtual ~Point(void) {}
 
   std::ostream &write(std::ostream &os) const;
 

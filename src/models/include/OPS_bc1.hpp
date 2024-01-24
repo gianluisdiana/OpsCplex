@@ -23,7 +23,7 @@ class OPS_cplex_solver1 : public OPS_solver_t {
   double tol_;
 
  public:
-  OPS_cplex_solver1(const OPS_input_t *I, OPS_output_t &O, double eps);
+  OPS_cplex_solver1(const OpsInput *I, OPS_output_t &O, double eps);
   virtual ~OPS_cplex_solver1(void);
 
   virtual void set_param(std::ostream &r_os);

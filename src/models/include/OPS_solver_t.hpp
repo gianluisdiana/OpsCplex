@@ -11,12 +11,12 @@ namespace emir {
 
 class OPS_solver_t {
  public:
-  const OPS_input_t *I_;
+  const OpsInput *I_;
   OPS_output_t &O_;
   const double tol_;
 
  public:
-  OPS_solver_t(const OPS_input_t *I, OPS_output_t &O, double eps) :
+  OPS_solver_t(const OpsInput *I, OPS_output_t &O, double eps) :
     I_(I), O_(O), tol_(eps) {}
 
   virtual ~OPS_solver_t(void) {}

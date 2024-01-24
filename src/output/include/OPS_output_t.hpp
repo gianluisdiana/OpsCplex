@@ -10,7 +10,7 @@ namespace emir {
 
 class OPS_output_t {
  public:
-  const OPS_input_t &I_;
+  const OpsInput &I_;
 
   GOMA::matrix<int> x_;
   std::vector<int> y_;
@@ -23,7 +23,7 @@ class OPS_output_t {
   bool found_;
 
  public:
-  OPS_output_t(const OPS_input_t &I);
+  OPS_output_t(const OpsInput &I);
 
   OPS_output_t(const OPS_output_t &O);
 
@@ -73,7 +73,7 @@ class OPS_output_t {
 
   int n_customers(void) const;
 
-  const OPS_input_t &get_input(void) const {
+  const OpsInput &get_input(void) const {
     return I_;
   }
 

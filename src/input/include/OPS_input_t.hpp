@@ -33,7 +33,7 @@
 
 namespace emir {
 
-class OPS_input_t {
+class OpsInput {
  public:
   const OpsInstance &instance_;
 
@@ -54,9 +54,9 @@ class OPS_input_t {
   GOMA::matrix<int> t_cost_;  // Matriz de costes transformada
 
  public:
-  OPS_input_t(const OpsInstance &instance, bool build = true);
+  OpsInput(const OpsInstance &instance, bool build = true);
 
-  virtual ~OPS_input_t(void);
+  virtual ~OpsInput(void);
 
   const OpsInstance &get_instance(void) const {
     return instance_;

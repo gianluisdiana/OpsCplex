@@ -22,7 +22,7 @@ int processor(
   emir::OpsInstance I;
   read(ins_file, I);
 
-  emir::OPS_input_t In(I);
+  emir::OpsInput In(I);
   const double tol = 1E-4;
 
   emir::OPS_output_t Out(In);

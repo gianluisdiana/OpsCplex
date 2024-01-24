@@ -13,8 +13,8 @@ namespace emir {
 
 class gantt_TIKZ_t {
  private:
-  const target_set_t &T_;
-  const OPS_input_t &I_;
+  const TargetSet &T_;
+  const OpsInput &I_;
 
   GOMA::matrix<double> D_;
 
@@ -27,7 +27,7 @@ class gantt_TIKZ_t {
   const double axis_y_gap_;
 
  public:
-  gantt_TIKZ_t(const target_set_t &T, const OPS_input_t &I) :
+  gantt_TIKZ_t(const TargetSet &T, const OpsInput &I) :
     T_(T), I_(I), D_(), gantt_w_(30), task_h_(1.0), slit_gap_(0.1),
     task_gap_(0.2), axis_x_gap_(0.1), axis_y_gap_(0.1) {
     T.get_time_matrix(T.get_CSU_setup().b_spd(), D_);

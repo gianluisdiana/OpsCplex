@@ -3,7 +3,7 @@
 namespace emir {
 
 OPS_cplex_solver1::OPS_cplex_solver1(
-  const OPS_input_t *I, OPS_output_t &O, double eps
+  const OpsInput *I, OPS_output_t &O, double eps
 ) :
   OPS_solver_t(I, O, eps),
   env_(), x_(env_), y_(env_), s_(env_), cplex_(env_) {}

@@ -9,7 +9,7 @@ namespace emir {
 
 const double OPS_output_t::kMaxTimeMargin = 1.0e-2;
 
-OPS_output_t::OPS_output_t(const OPS_input_t &I) :
+OPS_output_t::OPS_output_t(const OpsInput &I) :
   I_(I), x_(get_n() * get_m(), get_n()), y_(get_n()), s_(get_n()), h_(get_n()),
   t_cost_(get_n(), get_n()), optimal_(false), found_(false) {
   x_.init(0);
@@ -409,7 +409,7 @@ int OPS_output_t::get_obj(void) const {
 
   for (int j = y_.size() - 1; j >= 0; j--)
     if (y_[j] > 0) {
-      const double b = I_.OPS_input_t::get_b(j);
+      const double b = I_.OpsInput::get_b(j);
       obj += y_[j] * b;
     }
 

@@ -7,7 +7,7 @@
 
 namespace emir {
 
-typedef std::vector<target_t> target_set_t;
+using TargetSet = std::vector<Target>;
 
 }  // namespace emir
 
