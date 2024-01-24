@@ -19,13 +19,6 @@ void OpsInstance::write_statistics(std::ostream &os) const {
   os << name_ << "\t";
 }
 
-void OpsInstance::set(
-  const std::string &name, const std::string &stamp, const std::string &desc
-) {
-  name_ = name;
-  date_stamp_ = stringToDateStamp(stamp);
-}
-
 int OpsInstance::get_max_Jk(void) const {
   int max = 0;
 
@@ -33,40 +26,6 @@ int OpsInstance::get_max_Jk(void) const {
     if ((int)(Jk.size()) > max) max = Jk.size();
 
   return max;
-}
-
-void OpsInstance::set_L(double alpha, int L) {
-  alpha_ = alpha;
-  L_ = L;
-}
-
-void OpsInstance::set(
-  const std::string &tar_name, const std::string &tar_stamp,
-  const std::string &tar_desc, int type,
-  const std::vector<std::vector<int>> &Jk, const GOMA::matrix<int> &T,
-  const std::vector<int> &b
-) {
-  name_ = tar_name;
-  // date_stamp_ = tar_stamp;
-  type_ = type;
-
-  Jk_ = Jk;
-  T_ = T;
-  b_ = b;
-
-  make_Kj();
-}
-
-void OpsInstance::set(const OpsInstance &O) {
-  name_ = O.name_;
-  date_stamp_ = O.date_stamp_;
-  type_ = O.type_;
-
-  Jk_ = O.Jk_;
-  T_ = O.T_;
-  b_ = O.b_;
-
-  make_Kj();
 }
 
 void OpsInstance::make_Kj(void) {

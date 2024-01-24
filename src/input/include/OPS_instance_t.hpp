@@ -116,19 +116,6 @@ class OpsInstance {
 
   int get_max_Jk(void) const;
 
-  // ------------------------------- Setters ------------------------------- //
-
-  void set(
-    const std::string &source_name, const std::string &source_stamp,
-    const std::string &desc, int type, const std::vector<std::vector<int>> &Jk,
-    const GOMA::matrix<int> &T, const std::vector<int> &b
-  );
-  void set(const OpsInstance &O);
-  void set(
-    const std::string &name, const std::string &stamp, const std::string &desc
-  );
-  void set_L(double alpha, int L);
-
   // ---------------------------- Statistcs Data --------------------------- //
 
   void write_statistics(std::ostream &os) const;
