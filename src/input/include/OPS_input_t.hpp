@@ -35,23 +35,38 @@ namespace emir {
 
 class OpsInput : public OpsInstance {
  public:
+  // Successors of each node (k, i) with respect to the k-th sliding bar and the
+  // i-th object
   GOMA::matrix<std::vector<int>> succ_;
+  // Predecessors of each node (k, i) with respect to the k-th sliding bar and
+  // the i-th object
   GOMA::matrix<std::vector<int>> pred_;
 
+  // Indexes of the arcs described at succ_ matrix with respect to the k-th
+  // sliding bar and the i-th object
   GOMA::matrix<std::vector<int>> succ_inx_;
+  // Indexes of the arcs described at pred_ matrix with respect to the k-th
+  // sliding bar and the i-th object
   GOMA::matrix<std::vector<int>> pred_inx_;
 
+  // 1D vector that represents a 3D structure with the sliding bars, the objects
+  // and its successors
   std::vector<int> A_succ_;
-
+  // Index of the reached objects in the k-th sliding bar
   std::vector<std::vector<int>> nodes_k_;
-
   std::vector<GOMA::matrix<int>> inv_succ_;
-
+  // Arcs indexes of the k-th sliding bar
   std::vector<std::vector<int>> arcs_k_;
 
-  GOMA::matrix<int> t_cost_;  // Matriz de costes transformada
+  // Time matrix with some impossible transitions removed
+  GOMA::matrix<int> t_cost_;
 
  public:
+  /**
+   * @brief Construct a new OpsInput object
+   *
+   * @param build Whether to build the graph structures or not.
+   */
   OpsInput(bool build = true);
 
   virtual ~OpsInput(void);
