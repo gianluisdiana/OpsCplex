@@ -149,7 +149,7 @@ void OPS_output_t::init_t_cost(void) {
   for (int i = 1; i <= n - 1; i++) {
     for (int j = 2; j <= n; j++)
       if ((i != j) && !((i == 1) && (j == n))) {
-        t_cost_(i, j) = I_.instance_.get_T()(i, j);
+        t_cost_(i, j) = I_.instance_.getT()(i, j);
       } else
         t_cost_(i, j) = OpsInstance::kInfiniteTime;
   }

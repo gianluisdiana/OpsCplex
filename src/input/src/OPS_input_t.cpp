@@ -687,7 +687,7 @@ void OPS_input_t::test_A_succ(void) {
 #endif
 
 void OPS_input_t::write_statistics_hdr(std::ostream &os) const {
-  instance_.write_statistics_hdr(os);
+  instance_.writeStatisticsHdr(os);
 
   os << "$n$"
      << "\t";
@@ -711,7 +711,7 @@ void OPS_input_t::write_statistics_hdr(std::ostream &os) const {
 }
 
 void OPS_input_t::write_statistics(std::ostream &os) const {
-  instance_.write_statistics(os);
+  instance_.writeStatistics(os);
 
   int nsync, maxgsync, mingsync;
   double avggsync;

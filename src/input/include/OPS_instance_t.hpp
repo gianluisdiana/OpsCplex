@@ -51,12 +51,12 @@ class OpsInstance {
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Get the amount of objects to visualize */
-  inline int get_n(void) const {
+  inline int getN(void) const {
     return b_.size();
   }
 
   /** @brief Get the amount of sliding bars */
-  inline int get_m(void) const {
+  inline int getM(void) const {
     return Jk_.size();
   }
 
@@ -66,7 +66,7 @@ class OpsInstance {
    * @param k The index of the sliding bar
    * @return The objects that can be observed by the sliding bar selected
    */
-  inline const std::vector<int> &get_Jk(int k) const {
+  inline const std::vector<int> &getJk(int k) const {
     return Jk_[k];
   }
 
@@ -76,34 +76,34 @@ class OpsInstance {
    * @param j The index of the object
    * @return The profit (or priority) for the object selected
    */
-  inline int get_b(int j) const {
+  inline int getB(int j) const {
     return b_[j];
   }
 
   /** @brief Returns the time limit to use the telescope */
-  inline int get_L(void) const {
+  inline int getL(void) const {
     return L_;
   }
 
   /** @brief Returns the full time matrix */
-  inline const GOMA::matrix<int> &get_T(void) const {
+  inline const GOMA::matrix<int> &getT(void) const {
     return T_;
   }
 
   /** @brief Gives read-only access to the scaling factor */
-  inline double get_scal_factor(void) const {
+  inline double getScalingFactor(void) const {
     return scal_factor_;
   }
 
   /** @brief Returns the Kj matrix */
-  inline const std::vector<std::vector<int>> &get_Kj(void) const {
+  inline const std::vector<std::vector<int>> &getKj(void) const {
     return Kj_;
   }
 
   // ---------------------------- Statistcs Data --------------------------- //
 
-  void write_statistics(std::ostream &os) const;
-  void write_statistics_hdr(std::ostream &os) const;
+  void writeStatistics(std::ostream &os) const;
+  void writeStatisticsHdr(std::ostream &os) const;
 
   // ------------------------------ Operators ------------------------------ //
 

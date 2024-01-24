@@ -63,11 +63,11 @@ class OPS_input_t {
   }
 
   inline virtual int get_n() const {
-    return instance_.get_n();
+    return instance_.getN();
   }
 
   inline virtual int get_m() const {
-    return instance_.get_m();
+    return instance_.getM();
   }
 
   inline virtual int get_n_x(void) const {
@@ -79,11 +79,11 @@ class OPS_input_t {
   }
 
   inline virtual const std::vector<int> &get_Jk(int k) const {
-    return instance_.get_Jk(k);
+    return instance_.getJk(k);
   }
 
   inline virtual const std::vector<std::vector<int>> &get_Kj(void) const {
-    return instance_.get_Kj();
+    return instance_.getKj();
   }
 
   inline const GOMA::matrix<int> &get_T(void) const {
@@ -91,7 +91,7 @@ class OPS_input_t {
   }
 
   inline virtual int get_T(int i, int j) const {
-    return instance_.get_T()(i, j);
+    return instance_.getT()(i, j);
   }
 
   inline int get_t(int i, int j) const {
@@ -99,17 +99,17 @@ class OPS_input_t {
   }
 
   inline virtual int get_b(int j) const {
-    return instance_.get_b(j);
+    return instance_.getB(j);
   }
 
   inline int get_L() const {
-    return instance_.get_L();
+    return instance_.getL();
   }
 
   virtual void get_L(std::vector<int> &L) const;
 
   inline double get_scal_factor() const {
-    return instance_.get_scal_factor();
+    return instance_.getScalingFactor();
   }
 
   inline const std::vector<int> &get_arcs_k(int k) const {

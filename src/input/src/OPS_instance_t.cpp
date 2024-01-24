@@ -13,11 +13,11 @@ OpsInstance::~OpsInstance(void) {}
 
 // ----------------------------- Statistcs Data ---------------------------- //
 
-void OpsInstance::write_statistics_hdr(std::ostream &os) const {
+void OpsInstance::writeStatisticsHdr(std::ostream &os) const {
   os << "ID\t";
 }
 
-void OpsInstance::write_statistics(std::ostream &os) const {
+void OpsInstance::writeStatistics(std::ostream &os) const {
   os << name_ << "\t";
 }
 
@@ -83,12 +83,12 @@ void OpsInstance::truncateTMatrix() {
 void OpsInstance::make_Kj(void) {
   Kj_.clear();
 
-  const int K = get_m();
+  const int K = getM();
 
-  Kj_.resize(get_n());
+  Kj_.resize(getN());
 
   for (int k = 0; k < K; k++) {
-    const std::vector<int> &Jk = get_Jk(k);
+    const std::vector<int> &Jk = getJk(k);
 
     for (int i : Jk) Kj_[i].push_back(k);
   }
