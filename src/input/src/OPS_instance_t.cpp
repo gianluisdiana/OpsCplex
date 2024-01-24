@@ -1,82 +1,32 @@
-#include <cassert>
-#include <cstdio>
-#include <iomanip>
-
 #include <OPS_instance_t.hpp>
+#include <functions.hpp>
 
 namespace emir {
 
-const unsigned int OPS_instance_t::kInfiniteTime = 999'999;
+const unsigned int OpsInstance::kInfiniteTime = 999'999;
 
-OPS_instance_t::OPS_instance_t(void) :
-  id_(N_ITEM), type_(), Jk_(), Kj_(), T_(), b_(), alpha_(-1), L_(0),
+OpsInstance::OpsInstance(void) :
+  name_(), date_stamp_(), type_(), Jk_(), Kj_(), T_(), b_(), alpha_(-1), L_(0),
   scal_factor_(10) {}
 
-OPS_instance_t::~OPS_instance_t(void) {}
+OpsInstance::~OpsInstance(void) {}
 
-void OPS_instance_t::write_statistics_hdr(std::ostream &os) const {
-  os << "ID"
-     << "\t";
+void OpsInstance::write_statistics_hdr(std::ostream &os) const {
+  os << "ID\t";
 }
 
-void OPS_instance_t::write_statistics(std::ostream &os) const {
-  os << id_[NAME] << "\t";
+void OpsInstance::write_statistics(std::ostream &os) const {
+  os << name_ << "\t";
 }
 
-void OPS_instance_t::get_json(json &instance) const {
-  json jT;
-  T_.get_json(jT);
-
-  instance["id"] = id_;
-  instance["type"] = type_;
-
-  instance["Jk"] = Jk_;
-  instance["T"] = jT;
-  instance["b"] = b_;
-  instance["alpha"] = alpha_;
-  instance["L"] = L_;
-}
-
-void OPS_instance_t::set_json(const json &instance) {
-  json jT = instance["T"];
-
-  T_.set_json(jT);
-
-  id_ = instance["id"].get<std::vector<std::string>>();
-  type_ = instance["type"].get<int>();
-  Jk_ = instance["Jk"].get<std::vector<std::vector<int>>>();
-  // b_    = instance["b"].get<std::vector<int> >();
-  b_ = instance["b"].get<std::vector<int>>();
-  alpha_ = instance["alpha"].get<double>();
-  L_ = instance["L"].get<int>();
-}
-
-std::istream &OPS_instance_t::read(std::istream &is) {
-  json instance;
-  is >> instance;
-
-  set_json(instance);
-
-  make_Kj();
-
-  const int m = T_.get_m();
-  const int n = T_.get_n();
-
-  for (int i = 1; i <= m; i++)
-    for (int j = 1; j <= n; j++)
-      if (T_(i, j) >= L_) T_(i, j) = OPS_instance_t::kInfiniteTime + 1;
-
-  return is;
-}
-
-void OPS_instance_t::set(
+void OpsInstance::set(
   const std::string &name, const std::string &stamp, const std::string &desc
 ) {
-  id_[NAME] = name;
-  id_[STAMP] = stamp;
+  name_ = name;
+  date_stamp_ = stringToDateStamp(stamp);
 }
 
-int OPS_instance_t::get_max_Jk(void) const {
+int OpsInstance::get_max_Jk(void) const {
   int max = 0;
 
   for (auto Jk : Jk_)
@@ -85,19 +35,19 @@ int OPS_instance_t::get_max_Jk(void) const {
   return max;
 }
 
-void OPS_instance_t::set_L(double alpha, int L) {
+void OpsInstance::set_L(double alpha, int L) {
   alpha_ = alpha;
   L_ = L;
 }
 
-void OPS_instance_t::set(
+void OpsInstance::set(
   const std::string &tar_name, const std::string &tar_stamp,
   const std::string &tar_desc, int type,
   const std::vector<std::vector<int>> &Jk, const GOMA::matrix<int> &T,
   const std::vector<int> &b
 ) {
-  id_[NAME] = tar_name;
-  id_[STAMP] = tar_stamp;
+  name_ = tar_name;
+  // date_stamp_ = tar_stamp;
   type_ = type;
 
   Jk_ = Jk;
@@ -107,9 +57,9 @@ void OPS_instance_t::set(
   make_Kj();
 }
 
-void OPS_instance_t::set(const OPS_instance_t &O) {
-  id_[NAME] = O.id_[NAME];
-  id_[STAMP] = O.id_[STAMP];
+void OpsInstance::set(const OpsInstance &O) {
+  name_ = O.name_;
+  date_stamp_ = O.date_stamp_;
   type_ = O.type_;
 
   Jk_ = O.Jk_;
@@ -119,7 +69,7 @@ void OPS_instance_t::set(const OPS_instance_t &O) {
   make_Kj();
 }
 
-void OPS_instance_t::make_Kj(void) {
+void OpsInstance::make_Kj(void) {
   Kj_.clear();
 
   const int K = get_m();
@@ -133,23 +83,63 @@ void OPS_instance_t::make_Kj(void) {
   }
 }
 
-std::ostream &OPS_instance_t::write(std::ostream &os) const {
-  json instance;
-  get_json(instance);
+// ---------------------------- Private Methods ----------------------------- //
 
-  os << std::setw(2) << instance;
-
-  return os;
+json OpsInstance::toJson() const {
+  json json_file = {
+    {"id", json::array({name_, get_instance_stamp()})},
+    {"type", type_},
+    {"Jk", Jk_},
+    {"b", b_},
+    {"alpha", alpha_},
+    {"L", L_}};
+  T_.get_json(json_file["T"]);
+  return json_file;
 }
 
-std::istream &operator>>(std::istream &is, OPS_instance_t &I) {
-  I.read(is);
+void OpsInstance::setFromJson(const json &json_instance) {
+  if (json_instance.find("T") != json_instance.end())
+    T_.set_json(json_instance["T"]);
+  if (json_instance.find("id") != json_instance.end() && json_instance["id"].size() >= 2) {
+    name_ = json_instance["id"][0].get<std::string>();
+    date_stamp_ = stringToDateStamp(json_instance["id"][1].get<std::string>());
+  }
+  if (json_instance.find("type") != json_instance.end())
+    type_ = json_instance["type"].get<int>();
+  if (json_instance.find("b") != json_instance.end())
+    b_ = json_instance["b"].get<std::vector<int>>();
+  if (json_instance.find("Jk") != json_instance.end()) {
+    Jk_ = json_instance["Jk"].get<std::vector<std::vector<int>>>();
+    make_Kj();
+  }
+  if (json_instance.find("alpha") != json_instance.end())
+    alpha_ = json_instance["alpha"].get<double>();
+  if (json_instance.find("L") != json_instance.end())
+    L_ = json_instance["L"].get<int>();
+}
+
+void OpsInstance::truncateTMatrix() {
+  const int m = T_.get_m();
+  const int n = T_.get_n();
+  for (int i = 1; i <= m; ++i) {
+    for (int j = 1; j <= n; ++j) {
+      if (T_(i, j) >= L_) T_(i, j) = OpsInstance::kInfiniteTime + 1;
+    }
+  }
+}
+
+// ------------------------------- Operators ------------------------------- //
+
+std::istream &operator>>(std::istream &is, OpsInstance &ops_instance) {
+  json json_instance;
+  is >> json_instance;
+  ops_instance.setFromJson(json_instance);
+  ops_instance.truncateTMatrix();
   return is;
 }
 
-std::ostream &operator<<(std::ostream &os, const OPS_instance_t &I) {
-  I.write(os);
-  return os;
+std::ostream &operator<<(std::ostream &os, const OpsInstance &ops_instance) {
+  return os << std::setw(2) << ops_instance.toJson();
 }
 
 }  // namespace emir

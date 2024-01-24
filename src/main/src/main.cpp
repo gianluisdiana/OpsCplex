@@ -9,10 +9,9 @@
 #include <OPS_output_t.hpp>
 #include <solvers.hpp>
 
-void read(const std::string &file_name, emir::OPS_instance_t &instance) {
+void read(const std::string &file_name, emir::OpsInstance &instance) {
   std::ifstream input_file(file_name);
-
-  instance.read(input_file);
+  input_file >> instance;
   input_file.close();
 }
 
@@ -20,7 +19,7 @@ int processor(
   const std::string &ins_file, const std::string &sta_file,
   const std::string &log_file, const int id
 ) {
-  emir::OPS_instance_t I;
+  emir::OpsInstance I;
   read(ins_file, I);
 
   emir::OPS_input_t In(I);

@@ -43,24 +43,23 @@ namespace emir {
 enum { NAME, STAMP };
 
 /** @brief Represents a basic instance for the O.P.S. */
-class OPS_instance_t {
+class OpsInstance {
  public:
   // Constant to represent an infinite time to process an object and go to
   // another
   static const unsigned int kInfiniteTime;
 
-  OPS_instance_t(void);
-  virtual ~OPS_instance_t(void);
+  OpsInstance(void);
+  virtual ~OpsInstance(void);
 
-  std::istream &read(std::istream &is);
-  std::ostream &write(std::ostream &os) const;
+  // ------------------------------ Getters -------------------------------- //
 
   inline const std::string &get_instance_name(void) const {
-    return id_[NAME];
+    return name_;
   }
 
-  inline const std::string &get_instance_stamp(void) const {
-    return id_[STAMP];
+  inline const std::string get_instance_stamp(void) const {
+    return std::ctime(&date_stamp_);
   }
 
   inline int get_n(void) const {
@@ -97,12 +96,14 @@ class OPS_instance_t {
     return Kj_;
   }
 
+  // ------------------------------- Setters ------------------------------- //
+
   void set(
     const std::string &source_name, const std::string &source_stamp,
     const std::string &desc, int type, const std::vector<std::vector<int>> &Jk,
     const GOMA::matrix<int> &T, const std::vector<int> &b
   );
-  void set(const OPS_instance_t &O);
+  void set(const OpsInstance &O);
   void set(
     const std::string &name, const std::string &stamp, const std::string &desc
   );
@@ -111,6 +112,28 @@ class OPS_instance_t {
   void write_statistics(std::ostream &os) const;
   void write_statistics_hdr(std::ostream &os) const;
 
+  // ------------------------------ Operators ------------------------------ //
+
+  /**
+   * @brief Overload of the >> operator to read an instance from a json file.
+   *
+   * @param is Represents the inflow
+   * @param ops_instance The OPS instance to read from the inflow
+   * @return The inflow with the instance read
+   */
+  friend std::istream &operator>>(std::istream &is, OpsInstance &ops_instance);
+
+  /**
+   * @brief Overload of the << operator to display a json format of the
+   * instance.
+   *
+   * @param os Represents the outflow
+   * @param ops_instance The OPS instance to display
+   * @return The outflow with the string that represents the state.
+   */
+  friend std::ostream &
+  operator<<(std::ostream &os, const OpsInstance &ops_instance);
+
  private:
   // ----------------------------------------------------------------------- //
   // ----------------------------- Attributes ------------------------------ //
@@ -118,8 +141,10 @@ class OPS_instance_t {
 
   // ------------------------- Instance Attributes ------------------------- //
 
-  std::vector<std::string> id_; /**< Id of the instance Id of the source target
-                                   points @see target_set_t.hpp */
+  // Name of the instance, typically the name of the file
+  std::string name_;
+  // Date stamp of the instance creation
+  std::time_t date_stamp_;
   // Type of instance generation @see instance_code_type.hpp
   int type_;
 
@@ -146,15 +171,30 @@ class OPS_instance_t {
   // ------------------------------- Methods ------------------------------- //
   // ----------------------------------------------------------------------- //
 
-  void get_json(json &instance) const;
-  void set_json(const json &instance);
+  /**
+   * @brief Formats the instance to a json file
+   *
+   * @return The json file with the ops information
+   */
+  json toJson() const;
+
+  /**
+   * @brief Set the OPS instance from a json file
+   *
+   * @param json_instance The json file with the ops information
+   */
+  void setFromJson(const json &json_instance);
+
+  /**
+   * @brief Truncate the T matrix, checking if the current value of a cell
+   * exceeds the maximum value allowed (the time limit to use the
+   * telescope)
+   */
+  void truncateTMatrix();
 
   void make_Kj(void);
 };
 
 }  // namespace emir
-
-std::istream &operator>>(std::istream &is, emir::OPS_instance_t &input);
-std::ostream &operator<<(std::ostream &os, const emir::OPS_instance_t &input);
 
 #endif  // _EMIR_OPS_INSTANCE_HPP_

@@ -151,15 +151,14 @@ void OPS_output_t::init_t_cost(void) {
       if ((i != j) && !((i == 1) && (j == n))) {
         t_cost_(i, j) = I_.instance_.get_T()(i, j);
       } else
-        t_cost_(i, j) = OPS_instance_t::kInfiniteTime;
+        t_cost_(i, j) = OpsInstance::kInfiniteTime;
   }
 
   t_cost_(1, n) = 0;
 
-  for (int j = 1; j <= n - 1; j++)
-    t_cost_(n, j) = OPS_instance_t::kInfiniteTime;
+  for (int j = 1; j <= n - 1; j++) t_cost_(n, j) = OpsInstance::kInfiniteTime;
 
-  for (int i = 1; i <= n; i++) t_cost_(i, 1) = OPS_instance_t::kInfiniteTime;
+  for (int i = 1; i <= n; i++) t_cost_(i, 1) = OpsInstance::kInfiniteTime;
 }
 
 int OPS_output_t::get_next(int i, int k) const {

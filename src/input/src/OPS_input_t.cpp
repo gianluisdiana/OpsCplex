@@ -5,7 +5,7 @@
 
 namespace emir {
 
-/*OPS_input_t::OPS_input_t(const OPS_instance_t& instance, const
+/*OPS_input_t::OPS_input_t(const OpsInstance& instance, const
 std::vector<int>& nJ, const std::vector<int>& nK): instance_(instance), succ_(),
     pred_(),
     succ_inx_(),
@@ -180,14 +180,14 @@ void OPS_input_t::init_t_cost(void) {
 
         t_cost_(i, j) = get_T(i, j);
       } else
-        t_cost_(i, j) = OPS_instance_t::kInfiniteTime;
+        t_cost_(i, j) = OpsInstance::kInfiniteTime;
   }
 
   t_cost_(1, n) = 0;
 
-  for (int j = 1; j <= n; j++) t_cost_(n, j) = OPS_instance_t::kInfiniteTime;
+  for (int j = 1; j <= n; j++) t_cost_(n, j) = OpsInstance::kInfiniteTime;
 
-  for (int i = 1; i <= n; i++) t_cost_(i, 1) = OPS_instance_t::kInfiniteTime;
+  for (int i = 1; i <= n; i++) t_cost_(i, 1) = OpsInstance::kInfiniteTime;
 
   // t_cost_.write_raw(std::cout);
 }
@@ -223,7 +223,7 @@ void OPS_input_t::make_structures(void)  // AQUÍ!!!!!!!!!
     std::vector<int> nodes(n, 0);
 
     for (auto j : Jk) {
-      if (t_cost_(1, j + 1) < OPS_instance_t::kInfiniteTime)
+      if (t_cost_(1, j + 1) < OpsInstance::kInfiniteTime)
         update_structures(k, 0, j, l, A_inv, arcs_k, nodes);
     }
 
@@ -236,7 +236,7 @@ void OPS_input_t::make_structures(void)  // AQUÍ!!!!!!!!!
         if (i != j) {
           const int Jj = Jk[j];
 
-          if (t_cost_(Ji + 1, Jj + 1) < OPS_instance_t::kInfiniteTime)
+          if (t_cost_(Ji + 1, Jj + 1) < OpsInstance::kInfiniteTime)
             update_structures(k, Ji, Jj, l, A_inv, arcs_k, nodes);
         }
 
@@ -305,7 +305,7 @@ void OPS_input_t::write_arc_inx(std::ostream &os, int inx) const {
      << std::setw(2) << k << " ]";
 }
 
-OPS_input_t::OPS_input_t(const OPS_instance_t &instance, bool build) :
+OPS_input_t::OPS_input_t(const OpsInstance &instance, bool build) :
   instance_(instance), succ_(), pred_(), succ_inx_(), pred_inx_(), A_succ_(),
   inv_succ_(), t_cost_() {
   if (build) build_input();
@@ -551,7 +551,7 @@ void OPS_input_t::shortest_path(
 
   for (int i = 0; i < n; i++) {
     if (i != source) {
-      dist[i] = OPS_instance_t::kInfiniteTime;
+      dist[i] = OpsInstance::kInfiniteTime;
       prev[i] = -1;
     }
     Q.insert(i);
@@ -559,7 +559,7 @@ void OPS_input_t::shortest_path(
 
   while (!Q.empty()) {
     int u = -1;
-    int best_val = OPS_instance_t::kInfiniteTime + 1;
+    int best_val = OpsInstance::kInfiniteTime + 1;
 
     for (int i = 0; i < n; i++)
       if ((Q.find(i) != Q.end()) && (dist[i] < best_val)) {
