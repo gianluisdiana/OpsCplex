@@ -71,9 +71,9 @@ void OPS_cplex_solver1::set_output(OPS_output_t &output) {
 }
 
 void OPS_cplex_solver1::makeModel(IloModel &model) {
-  const int n = I_->get_n();  // Number of vertices plus two depots
-  const int K = I_->get_m();  // Number of vehicles
-  const int L = I_->get_L();  // Limit
+  const int n = I_->getN();  // Number of vertices plus two depots
+  const int K = I_->getM();  // Number of vehicles
+  const int L = I_->getL();  // Limit
 
   const int max_arc = I_->get_max_arc() + 1;
   const int big_m = max_arc > L ? max_arc : L;
@@ -125,7 +125,7 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   IloExpr obj(env_);
 
-  for (int i = 1; i < n - 1; i++) obj += I_->get_b(i) * y_[i - 1];
+  for (int i = 1; i < n - 1; i++) obj += I_->getB(i) * y_[i - 1];
 
   model.add(IloMaximize(env_, obj));
 

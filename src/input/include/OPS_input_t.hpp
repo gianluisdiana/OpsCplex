@@ -33,10 +33,8 @@
 
 namespace emir {
 
-class OpsInput {
+class OpsInput : public OpsInstance {
  public:
-  const OpsInstance &instance_;
-
   GOMA::matrix<std::vector<int>> succ_;
   GOMA::matrix<std::vector<int>> pred_;
 
@@ -54,36 +52,16 @@ class OpsInput {
   GOMA::matrix<int> t_cost_;  // Matriz de costes transformada
 
  public:
-  OpsInput(const OpsInstance &instance, bool build = true);
+  OpsInput(bool build = true);
 
   virtual ~OpsInput(void);
-
-  const OpsInstance &get_instance(void) const {
-    return instance_;
-  }
-
-  inline virtual int get_n() const {
-    return instance_.getN();
-  }
-
-  inline virtual int get_m() const {
-    return instance_.getM();
-  }
 
   inline virtual int get_n_x(void) const {
     return get_mm();
   }
 
   inline virtual int get_n_y(void) const {
-    return get_n() - 2;
-  }
-
-  inline virtual const std::vector<int> &get_Jk(int k) const {
-    return instance_.getJk(k);
-  }
-
-  inline virtual const std::vector<std::vector<int>> &get_Kj(void) const {
-    return instance_.getKj();
+    return getN() - 2;
   }
 
   inline const GOMA::matrix<int> &get_T(void) const {
@@ -91,26 +69,14 @@ class OpsInput {
   }
 
   inline virtual int get_T(int i, int j) const {
-    return instance_.getT()(i, j);
+    return getT()(i, j);
   }
 
   inline int get_t(int i, int j) const {
     return t_cost_(i + 1, j + 1);
   }
 
-  inline virtual int get_b(int j) const {
-    return instance_.getB(j);
-  }
-
-  inline int get_L() const {
-    return instance_.getL();
-  }
-
   virtual void get_L(std::vector<int> &L) const;
-
-  inline double get_scal_factor() const {
-    return instance_.getScalingFactor();
-  }
 
   inline const std::vector<int> &get_arcs_k(int k) const {
     return arcs_k_[k];
@@ -158,7 +124,7 @@ class OpsInput {
   }
 
   int get_pos(int k, int i, int j) const {
-    return (i * get_n() + j + get_n() * get_n() * k);
+    return (i * getN() + j + getN() * getN() * k);
   }
 
   void get_pos(int pos, int &k, int &i, int &j) const;
@@ -188,8 +154,8 @@ class OpsInput {
   bool check_path(const std::vector<int> &p) const;
   int length_path(const std::vector<int> &p) const;
 
-  void write_statistics(std::ostream &os) const;
-  void write_statistics_hdr(std::ostream &os) const;
+  void writeStatistics(std::ostream &os) const;
+  void writeStatisticsHdr(std::ostream &os) const;
 
   void write_arc_inx(std::ostream &os, int inx) const;
 
@@ -206,15 +172,15 @@ class OpsInput {
   }
 
   virtual void get_r(std::vector<int> &r) const {
-    r.resize(get_n());
+    r.resize(getN());
 
     for (int &i : r) i = 0;
   }
 
   virtual void get_d(std::vector<int> &d) const {
-    d.resize(get_n());
+    d.resize(getN());
 
-    for (int &i : d) i = get_L();
+    for (int &i : d) i = getL();
   }
 
  protected:

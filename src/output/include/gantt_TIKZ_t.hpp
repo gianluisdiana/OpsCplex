@@ -127,8 +127,8 @@ class gantt_TIKZ_t {
   }
 
   void setup(std::ostream &os, const OPS_output_t &O) const {
-    const int n = I_.get_n();
-    const int K = I_.get_m();
+    const int n = I_.getN();
+    const int K = I_.getM();
 
     std::vector<int> Jk;
 
@@ -156,10 +156,10 @@ class gantt_TIKZ_t {
 
   void
   g_setup(std::ostream &os, const OPS_output_t &O, int k, int i, int j) const {
-    const int n = I_.get_n();
-    const int K = I_.get_m();
+    const int n = I_.getN();
+    const int K = I_.getM();
 
-    const double rL = (double)(I_.get_L()) / I_.get_scal_factor();
+    const double rL = (double)(I_.getL()) / I_.getScalingFactor();
 
     const double pi = (i == 0) ? 0 : T_[i - 1].get_p();
     const double pj = (j == (n - 1)) ? 0 : T_[j - 1].get_p();
@@ -216,10 +216,10 @@ class gantt_TIKZ_t {
   }
 
   void axis(std::ostream &os, const OPS_output_t &O) const {
-    const int K = I_.get_m();
-    const int n = I_.get_n();
+    const int K = I_.getM();
+    const int n = I_.getN();
 
-    const double rL = (double)(I_.get_L()) / I_.get_scal_factor();
+    const double rL = (double)(I_.getL()) / I_.getScalingFactor();
 
     const double x = gantt_w_ + 0.5;
     const double y = -K * task_h_ + slit_gap_ - task_gap_;

@@ -30,11 +30,11 @@ class OPS_output_t {
   virtual ~OPS_output_t(void);
 
   virtual int get_n() const {
-    return I_.get_n();
+    return I_.getN();
   }
 
   virtual int get_m() const {
-    return I_.get_m();
+    return I_.getM();
   }
 
   bool set(

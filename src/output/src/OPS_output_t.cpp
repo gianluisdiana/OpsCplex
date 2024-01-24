@@ -29,8 +29,8 @@ OPS_output_t::OPS_output_t(const OpsInput &I) :
 
   const int sz_h = h_.size();
 
-  const int L = I.get_L();
-  const double scal_factor = I.get_scal_factor();
+  const int L = I.getL();
+  const double scal_factor = I.getScalingFactor();
 
   for (int i = 0; i < sz_h; i++) h_[i] = L / scal_factor;
 
@@ -69,7 +69,7 @@ void OPS_output_t::set(const OPS_output_t &O) {
 
   set(x, y_);
 
-  if (s_[n - 1] < I_.get_L()) found_ = false;
+  if (s_[n - 1] < I_.getL()) found_ = false;
 
   check();
 }
@@ -91,7 +91,7 @@ void OPS_output_t::setADD(const OPS_output_t &O) {
 
   set(x, y_);
 
-  const double L = I_.get_L() / I_.get_scal_factor();
+  const double L = I_.getL() / I_.getScalingFactor();
 
   if (s_[n - 1] <= L)
     found_ = true;
@@ -149,7 +149,7 @@ void OPS_output_t::init_t_cost(void) {
   for (int i = 1; i <= n - 1; i++) {
     for (int j = 2; j <= n; j++)
       if ((i != j) && !((i == 1) && (j == n))) {
-        t_cost_(i, j) = I_.instance_.getT()(i, j);
+        t_cost_(i, j) = I_.getT()(i, j);
       } else
         t_cost_(i, j) = OpsInstance::kInfiniteTime;
   }
@@ -249,7 +249,7 @@ bool OPS_output_t::set(
     }
   }
 
-  for (int i = 0; i < n; i++) s_[i] /= I_.get_scal_factor();
+  for (int i = 0; i < n; i++) s_[i] /= I_.getScalingFactor();
 
   // x_.write_raw(std::cout);
 
@@ -261,7 +261,7 @@ bool OPS_output_t::set(
 void OPS_output_t::get_Jk(std::vector<int> &Jk, int k) const {
   Jk.clear();
 
-  const std::vector<int> &J = I_.get_Jk(k);
+  const std::vector<int> &J = I_.getJk(k);
 
   for (int j : J) {
     if (y_[j] > 0) Jk.push_back(j);
@@ -278,7 +278,7 @@ bool OPS_output_t::set(
 
   const int n = get_n();
   const int K = get_m();
-  const int In = I_.get_n();
+  const int In = I_.getN();
 
   GOMA::matrix<int> new_x(n * K, n);
   new_x.init(0);
@@ -409,7 +409,7 @@ int OPS_output_t::get_obj(void) const {
 
   for (int j = y_.size() - 1; j >= 0; j--)
     if (y_[j] > 0) {
-      const double b = I_.OpsInput::get_b(j);
+      const double b = I_.OpsInput::getB(j);
       obj += y_[j] * b;
     }
 
@@ -447,7 +447,7 @@ bool OPS_output_t::check(void) {
 
   const int n = get_n();
   const int K = get_m();
-  const int L = I_.get_L();
+  const int L = I_.getL();
 
   std::vector<int> i_degree(n);
   std::vector<int> o_degree(n);
@@ -477,7 +477,7 @@ bool OPS_output_t::check(void) {
     else
       assert(y_[i] == 0);
 
-  const double rL = (double)(L) / I_.get_scal_factor();
+  const double rL = (double)(L) / I_.getScalingFactor();
 
   /*for (int j = 0; j < n; j++)
                   std::cout << "Nodo: " << std::setw(3) << j << ": " <<

@@ -37,7 +37,7 @@ std::vector<int>& nJ, const std::vector<int>& nK): instance_(instance), succ_(),
 
         const int k = nK[ki];
 
-        const std::vector<int>& Jk = instance.get_Jk(k);
+        const std::vector<int>& Jk = instance.getJk(k);
         const int nJ = Jk.size();
 
         matrix<int>& A_inv  = inv_succ_[ki];
@@ -121,8 +121,8 @@ std::vector<int>& nJ, const std::vector<int>& nK): instance_(instance), succ_(),
 } */
 
 void OpsInput::resize_structures(void) {
-  const int m = get_m();
-  const int n = get_n();
+  const int m = getM();
+  const int n = getN();
 
   // std::cout << "CREANDO ESTRUCTURAS: " << m << " " << n << '\n';
 
@@ -169,7 +169,7 @@ void OpsInput::update_pred(int k, int Ji, int Jj, int &l) {
 }
 
 void OpsInput::init_t_cost(void) {
-  const int n = get_n();
+  const int n = getN();
 
   for (int i = 1; i <= n - 1; i++) {
     // shortest_path(aux, i - 1, dist, prev);
@@ -193,24 +193,24 @@ void OpsInput::init_t_cost(void) {
 }
 
 void OpsInput::get_L(std::vector<int> &L) const {
-  const int n = get_n();
+  const int n = getN();
 
   L.resize(n);
 
   for (int i = 0; i < n - 1; i++) L[i] = 0;
 
-  L[n - 1] = get_L();
+  L[n - 1] = getL();
 }
 
 void OpsInput::make_structures(void)  // AQUÍ!!!!!!!!!
 {
   int l = 0;
 
-  const int n = get_n();
-  const int m = get_m();
+  const int n = getN();
+  const int m = getM();
 
   for (int k = 0; k < m; k++) {
-    const std::vector<int> &Jk = get_Jk(k);
+    const std::vector<int> &Jk = getJk(k);
 
     const int nJ = Jk.size();
 
@@ -252,13 +252,13 @@ void OpsInput::make_structures(void)  // AQUÍ!!!!!!!!!
 }
 
 void OpsInput::make_prev(void) {
-  const int m = get_m();
-  const int n = get_n();
+  const int m = getM();
+  const int n = getN();
 
   int l = 0;
 
   for (int k = 0; k < m; k++) {
-    const std::vector<int> &Jk = get_Jk(k);
+    const std::vector<int> &Jk = getJk(k);
     const int nJ = Jk.size();
 
     for (auto j : Jk) update_pred(k, 0, j, l);
@@ -305,8 +305,8 @@ void OpsInput::write_arc_inx(std::ostream &os, int inx) const {
      << std::setw(2) << k << " ]";
 }
 
-OpsInput::OpsInput(const OpsInstance &instance, bool build) :
-  instance_(instance), succ_(), pred_(), succ_inx_(), pred_inx_(), A_succ_(),
+OpsInput::OpsInput(bool build) :
+  OpsInstance(), succ_(), pred_(), succ_inx_(), pred_inx_(), A_succ_(),
   inv_succ_(), t_cost_() {
   if (build) build_input();
 }
@@ -330,7 +330,7 @@ int OpsInput::get_max_arc(void) const {
 
 int OpsInput::get_max_nodes(void) const {
   int m = -1;
-  const int K = get_m();
+  const int K = getM();
 
   for (int k = 0; k < K; k++) {
     const int csz = nodes_k_[k].size();
@@ -343,7 +343,7 @@ int OpsInput::get_max_nodes(void) const {
 
 const std::vector<int> OpsInput::get_inv_succ(int i, int j) const {
   std::vector<int> aux;
-  const int K = get_m();
+  const int K = getM();
 
   for (int k = 0; k < K; k++) {
     const int inx = get_inv_succ(k, i, j);
@@ -357,8 +357,8 @@ const std::vector<int> OpsInput::get_inv_succ(int i, int j) const {
 void OpsInput::get_sync_stat(
   int &nsync, int &maxgsync, int &mingsync, double &avggsync
 ) const {
-  const int K = get_m();
-  const int n = get_n();
+  const int K = getM();
+  const int n = getN();
 
   std::vector<int> V(n);
 
@@ -404,7 +404,7 @@ void OpsInput::get_sync_stat(
 
 double OpsInput::get_avg_nodes(void) const {
   double m = 0;
-  const int K = get_m();
+  const int K = getM();
 
   for (int k = 0; k < K; k++) {
     const int csz = nodes_k_[k].size();
@@ -419,13 +419,13 @@ OpsInput::~OpsInput(void) {}
 int OpsInput::get_msucc(int k) const {
   int m = 0;
 
-  for (int i = 0; i < get_n(); i++) m += get_nsucc(k, i);
+  for (int i = 0; i < getN(); i++) m += get_nsucc(k, i);
 
   return m;
 }
 
 int OpsInput::get_mm(void) const {
-  const int K = get_m();
+  const int K = getM();
   int m = 0;
 
   for (int k = 0; k < K; k++) m += get_msucc(k);
@@ -434,7 +434,7 @@ int OpsInput::get_mm(void) const {
 }
 
 void OpsInput::get_pos(int pos, int &k, int &i, int &j) const {
-  const int n = get_n();
+  const int n = getN();
   const int m = n * n;
 
   k = pos / m;
@@ -457,7 +457,7 @@ bool OpsInput::check_path(const std::vector<int> &p) const {
 
   get_pos(last, k, i, j);
 
-  const bool depot2 = (j == (get_n() - 1));
+  const bool depot2 = (j == (getN() - 1));
 
   return (depot1 && depot2);
 }
@@ -595,11 +595,11 @@ void OpsInput::shortest_path(
 #ifndef NDEBUG
 
 void OpsInput::test_succ(void) {
-  const int K = get_m();
+  const int K = getM();
 
   for (int k = 0; k < K; k++) {
     std::set<int> SJk;
-    const std::vector<int> &Jk = get_Jk(k);
+    const std::vector<int> &Jk = getJk(k);
     const int nJ = Jk.size();
 
     // std::cout << "Grupo: " << k << '\n';
@@ -641,11 +641,11 @@ void OpsInput::test_succ(void) {
 }
 
 void OpsInput::test_pred(void) {
-  const int K = get_m();
+  const int K = getM();
 
   for (int k = 0; k < K; k++) {
     std::set<int> SJk;
-    const std::vector<int> &Jk = get_Jk(k);
+    const std::vector<int> &Jk = getJk(k);
     const int nJ = Jk.size();
 
     for (auto i : Jk) SJk.insert(i);
@@ -665,7 +665,7 @@ void OpsInput::test_pred(void) {
 
 void OpsInput::test_A_succ(void) {
   const int sz = A_succ_.size();
-  const int n = get_n();
+  const int n = getN();
 
   for (int l = 0; l < sz; l++) {
     const int pos = A_succ_[l];
@@ -675,7 +675,7 @@ void OpsInput::test_A_succ(void) {
 
     if ((i != 0) && (j != n - 1)) {
       std::set<int> SJk;
-      const std::vector<int> &Jk = get_Jk(k);
+      const std::vector<int> &Jk = getJk(k);
 
       for (auto Ji : Jk) SJk.insert(Ji);
 
@@ -686,8 +686,8 @@ void OpsInput::test_A_succ(void) {
 
 #endif
 
-void OpsInput::write_statistics_hdr(std::ostream &os) const {
-  instance_.writeStatisticsHdr(os);
+void OpsInput::writeStatisticsHdr(std::ostream &os) const {
+  OpsInstance::writeStatisticsHdr(os);
 
   os << "$n$"
      << "\t";
@@ -710,16 +710,16 @@ void OpsInput::write_statistics_hdr(std::ostream &os) const {
      << "\t";
 }
 
-void OpsInput::write_statistics(std::ostream &os) const {
-  instance_.writeStatistics(os);
+void OpsInput::writeStatistics(std::ostream &os) const {
+  OpsInstance::writeStatistics(os);
 
   int nsync, maxgsync, mingsync;
   double avggsync;
 
   get_sync_stat(nsync, maxgsync, mingsync, avggsync);
 
-  os << std::setw(4) << get_n() << "\t";
-  os << std::setw(4) << get_m() << "\t";
+  os << std::setw(4) << getN() << "\t";
+  os << std::setw(4) << getM() << "\t";
 
   os << std::setw(4) << get_max_nodes() << "\t";
   os << std::setw(6) << std::fixed << std::setprecision(1) << get_avg_nodes()
@@ -729,7 +729,7 @@ void OpsInput::write_statistics(std::ostream &os) const {
   os << std::setw(4) << maxgsync << "\t";
   os << std::setw(6) << std::fixed << std::setprecision(1) << avggsync << "\t";
 
-  os << std::setw(6) << get_L() << "\t";
+  os << std::setw(6) << getL() << "\t";
   os << "\t";
 }
 
