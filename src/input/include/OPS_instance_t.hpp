@@ -36,11 +36,7 @@
 
 using json = nlohmann::json;
 
-#define N_ITEM 2
-
 namespace emir {
-
-enum { NAME, STAMP };
 
 /** @brief Represents a basic instance for the O.P.S. */
 class OpsInstance {
@@ -54,47 +50,71 @@ class OpsInstance {
 
   // ------------------------------ Getters -------------------------------- //
 
+  /** @brief Gets the name of the instance. */
   inline const std::string &get_instance_name(void) const {
     return name_;
   }
 
+  /**
+   * @brief Returns the date stamp of the current instance.
+   *   The returned string has the following format:
+   *   Www Mmm dd hh:mm:ss yyyy
+   */
   inline const std::string get_instance_stamp(void) const {
     return std::ctime(&date_stamp_);
   }
 
+  /** @brief Get the amount of objects to visualize */
   inline int get_n(void) const {
     return b_.size();
   }
 
+  /** @brief Get the amount of sliding bars */
   inline int get_m(void) const {
     return Jk_.size();
   }
 
+  /**
+   * @brief Get the objects that can be observed by the 'k' sliding bar
+   *
+   * @param k The index of the sliding bar
+   * @return The objects that can be observed by the sliding bar selected
+   */
   inline const std::vector<int> &get_Jk(int k) const {
     return Jk_[k];
   }
 
+  /**
+   * @brief Get the profit (or priority) for the object 'j'
+   *
+   * @param j The index of the object
+   * @return The profit (or priority) for the object selected
+   */
   inline int get_b(int j) const {
     return b_[j];
   }
 
+  /** @brief Returns the time limit to use the telescope */
   inline int get_L(void) const {
     return L_;
   }
 
+  /** @brief Returns the full time matrix */
   inline const GOMA::matrix<int> &get_T(void) const {
     return T_;
   }
 
+  /** @brief Gives read-only access to the scaling factor */
   inline double get_scal_factor(void) const {
     return scal_factor_;
   }
 
-  int get_max_Jk(void) const;
-
-  const std::vector<std::vector<int>> &get_Kj(void) const {
+  /** @brief Returns the Kj matrix */
+  inline const std::vector<std::vector<int>> &get_Kj(void) const {
     return Kj_;
   }
+
+  int get_max_Jk(void) const;
 
   // ------------------------------- Setters ------------------------------- //
 
@@ -108,6 +128,8 @@ class OpsInstance {
     const std::string &name, const std::string &stamp, const std::string &desc
   );
   void set_L(double alpha, int L);
+
+  // ---------------------------- Statistcs Data --------------------------- //
 
   void write_statistics(std::ostream &os) const;
   void write_statistics_hdr(std::ostream &os) const;
@@ -192,7 +214,10 @@ class OpsInstance {
    */
   void truncateTMatrix();
 
-  void make_Kj(void);
+  /**
+   * @brief Resets the Kj matrix and fills it with the correct values
+   */
+  void make_Kj();
 };
 
 }  // namespace emir
