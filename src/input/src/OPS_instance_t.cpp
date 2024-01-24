@@ -62,7 +62,7 @@ void OpsInstance::setFromJson(const json &json_instance) {
     b_ = json_instance["b"].get<std::vector<int>>();
   if (json_instance.find("Jk") != json_instance.end()) {
     Jk_ = json_instance["Jk"].get<std::vector<std::vector<int>>>();
-    make_Kj();
+    resetKjMatrix();
   }
   if (json_instance.find("alpha") != json_instance.end())
     alpha_ = json_instance["alpha"].get<double>();
@@ -80,17 +80,11 @@ void OpsInstance::truncateTMatrix() {
   }
 }
 
-void OpsInstance::make_Kj(void) {
+void OpsInstance::resetKjMatrix(void) {
   Kj_.clear();
-
-  const int K = getM();
-
   Kj_.resize(getN());
-
-  for (int k = 0; k < K; k++) {
-    const std::vector<int> &Jk = getJk(k);
-
-    for (int i : Jk) Kj_[i].push_back(k);
+  for (auto k = 0; k < getM(); ++k) {
+    for (const auto i : getJk(k)) Kj_[i].push_back(k);
   }
 }
 

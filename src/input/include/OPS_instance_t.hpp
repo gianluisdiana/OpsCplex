@@ -188,7 +188,7 @@ class OpsInstance {
   /**
    * @brief Resets the Kj matrix and fills it with the correct values
    */
-  void make_Kj();
+  void resetKjMatrix();
 };
 
 }  // namespace emir
