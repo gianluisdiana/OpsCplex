@@ -11,17 +11,6 @@ OpsInstance::OpsInstance(void) :
 
 OpsInstance::~OpsInstance(void) {}
 
-// ------------------------------- Getters --------------------------------- //
-
-int OpsInstance::get_max_Jk(void) const {
-  int max = 0;
-
-  for (auto Jk : Jk_)
-    if ((int)(Jk.size()) > max) max = Jk.size();
-
-  return max;
-}
-
 // ----------------------------- Statistcs Data ---------------------------- //
 
 void OpsInstance::write_statistics_hdr(std::ostream &os) const {
@@ -50,7 +39,7 @@ std::ostream &operator<<(std::ostream &os, const OpsInstance &ops_instance) {
 
 json OpsInstance::toJson() const {
   json json_file = {
-    {"id", json::array({name_, get_instance_stamp()})},
+    {"id", json::array({name_, std::ctime(&date_stamp_)})},
     {"type", type_},
     {"Jk", Jk_},
     {"b", b_},

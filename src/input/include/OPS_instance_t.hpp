@@ -50,20 +50,6 @@ class OpsInstance {
 
   // ------------------------------ Getters -------------------------------- //
 
-  /** @brief Gets the name of the instance. */
-  inline const std::string &get_instance_name(void) const {
-    return name_;
-  }
-
-  /**
-   * @brief Returns the date stamp of the current instance.
-   *   The returned string has the following format:
-   *   Www Mmm dd hh:mm:ss yyyy
-   */
-  inline const std::string get_instance_stamp(void) const {
-    return std::ctime(&date_stamp_);
-  }
-
   /** @brief Get the amount of objects to visualize */
   inline int get_n(void) const {
     return b_.size();
@@ -113,8 +99,6 @@ class OpsInstance {
   inline const std::vector<std::vector<int>> &get_Kj(void) const {
     return Kj_;
   }
-
-  int get_max_Jk(void) const;
 
   // ---------------------------- Statistcs Data --------------------------- //
 
