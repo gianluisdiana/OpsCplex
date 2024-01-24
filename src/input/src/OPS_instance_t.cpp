@@ -11,13 +11,7 @@ OpsInstance::OpsInstance(void) :
 
 OpsInstance::~OpsInstance(void) {}
 
-void OpsInstance::write_statistics_hdr(std::ostream &os) const {
-  os << "ID\t";
-}
-
-void OpsInstance::write_statistics(std::ostream &os) const {
-  os << name_ << "\t";
-}
+// ------------------------------- Getters --------------------------------- //
 
 int OpsInstance::get_max_Jk(void) const {
   int max = 0;
@@ -28,18 +22,28 @@ int OpsInstance::get_max_Jk(void) const {
   return max;
 }
 
-void OpsInstance::make_Kj(void) {
-  Kj_.clear();
+// ----------------------------- Statistcs Data ---------------------------- //
 
-  const int K = get_m();
+void OpsInstance::write_statistics_hdr(std::ostream &os) const {
+  os << "ID\t";
+}
 
-  Kj_.resize(get_n());
+void OpsInstance::write_statistics(std::ostream &os) const {
+  os << name_ << "\t";
+}
 
-  for (int k = 0; k < K; k++) {
-    const std::vector<int> &Jk = get_Jk(k);
+// ------------------------------- Operators ------------------------------- //
 
-    for (int i : Jk) Kj_[i].push_back(k);
-  }
+std::istream &operator>>(std::istream &is, OpsInstance &ops_instance) {
+  json json_instance;
+  is >> json_instance;
+  ops_instance.setFromJson(json_instance);
+  ops_instance.truncateTMatrix();
+  return is;
+}
+
+std::ostream &operator<<(std::ostream &os, const OpsInstance &ops_instance) {
+  return os << std::setw(2) << ops_instance.toJson();
 }
 
 // ---------------------------- Private Methods ----------------------------- //
@@ -87,18 +91,18 @@ void OpsInstance::truncateTMatrix() {
   }
 }
 
-// ------------------------------- Operators ------------------------------- //
+void OpsInstance::make_Kj(void) {
+  Kj_.clear();
 
-std::istream &operator>>(std::istream &is, OpsInstance &ops_instance) {
-  json json_instance;
-  is >> json_instance;
-  ops_instance.setFromJson(json_instance);
-  ops_instance.truncateTMatrix();
-  return is;
-}
+  const int K = get_m();
 
-std::ostream &operator<<(std::ostream &os, const OpsInstance &ops_instance) {
-  return os << std::setw(2) << ops_instance.toJson();
+  Kj_.resize(get_n());
+
+  for (int k = 0; k < K; k++) {
+    const std::vector<int> &Jk = get_Jk(k);
+
+    for (int i : Jk) Kj_[i].push_back(k);
+  }
 }
 
 }  // namespace emir
