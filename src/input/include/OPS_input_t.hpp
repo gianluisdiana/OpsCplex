@@ -71,30 +71,12 @@ class OpsInput : public OpsInstance {
 
   virtual ~OpsInput(void);
 
-  inline virtual int get_n_x(void) const {
-    return get_mm();
-  }
-
-  inline virtual int get_n_y(void) const {
-    return getN() - 2;
-  }
-
-  inline const GOMA::matrix<int> &get_T(void) const {
-    return t_cost_;
-  }
-
   inline virtual int get_T(int i, int j) const {
     return getT()(i, j);
   }
 
   inline int get_t(int i, int j) const {
     return t_cost_(i + 1, j + 1);
-  }
-
-  virtual void get_L(std::vector<int> &L) const;
-
-  inline const std::vector<int> &get_arcs_k(int k) const {
-    return arcs_k_[k];
   }
 
   inline int get_nsucc(int k, int i) const {
@@ -111,14 +93,6 @@ class OpsInput : public OpsInstance {
     return succ_inx_(k + 1, i + 1)[l];
   }
 
-  inline const std::vector<int> &get_succ_inx(int k, int i) const {
-    return succ_inx_(k + 1, i + 1);
-  }
-
-  inline int get_succ(int k, int i, int l) const {
-    return succ_(k + 1, i + 1)[l];
-  }
-
   inline int get_pred_inx(int k, int i, int l) const {
     return pred_inx_(k + 1, i + 1)[l];
   }
@@ -127,8 +101,6 @@ class OpsInput : public OpsInstance {
     const { /* assert (inv_succ_[k](i + 1, j + 1) != -1); */
     return inv_succ_[k](i + 1, j + 1);
   }
-
-  const std::vector<int> get_inv_succ(int i, int j) const;
 
   inline int get_A_succ_sz(void) const {
     return A_succ_.size();
@@ -144,47 +116,19 @@ class OpsInput : public OpsInstance {
 
   void get_pos(int pos, int &k, int &i, int &j) const;
 
-  int get_mm(void) const;
-
-  const std::vector<int> &get_nodes(int k) const {
-    return nodes_k_[k];
-  }
-
   void get_sync_stat(int &nsync, int &maxgsync, int &mingsync, double &avggsync)
     const;
   double get_avg_nodes(void) const;
   int get_max_nodes(void) const;
   int get_max_arc(void) const;
 
-  void get_path(const std::vector<int> &v, int k, std::vector<int> &arcs) const;
   void get_path(
     const std::vector<int> &v, int k, std::vector<int> &arcs,
     std::vector<bool> &visited
   ) const;
-  void get_mpath(
-    const std::vector<int> &v, int k, std::vector<int> &arcs,
-    std::vector<bool> &visited
-  ) const;
-
-  bool check_path(const std::vector<int> &p) const;
-  int length_path(const std::vector<int> &p) const;
 
   void writeStatistics(std::ostream &os) const;
   void writeStatisticsHdr(std::ostream &os) const;
-
-  void write_arc_inx(std::ostream &os, int inx) const;
-
-  virtual inline int get_mapped_v(int i) const {
-    return i;
-  }
-
-  virtual inline int get_inv_mapped_v(int i) const {
-    return i;
-  }
-
-  virtual void get_mapped_r(std::vector<int> &r) const {
-    get_r(r);
-  }
 
   virtual void get_r(std::vector<int> &r) const {
     r.resize(getN());
@@ -192,21 +136,11 @@ class OpsInput : public OpsInstance {
     for (int &i : r) i = 0;
   }
 
-  virtual void get_d(std::vector<int> &d) const {
-    d.resize(getN());
-
-    for (int &i : d) i = getL();
-  }
-
  protected:
   void test_succ(void);
   void test_pred(void);
 
   void test_A_succ(void);
-  void test_A_pred(void);
-
-  void
-  shortest_path(const GOMA::matrix<int> &M, int source, int *dist, int *prev);
 
   void resize_structures(void);
   void update_structures(

@@ -192,16 +192,6 @@ void OpsInput::init_t_cost(void) {
   // t_cost_.write_raw(std::cout);
 }
 
-void OpsInput::get_L(std::vector<int> &L) const {
-  const int n = getN();
-
-  L.resize(n);
-
-  for (int i = 0; i < n - 1; i++) L[i] = 0;
-
-  L[n - 1] = getL();
-}
-
 void OpsInput::make_structures(void)  // AQUÍ!!!!!!!!!
 {
   int l = 0;
@@ -296,15 +286,6 @@ void OpsInput::build_input(void) {
 #endif
 }
 
-void OpsInput::write_arc_inx(std::ostream &os, int inx) const {
-  const int pos = get_A_succ(inx);
-  int s, t, k;
-  get_pos(pos, k, s, t);
-
-  os << "(" << std::setw(3) << s << ", " << std::setw(3) << t << ")["
-     << std::setw(2) << k << " ]";
-}
-
 OpsInput::OpsInput(bool build) :
   OpsInstance(), succ_(), pred_(), succ_inx_(), pred_inx_(), A_succ_(),
   inv_succ_(), t_cost_() {
@@ -339,19 +320,6 @@ int OpsInput::get_max_nodes(void) const {
   }
 
   return m;
-}
-
-const std::vector<int> OpsInput::get_inv_succ(int i, int j) const {
-  std::vector<int> aux;
-  const int K = getM();
-
-  for (int k = 0; k < K; k++) {
-    const int inx = get_inv_succ(k, i, j);
-
-    if (inx >= 0) aux.push_back(inx);
-  }
-
-  return aux;
 }
 
 void OpsInput::get_sync_stat(
@@ -424,15 +392,6 @@ int OpsInput::get_msucc(int k) const {
   return m;
 }
 
-int OpsInput::get_mm(void) const {
-  const int K = getM();
-  int m = 0;
-
-  for (int k = 0; k < K; k++) m += get_msucc(k);
-
-  return m;
-}
-
 void OpsInput::get_pos(int pos, int &k, int &i, int &j) const {
   const int n = getN();
   const int m = n * n;
@@ -442,47 +401,6 @@ void OpsInput::get_pos(int pos, int &k, int &i, int &j) const {
 
   i = res / n;
   j = res % n;
-}
-
-bool OpsInput::check_path(const std::vector<int> &p) const {
-  int k, i, j;
-
-  const int first = get_A_succ(p[0]);
-
-  get_pos(first, k, i, j);
-
-  const bool depot1 = (i == 0);
-
-  const int last = get_A_succ(p[p.size() - 1]);
-
-  get_pos(last, k, i, j);
-
-  const bool depot2 = (j == (getN() - 1));
-
-  return (depot1 && depot2);
-}
-
-int OpsInput::length_path(const std::vector<int> &p) const {
-  const int sz = p.size();
-
-  int len = 0;
-
-  for (int l = 0; l < sz; l++) {
-    const int inx = get_A_succ(p[l]);
-
-    int k, i, j;
-
-    get_pos(inx, k, i, j);
-
-    std::cout << get_t(i, j) << " - ";
-
-    len += get_t(i, j);
-  }
-
-  std::cout << '\n';
-  std::cout << len << '\n';
-
-  return len;
 }
 
 void OpsInput::get_path(
@@ -498,97 +416,6 @@ void OpsInput::get_path(
 
     const int p = get_inv_succ(k, v[l], v[l + 1]);
     arcs.push_back(p);
-  }
-}
-
-void OpsInput::get_path(
-  const std::vector<int> &v, int k, std::vector<int> &arcs
-) const {
-  const int sz = v.size() - 1;
-  assert(sz > 0);
-
-  for (int l = 0; l < sz; l++) {
-    const int p = get_inv_succ(k, v[l], v[l + 1]);
-    arcs.push_back(p);
-  }
-}
-
-void OpsInput::get_mpath(
-  const std::vector<int> &v, int k, std::vector<int> &arcs,
-  std::vector<bool> &visited
-) const {
-  if (v.size() == 0) return;
-
-  get_path(v, k, arcs, visited);
-
-  const int sz = v.size();
-
-  for (int i = 0; i < sz - 2; i++)
-    for (int j = i + 2; j < sz; j++) {
-      const int p = get_inv_succ(k, v[i], v[j]);
-      arcs.push_back(p);
-    }
-
-  for (int i = sz - 2; i >= 2; i--)
-    for (int j = i - 1; j >= 1; j--) {
-      const int p = get_inv_succ(k, v[i], v[j]);
-      arcs.push_back(p);
-    }
-}
-
-void OpsInput::shortest_path(
-  const GOMA::matrix<int> &M, int source, int *dist, int *prev
-) {
-  // M.write_raw(std::cout);
-
-  std::set<int> Q;
-  std::set<int>::iterator it;
-
-  const int n = M.get_m();
-
-  dist[source] = 0;
-  prev[source] = -1;
-
-  for (int i = 0; i < n; i++) {
-    if (i != source) {
-      dist[i] = OpsInstance::kInfiniteTime;
-      prev[i] = -1;
-    }
-    Q.insert(i);
-  }
-
-  while (!Q.empty()) {
-    int u = -1;
-    int best_val = OpsInstance::kInfiniteTime + 1;
-
-    for (int i = 0; i < n; i++)
-      if ((Q.find(i) != Q.end()) && (dist[i] < best_val)) {
-        best_val = dist[i];
-        u = i;
-      }
-
-    assert(u >= 0);
-
-    Q.erase(Q.find(u));
-
-    for (int i = 0; i < n; i++) {
-      const int t = M(u + 1, i + 1);
-
-      // if (M(u + 1, i + 1) > 0)
-      {
-        const int alt = best_val + t;
-        const int v = i;
-
-        if (alt < dist[v]) {
-          dist[v] = alt;
-          prev[v] = u;
-        }
-      }
-    }
-
-    /* for (int i = 0; i < n; i++)
-        std::cout << dist[i] << " ";
-    std::cout << '\n'; */
   }
 }
 
