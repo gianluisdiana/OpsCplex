@@ -136,7 +136,7 @@ class OpsInput : public OpsInstance {
     for (int &i : r) i = 0;
   }
 
-  // ---------------------------------- Operators ---------------------------------- //
+  // ------------------------------ Operators ------------------------------ //
 
   /**
    * @brief Overload of the >> operator to read an input from a json file.
@@ -149,21 +149,76 @@ class OpsInput : public OpsInstance {
   friend std::istream &operator>>(std::istream &is, OpsInput &ops_input);
 
  protected:
+  // -------------------------------- Test -------------------------------- //
+
   void test_succ(void);
   void test_pred(void);
 
   void test_A_succ(void);
 
+  // ------------------------------- Build ------------------------------- //
+
+  /** @brief Resize all the structures that represents the graph. */
   void resize_structures(void);
+
+  /**
+   * @brief Update the structures that represents the graph with the new arc
+   * (Ji -> Jj) in the k-th sliding bar. The structures that are updated are:
+   * - The successors
+   * - The arcs in the k-th sliding bar
+   * - The nodes that can be reached in the k-th sliding bar
+   *
+   * @param k The index of the sliding bar
+   * @param Ji The index of the object which arc is connected towards Jj
+   * @param Jj The index of the object which arc is connected from Ji
+   * @param l The index of the arc (Ji -> Jj) in the k-th sliding bar.
+   */
   void update_structures(
     int k, int Ji, int Jj, int &l, GOMA::matrix<int> &A_inv,
     std::vector<int> &arcs_k, std::vector<int> &nodes
   );
+
+  /**
+   * @brief Update the predecessors matrixes for the node Jj, adding the arc
+   * (Ji -> Jj) in the k-th sliding bar.
+   *
+   * @param k The index of the sliding bar
+   * @param Ji The index of the object which arc is connected towards Jj
+   * @param Jj The index of the object which arc is connected from Ji
+   * @param l The index of the arc (Ji -> Jj) in the k-th sliding bar.
+   */
   void update_pred(int k, int Ji, int Jj, int &l);
+
+  /**
+   * @brief Creates the necessary structures to represent the graph.
+   */
   void build_input(void);
 
+  /**
+   * @brief Copy the time matrix from the input instance to the t_cost_
+   * matrix, truncating the first and last row to have only arcs out and
+   * arcs in respectively.
+   * Furthermore, removes the diagonal since an object cannot travel to
+   * itself.
+   */
   void init_t_cost(void);
+
+  /**
+   * @brief Creates the arcs matrixes for each sliding bar, creating a
+   * graph with only the nodes that can be reached.
+   * The arcs are created if:
+   * - The time doesn't exceed the time limit
+   * - No node can go to the first node.
+   * - No node can be reached from the last node.
+   * - No node can go to itself.
+   */
   void make_structures(void);
+
+  /**
+   * @brief Creates the predecessors matrixes for each sliding bar,
+   * creating a graph with all nodes connected between them except the
+   * first one with the last one.
+   */
   void make_prev(void);
 };
 
