@@ -46,8 +46,6 @@ class Point : public std::pair<double, double> {
 
   virtual ~Point(void) {}
 
-  std::ostream &write(std::ostream &os) const;
-
   inline const double get_x(void) const {
     return first;
   }
@@ -55,9 +53,6 @@ class Point : public std::pair<double, double> {
   inline const double get_y(void) const {
     return second;
   }
-
-  void get_json(json &point) const;
-  void set_json(const json &point);
 };
 
 }  // namespace emir
