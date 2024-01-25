@@ -733,4 +733,12 @@ void OpsInput::writeStatistics(std::ostream &os) const {
   os << "\t";
 }
 
+// ------------------------------- Operators ------------------------------- //
+
+std::istream &operator>>(std::istream &is, OpsInput &ops_input) {
+  is >> static_cast<OpsInstance &>(ops_input);
+  ops_input.build_input();
+  return is;
+}
+
 }  // namespace emir

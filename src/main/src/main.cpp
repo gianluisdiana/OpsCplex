@@ -22,7 +22,7 @@ int processor(
   emir::OpsInput In;
   read(ins_file, In);
 
-  const double tol = 1E-4;
+  const double tol = 1e-4;
 
   emir::OPS_output_t Out(In);
 
@@ -62,8 +62,7 @@ int main(int argc, char **argv) {
   const int id = atoi(argv[4]) - 1;*/
 
   const std::string sta_file("tmp.txt");
-  const std::string ins_file("/home/riera/Dropbox/Trabajos_en_curso/OPS/"
-                             "OPS_CPX/test_ins.txt");
+  const std::string ins_file("data/test_instance.json");
   const std::string log_file("test_log.txt");
   const int id = 0;
 

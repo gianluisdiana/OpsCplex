@@ -52,7 +52,7 @@ class OpsInput : public OpsInstance {
   GOMA::matrix<int> t_cost_;  // Matriz de costes transformada
 
  public:
-  OpsInput(bool build = true);
+  OpsInput(bool build = false);
 
   virtual ~OpsInput(void);
 
@@ -182,6 +182,18 @@ class OpsInput : public OpsInstance {
 
     for (int &i : d) i = getL();
   }
+
+  // ---------------------------------- Operators ---------------------------------- //
+
+  /**
+   * @brief Overload of the >> operator to read an input from a json file.
+   * Calls OpsInstance::operator>> and then builds the input.
+   *
+   * @param is Represents the inflow
+   * @param ops_input The OPS input to read from the inflow
+   * @return The inflow with the input read
+   */
+  friend std::istream &operator>>(std::istream &is, OpsInput &ops_input);
 
  protected:
   void test_succ(void);
