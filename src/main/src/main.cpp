@@ -61,9 +61,9 @@ int main(int argc, char **argv) {
 
   const int id = atoi(argv[4]) - 1;*/
 
-  const std::string sta_file("tmp.txt");
+  const std::string sta_file("data/temporal.txt");
   const std::string ins_file("data/test_instance.json");
-  const std::string log_file("test_log.txt");
+  const std::string log_file("data/test_log.txt");
   const int id = 0;
 
   exit_code = processor(ins_file, sta_file, log_file, id);
