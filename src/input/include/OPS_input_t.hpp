@@ -158,8 +158,13 @@ class OpsInput : public OpsInstance {
 
   // ------------------------------- Build ------------------------------- //
 
+  /**
+   * @brief Creates the necessary structures to represent the graph.
+   */
+  void build(void);
+
   /** @brief Resize all the structures that represents the graph. */
-  void resize_structures(void);
+  void resizeGraphStructures(void);
 
   /**
    * @brief Update the structures that represents the graph with the new arc
@@ -173,7 +178,7 @@ class OpsInput : public OpsInstance {
    * @param Jj The index of the object which arc is connected from Ji
    * @param l The index of the arc (Ji -> Jj) in the k-th sliding bar.
    */
-  void update_structures(
+  void updateGraphStructures(
     int k, int Ji, int Jj, int &l, GOMA::matrix<int> &A_inv,
     std::vector<int> &arcs_k, std::vector<int> &nodes
   );
@@ -187,12 +192,7 @@ class OpsInput : public OpsInstance {
    * @param Jj The index of the object which arc is connected from Ji
    * @param l The index of the arc (Ji -> Jj) in the k-th sliding bar.
    */
-  void update_pred(int k, int Ji, int Jj, int &l);
-
-  /**
-   * @brief Creates the necessary structures to represent the graph.
-   */
-  void build_input(void);
+  void addPredecessor(int k, int Ji, int Jj, int &l);
 
   /**
    * @brief Copy the time matrix from the input instance to the t_cost_
@@ -201,7 +201,7 @@ class OpsInput : public OpsInstance {
    * Furthermore, removes the diagonal since an object cannot travel to
    * itself.
    */
-  void init_t_cost(void);
+  void processTMatrix(void);
 
   /**
    * @brief Creates the arcs matrixes for each sliding bar, creating a
@@ -212,14 +212,14 @@ class OpsInput : public OpsInstance {
    * - No node can be reached from the last node.
    * - No node can go to itself.
    */
-  void make_structures(void);
+  void makeGraphArcs(void);
 
   /**
    * @brief Creates the predecessors matrixes for each sliding bar,
    * creating a graph with all nodes connected between them except the
    * first one with the last one.
    */
-  void make_prev(void);
+  void makePredecessors(void);
 };
 
 }  // namespace emir

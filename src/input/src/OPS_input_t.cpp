@@ -120,28 +120,21 @@ std::vector<int>& nJ, const std::vector<int>& nK): instance_(instance), succ_(),
 
 } */
 
-void OpsInput::resize_structures(void) {
+void OpsInput::resizeGraphStructures(void) {
   const int m = getM();
   const int n = getN();
 
-  // std::cout << "CREANDO ESTRUCTURAS: " << m << " " << n << '\n';
-
   nodes_k_.resize(m);
-
   succ_.resize(m, n);
   pred_.resize(m, n);
-
   succ_inx_.resize(m, n);
   pred_inx_.resize(m, n);
-
   inv_succ_.resize(m);
-
   arcs_k_.resize(m);
-
   t_cost_.resize(n, n);
 }
 
-void OpsInput::update_structures(
+void OpsInput::updateGraphStructures(
   int k, int Ji, int Jj, int &l, GOMA::matrix<int> &A_inv,
   std::vector<int> &arcs_k, std::vector<int> &nodes
 ) {
@@ -161,14 +154,14 @@ void OpsInput::update_structures(
   l++;
 }
 
-void OpsInput::update_pred(int k, int Ji, int Jj, int &l) {
+void OpsInput::addPredecessor(int k, int Ji, int Jj, int &l) {
   pred_(k + 1, Jj + 1).push_back(Ji);
   pred_inx_(k + 1, Jj + 1).push_back(l);
 
   l++;
 }
 
-void OpsInput::init_t_cost(void) {
+void OpsInput::processTMatrix(void) {
   const int n = getN();
 
   for (int i = 1; i <= n - 1; i++) {
@@ -192,7 +185,7 @@ void OpsInput::init_t_cost(void) {
   // t_cost_.write_raw(std::cout);
 }
 
-void OpsInput::make_structures(void)  // AQUÍ!!!!!!!!!
+void OpsInput::makeGraphArcs(void)  // AQUÍ!!!!!!!!!
 {
   int l = 0;
 
@@ -214,10 +207,10 @@ void OpsInput::make_structures(void)  // AQUÍ!!!!!!!!!
 
     for (auto j : Jk) {
       if (t_cost_(1, j + 1) < OpsInstance::kInfiniteTime)
-        update_structures(k, 0, j, l, A_inv, arcs_k, nodes);
+        updateGraphStructures(k, 0, j, l, A_inv, arcs_k, nodes);
     }
 
-    update_structures(k, 0, n - 1, l, A_inv, arcs_k, nodes);
+    updateGraphStructures(k, 0, n - 1, l, A_inv, arcs_k, nodes);
 
     for (int i = 0; i < nJ; i++) {
       const int Ji = Jk[i];
@@ -227,10 +220,10 @@ void OpsInput::make_structures(void)  // AQUÍ!!!!!!!!!
           const int Jj = Jk[j];
 
           if (t_cost_(Ji + 1, Jj + 1) < OpsInstance::kInfiniteTime)
-            update_structures(k, Ji, Jj, l, A_inv, arcs_k, nodes);
+            updateGraphStructures(k, Ji, Jj, l, A_inv, arcs_k, nodes);
         }
 
-      update_structures(k, Ji, n - 1, l, A_inv, arcs_k, nodes);
+      updateGraphStructures(k, Ji, n - 1, l, A_inv, arcs_k, nodes);
     }
 
     // std::cout << "Concluido" << '\n';
@@ -241,7 +234,7 @@ void OpsInput::make_structures(void)  // AQUÍ!!!!!!!!!
   }
 }
 
-void OpsInput::make_prev(void) {
+void OpsInput::makePredecessors(void) {
   const int m = getM();
   const int n = getN();
 
@@ -251,9 +244,9 @@ void OpsInput::make_prev(void) {
     const std::vector<int> &Jk = getJk(k);
     const int nJ = Jk.size();
 
-    for (auto j : Jk) update_pred(k, 0, j, l);
+    for (auto j : Jk) addPredecessor(k, 0, j, l);
 
-    update_pred(k, 0, n - 1, l);
+    addPredecessor(k, 0, n - 1, l);
 
     for (int i = 0; i < nJ; i++) {
       const int Ji = Jk[i];
@@ -262,22 +255,22 @@ void OpsInput::make_prev(void) {
         if (i != j) {
           const int Jj = Jk[j];
 
-          update_pred(k, Ji, Jj, l);
+          addPredecessor(k, Ji, Jj, l);
         }
 
-      update_pred(k, Ji, n - 1, l);
+      addPredecessor(k, Ji, n - 1, l);
     }
   }
 }
 
-void OpsInput::build_input(void) {
-  resize_structures();
+void OpsInput::build(void) {
+  resizeGraphStructures();
 
-  make_structures();
+  makeGraphArcs();
 
-  make_prev();
+  makePredecessors();
 
-  init_t_cost();
+  processTMatrix();
 
 #ifndef NDEBUG
   test_succ();
@@ -289,7 +282,7 @@ void OpsInput::build_input(void) {
 OpsInput::OpsInput(bool build) :
   OpsInstance(), succ_(), pred_(), succ_inx_(), pred_inx_(), A_succ_(),
   inv_succ_(), t_cost_() {
-  if (build) build_input();
+  if (build) this->build();
 }
 
 int OpsInput::get_max_arc(void) const {
@@ -564,7 +557,7 @@ void OpsInput::writeStatistics(std::ostream &os) const {
 
 std::istream &operator>>(std::istream &is, OpsInput &ops_input) {
   is >> static_cast<OpsInstance &>(ops_input);
-  ops_input.build_input();
+  ops_input.build();
   return is;
 }
 
