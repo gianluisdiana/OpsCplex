@@ -43,25 +43,25 @@ class Target : public Point {
   double b_; /**< Priority value */
 
  public:
-  Target(void) : Point(), p_(0), b_(-1) {}
+  Target() : Point(), p_(0), b_(-1) {}
 
   Target(const Point &coord, double p, double b) : Point(coord), p_(p), b_(b) {}
 
   Target(const Point &coord) : Point(coord), p_(0), b_(-1) {}
 
-  inline double get_p(void) const {
+  inline double get_p() const {
     return p_;
   }
 
-  inline double get_b(void) const {
+  inline double get_b() const {
     return b_;
   }
 
-  inline const Point &get_coord(void) const {
+  inline const Point &get_coord() const {
     return *this;
   }
 
-  virtual ~Target(void) {}
+  virtual ~Target() {}
 
   std::ostream &write(std::ostream &os) const;
   std::istream &read(std::istream &is);

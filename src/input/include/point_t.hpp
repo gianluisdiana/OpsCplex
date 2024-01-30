@@ -40,17 +40,17 @@ namespace emir {
 
 class Point : public std::pair<double, double> {
  public:
-  Point(void) : std::pair<double, double>(0, 0) {}
+  Point() : std::pair<double, double>(0, 0) {}
 
   Point(double a, double b) : std::pair<double, double>(a, b) {}
 
-  virtual ~Point(void) {}
+  virtual ~Point() {}
 
-  inline const double get_x(void) const {
+  inline const double get_x() const {
     return first;
   }
 
-  inline const double get_y(void) const {
+  inline const double get_y() const {
     return second;
   }
 };

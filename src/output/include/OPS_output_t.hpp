@@ -27,7 +27,7 @@ class OPS_output_t {
 
   OPS_output_t(const OPS_output_t &O);
 
-  virtual ~OPS_output_t(void);
+  virtual ~OPS_output_t();
 
   virtual int get_n() const {
     return I_.getN();
@@ -56,24 +56,24 @@ class OPS_output_t {
 
   void get_Jk(std::vector<int> &Jk, int k) const;
 
-  int get_obj(void) const;
+  int get_obj() const;
   double length(int k) const;
-  double length(void) const;
+  double length() const;
 
   double slack(int i) const;
-  double slack(void) const;
+  double slack() const;
 
-  bool found(void) const {
+  bool found() const {
     return found_;
   }
 
-  bool optimal(void) const {
+  bool optimal() const {
     return optimal_;
   }
 
-  int n_customers(void) const;
+  int n_customers() const;
 
-  const OpsInput &get_input(void) const {
+  const OpsInput &get_input() const {
     return I_;
   }
 
@@ -84,7 +84,7 @@ class OPS_output_t {
   int get_next(int i, int k) const;
   int get_prev(int i, int k) const;
 
-  void init_t_cost(void);
+  void init_t_cost();
 
   void set(const OPS_output_t &O, int k);
   void set(const OPS_output_t &O);
@@ -95,7 +95,7 @@ class OPS_output_t {
     return (x_(1 + k * n, n) == 1);
   }
 
-  bool check(void);
+  bool check();
 
   // protected:
 

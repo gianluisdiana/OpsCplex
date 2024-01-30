@@ -5,11 +5,11 @@ namespace emir {
 
 const unsigned int OpsInstance::kInfiniteTime = 999'999;
 
-OpsInstance::OpsInstance(void) :
+OpsInstance::OpsInstance() :
   name_(), date_stamp_(), type_(), Jk_(), Kj_(), T_(), b_(), alpha_(-1), L_(0),
   scal_factor_(10) {}
 
-OpsInstance::~OpsInstance(void) {}
+OpsInstance::~OpsInstance() {}
 
 // ----------------------------- Statistcs Data ---------------------------- //
 
@@ -80,7 +80,7 @@ void OpsInstance::truncateTMatrix() {
   }
 }
 
-void OpsInstance::resetKjMatrix(void) {
+void OpsInstance::resetKjMatrix() {
   Kj_.clear();
   Kj_.resize(getN());
   for (auto k = 0; k < getM(); ++k) {

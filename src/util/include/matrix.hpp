@@ -21,13 +21,13 @@ template<class T> class matrix {
   std::vector<T> v_;
 
  public:
-  matrix(void) : m_(0), n_(0), v_() {}
+  matrix() : m_(0), n_(0), v_() {}
 
   matrix(int m, int n) : m_(m), n_(n), v_() {
     build();
   }
 
-  virtual ~matrix(void) {}
+  virtual ~matrix() {}
 
   void resize(int m, int n) {
     m_ = m;
@@ -96,11 +96,11 @@ template<class T> class matrix {
     return v_[pos(i, j)];
   }
 
-  int get_m(void) const {
+  int get_m() const {
     return m_;
   }
 
-  int get_n(void) const {
+  int get_n() const {
     return n_;
   }
 
@@ -159,7 +159,7 @@ template<class T> class matrix {
   }
 
  private:
-  void build(void) {
+  void build() {
     try {
       v_.resize(m_ * n_);
     } catch (const std::length_error &le) {

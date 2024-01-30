@@ -33,7 +33,7 @@ class gantt_TIKZ_t {
     T.get_time_matrix(T.get_CSU_setup().b_spd(), D_);
   }
 
-  ~gantt_TIKZ_t(void) {}
+  ~gantt_TIKZ_t() {}
 
   std::ostream &write(std::ostream &os, const OPS_output_t &O) const {
     OPS_TIKZ TIKZ_w;

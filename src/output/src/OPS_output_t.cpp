@@ -45,7 +45,7 @@ OPS_output_t::OPS_output_t(const OPS_output_t &O) :
   check();
 }
 
-OPS_output_t::~OPS_output_t(void) {}
+OPS_output_t::~OPS_output_t() {}
 
 void OPS_output_t::set(const OPS_output_t &O) {
   const int K = get_m();
@@ -143,7 +143,7 @@ void OPS_output_t::set(const OPS_output_t &O, int k) {
   }
 }
 
-void OPS_output_t::init_t_cost(void) {
+void OPS_output_t::init_t_cost() {
   const int n = get_n();
 
   for (int i = 1; i <= n - 1; i++) {
@@ -187,7 +187,7 @@ double OPS_output_t::slack(int i) const {
   return h_[i] - s_[i];
 }
 
-double OPS_output_t::slack(void) const {
+double OPS_output_t::slack() const {
   const int n = x_.get_n() - 1;
 
   return h_[n] - s_[n];
@@ -402,7 +402,7 @@ double OPS_output_t::get_s(int j) const {
   return s_[j];
 }
 
-int OPS_output_t::get_obj(void) const {
+int OPS_output_t::get_obj() const {
   assert((s_.size() > 0) && (s_[0] != -1));
 
   int obj = 0;
@@ -416,7 +416,7 @@ int OPS_output_t::get_obj(void) const {
   return obj;
 }
 
-int OPS_output_t::n_customers(void) const {
+int OPS_output_t::n_customers() const {
   int cnt = 0;
   const int nc = y_.size() - 1;
 
@@ -426,7 +426,7 @@ int OPS_output_t::n_customers(void) const {
   return cnt;
 }
 
-double OPS_output_t::length(void) const {
+double OPS_output_t::length() const {
   return s_[y_.size() - 1];
 }
 
@@ -442,7 +442,7 @@ double OPS_output_t::length(int k) const {
   return len;
 }
 
-bool OPS_output_t::check(void) {
+bool OPS_output_t::check() {
   found_ = true;
 
   const int n = get_n();

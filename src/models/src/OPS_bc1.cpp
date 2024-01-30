@@ -8,7 +8,7 @@ OPS_cplex_solver1::OPS_cplex_solver1(
   OPS_solver_t(I, O, eps),
   env_(), x_(env_), y_(env_), s_(env_), cplex_(env_) {}
 
-OPS_cplex_solver1::~OPS_cplex_solver1(void) {
+OPS_cplex_solver1::~OPS_cplex_solver1() {
   env_.end();
 }
 

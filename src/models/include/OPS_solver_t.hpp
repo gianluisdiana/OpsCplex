@@ -19,7 +19,7 @@ class OPS_solver_t {
   OPS_solver_t(const OpsInput *I, OPS_output_t &O, double eps) :
     I_(I), O_(O), tol_(eps) {}
 
-  virtual ~OPS_solver_t(void) {}
+  virtual ~OPS_solver_t() {}
 
   virtual void
   solve(std::ostream &r_os, double ub = 1E10, bool root_node = false) = 0;

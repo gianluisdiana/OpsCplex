@@ -120,7 +120,7 @@ std::vector<int>& nJ, const std::vector<int>& nK): instance_(instance), succ_(),
 
 } */
 
-void OpsInput::resizeGraphStructures(void) {
+void OpsInput::resizeGraphStructures() {
   const int m = getM();
   const int n = getN();
 
@@ -161,7 +161,7 @@ void OpsInput::addPredecessor(int k, int Ji, int Jj, int &l) {
   l++;
 }
 
-void OpsInput::processTMatrix(void) {
+void OpsInput::processTMatrix() {
   const int n = getN();
 
   for (int i = 1; i <= n - 1; i++) {
@@ -185,7 +185,7 @@ void OpsInput::processTMatrix(void) {
   // t_cost_.write_raw(std::cout);
 }
 
-void OpsInput::makeGraphArcs(void)  // AQUÍ!!!!!!!!!
+void OpsInput::makeGraphArcs()  // AQUÍ!!!!!!!!!
 {
   int l = 0;
 
@@ -234,7 +234,7 @@ void OpsInput::makeGraphArcs(void)  // AQUÍ!!!!!!!!!
   }
 }
 
-void OpsInput::makePredecessors(void) {
+void OpsInput::makePredecessors() {
   const int m = getM();
   const int n = getN();
 
@@ -263,7 +263,7 @@ void OpsInput::makePredecessors(void) {
   }
 }
 
-void OpsInput::build(void) {
+void OpsInput::build() {
   resizeGraphStructures();
 
   makeGraphArcs();
@@ -285,7 +285,7 @@ OpsInput::OpsInput(bool build) :
   if (build) this->build();
 }
 
-int OpsInput::get_max_arc(void) const {
+int OpsInput::get_max_arc() const {
   int max = 0;
 
   const int sz = get_A_succ_sz();
@@ -302,7 +302,7 @@ int OpsInput::get_max_arc(void) const {
   return max;
 }
 
-int OpsInput::get_max_nodes(void) const {
+int OpsInput::get_max_nodes() const {
   int m = -1;
   const int K = getM();
 
@@ -363,7 +363,7 @@ void OpsInput::get_sync_stat(
   }
 }
 
-double OpsInput::get_avg_nodes(void) const {
+double OpsInput::get_avg_nodes() const {
   double m = 0;
   const int K = getM();
 
@@ -375,7 +375,7 @@ double OpsInput::get_avg_nodes(void) const {
   return m / (double)(K);
 }
 
-OpsInput::~OpsInput(void) {}
+OpsInput::~OpsInput() {}
 
 int OpsInput::get_msucc(int k) const {
   int m = 0;
@@ -414,7 +414,7 @@ void OpsInput::get_path(
 
 #ifndef NDEBUG
 
-void OpsInput::test_succ(void) {
+void OpsInput::test_succ() {
   const int K = getM();
 
   for (int k = 0; k < K; k++) {
@@ -460,7 +460,7 @@ void OpsInput::test_succ(void) {
   }
 }
 
-void OpsInput::test_pred(void) {
+void OpsInput::test_pred() {
   const int K = getM();
 
   for (int k = 0; k < K; k++) {
@@ -483,7 +483,7 @@ void OpsInput::test_pred(void) {
   }
 }
 
-void OpsInput::test_A_succ(void) {
+void OpsInput::test_A_succ() {
   const int sz = A_succ_.size();
   const int n = getN();
 

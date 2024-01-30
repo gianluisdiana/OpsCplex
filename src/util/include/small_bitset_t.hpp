@@ -17,7 +17,7 @@ template<size_t N = 64> class small_bitset_t {
   block_type block_;
 
  public:
-  small_bitset_t(void) : block_(0x0) {
+  small_bitset_t() : block_(0x0) {
     clear();
   };
 
@@ -29,9 +29,9 @@ template<size_t N = 64> class small_bitset_t {
     for (int i : b) insert(i);
   }
 
-  ~small_bitset_t(void) {}
+  ~small_bitset_t() {}
 
-  inline block_type get_block(void) const {
+  inline block_type get_block() const {
     return block_;
   }
 
@@ -41,7 +41,7 @@ template<size_t N = 64> class small_bitset_t {
     return bs;
   }
 
-  inline void clear(void) {
+  inline void clear() {
     block_ = 0x0;
   }
 
@@ -54,7 +54,7 @@ template<size_t N = 64> class small_bitset_t {
     block_ |= (block_type(0x1) << i);
   }
 
-  inline bool empty(void) const {
+  inline bool empty() const {
     return block_ == 0x0;
   }
 
@@ -112,15 +112,15 @@ template<size_t N = 64> class small_bitset_t {
     C.block_ = block_ & ~B.block_;
   }
 
-  inline int first_item(void) const {
+  inline int first_item() const {
     return __builtin_ffsl(block_);
   }
 
-  inline size_t last_item(void) const {
+  inline size_t last_item() const {
     return N_SMALL_BITS_WORD - __builtin_clzl(block_);
   }
 
-  inline size_t cardinality(void) const {
+  inline size_t cardinality() const {
     return __builtin_popcountl(block_);
   }
 

@@ -21,16 +21,16 @@ class timer_t {
   rusage start_;
 
  public:
-  timer_t(void);
-  virtual ~timer_t(void);
+  timer_t();
+  virtual ~timer_t();
 
-  void start(void);
-  void stop(void);
-  void reset(void);
+  void start();
+  void stop();
+  void reset();
 
-  double current_time(void) const;
+  double current_time() const;
 
-  double seconds(void) const;
+  double seconds() const;
 };
 
 }  // namespace emir

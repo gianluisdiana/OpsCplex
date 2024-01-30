@@ -45,18 +45,18 @@ class OpsInstance {
   // another
   static const unsigned int kInfiniteTime;
 
-  OpsInstance(void);
-  virtual ~OpsInstance(void);
+  OpsInstance();
+  virtual ~OpsInstance();
 
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Get the amount of objects to visualize */
-  inline int getN(void) const {
+  inline int getN() const {
     return b_.size();
   }
 
   /** @brief Get the amount of sliding bars */
-  inline int getM(void) const {
+  inline int getM() const {
     return Jk_.size();
   }
 
@@ -81,22 +81,22 @@ class OpsInstance {
   }
 
   /** @brief Returns the time limit to use the telescope */
-  inline int getL(void) const {
+  inline int getL() const {
     return L_;
   }
 
   /** @brief Returns the full time matrix */
-  inline const GOMA::matrix<int> &getT(void) const {
+  inline const GOMA::matrix<int> &getT() const {
     return T_;
   }
 
   /** @brief Gives read-only access to the scaling factor */
-  inline double getScalingFactor(void) const {
+  inline double getScalingFactor() const {
     return scal_factor_;
   }
 
   /** @brief Returns the Kj matrix */
-  inline const std::vector<std::vector<int>> &getKj(void) const {
+  inline const std::vector<std::vector<int>> &getKj() const {
     return Kj_;
   }
 

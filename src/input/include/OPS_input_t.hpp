@@ -69,7 +69,7 @@ class OpsInput : public OpsInstance {
    */
   OpsInput(bool build = false);
 
-  virtual ~OpsInput(void);
+  virtual ~OpsInput();
 
   inline virtual int get_T(int i, int j) const {
     return getT()(i, j);
@@ -102,7 +102,7 @@ class OpsInput : public OpsInstance {
     return inv_succ_[k](i + 1, j + 1);
   }
 
-  inline int get_A_succ_sz(void) const {
+  inline int get_A_succ_sz() const {
     return A_succ_.size();
   }
 
@@ -118,9 +118,9 @@ class OpsInput : public OpsInstance {
 
   void get_sync_stat(int &nsync, int &maxgsync, int &mingsync, double &avggsync)
     const;
-  double get_avg_nodes(void) const;
-  int get_max_nodes(void) const;
-  int get_max_arc(void) const;
+  double get_avg_nodes() const;
+  int get_max_nodes() const;
+  int get_max_arc() const;
 
   void get_path(
     const std::vector<int> &v, int k, std::vector<int> &arcs,
@@ -151,20 +151,20 @@ class OpsInput : public OpsInstance {
  protected:
   // -------------------------------- Test -------------------------------- //
 
-  void test_succ(void);
-  void test_pred(void);
+  void test_succ();
+  void test_pred();
 
-  void test_A_succ(void);
+  void test_A_succ();
 
   // ------------------------------- Build ------------------------------- //
 
   /**
    * @brief Creates the necessary structures to represent the graph.
    */
-  void build(void);
+  void build();
 
   /** @brief Resize all the structures that represents the graph. */
-  void resizeGraphStructures(void);
+  void resizeGraphStructures();
 
   /**
    * @brief Update the structures that represents the graph with the new arc
@@ -201,7 +201,7 @@ class OpsInput : public OpsInstance {
    * Furthermore, removes the diagonal since an object cannot travel to
    * itself.
    */
-  void processTMatrix(void);
+  void processTMatrix();
 
   /**
    * @brief Creates the arcs matrixes for each sliding bar, creating a
@@ -212,14 +212,14 @@ class OpsInput : public OpsInstance {
    * - No node can be reached from the last node.
    * - No node can go to itself.
    */
-  void makeGraphArcs(void);
+  void makeGraphArcs();
 
   /**
    * @brief Creates the predecessors matrixes for each sliding bar,
    * creating a graph with all nodes connected between them except the
    * first one with the last one.
    */
-  void makePredecessors(void);
+  void makePredecessors();
 };
 
 }  // namespace emir

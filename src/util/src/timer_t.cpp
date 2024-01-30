@@ -2,19 +2,19 @@
 
 namespace emir {
 
-timer_t::timer_t(void) : acumulated_(0.0), start_() {}
+timer_t::timer_t() : acumulated_(0.0), start_() {}
 
-timer_t::~timer_t(void) {}
+timer_t::~timer_t() {}
 
-void timer_t::start(void) {
+void timer_t::start() {
   getrusage(RUSAGE_THREAD, &start_);
 }
 
-void timer_t::reset(void) {
+void timer_t::reset() {
   acumulated_ = 0;
 }
 
-void timer_t::stop(void) {
+void timer_t::stop() {
   rusage stop;
   getrusage(RUSAGE_THREAD, &stop);
 
@@ -25,7 +25,7 @@ void timer_t::stop(void) {
     1000000.0;
 }
 
-double timer_t::seconds(void) const {
+double timer_t::seconds() const {
   return acumulated_;
 }
 

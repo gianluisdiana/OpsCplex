@@ -14,7 +14,7 @@ template<class T, size_t N> class bitset_t {
   int sz_;
 
  public:
-  bitset_t(void) : block_(NULL), sz_(N / N_BITS_WORD) {
+  bitset_t() : block_(NULL), sz_(N / N_BITS_WORD) {
     if ((N % N_BITS_WORD) != 0) sz_++;
 
     block_ = new T[sz_];
@@ -28,7 +28,7 @@ template<class T, size_t N> class bitset_t {
     for (int i = 0; i < sz_; i++) block_[i] = bs.block_[i];
   }
 
-  ~bitset_t(void) {
+  ~bitset_t() {
     if (block_) delete[] block_;
   }
 
@@ -38,7 +38,7 @@ template<class T, size_t N> class bitset_t {
     return bs;
   }
 
-  void clear(void) {
+  void clear() {
     for (int i = 0; i < sz_; i++) block_[i] = 0;
   }
 
@@ -100,7 +100,7 @@ template<class T, size_t N> class bitset_t {
     return contains_set;
   }
 
-  int first_item(void) const {
+  int first_item() const {
     int sm = -1;
 
     for (int i = 0; (i < sz_) && (sm == -1); i++) {
@@ -110,7 +110,7 @@ template<class T, size_t N> class bitset_t {
     return sm;
   }
 
-  int last_item(void) const {
+  int last_item() const {
     int bg = -1;
 
     for (int i = sz_ - 1; (i >= 0) && (bg == -1); i--) {
@@ -120,7 +120,7 @@ template<class T, size_t N> class bitset_t {
     return bg;
   }
 
-  int cardinality(void) const {
+  int cardinality() const {
     int card = 0;
 
     for (int i = 0; i < sz_; i++) card += cardinality(block_[i]);
