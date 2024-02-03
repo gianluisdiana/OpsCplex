@@ -85,9 +85,15 @@ class OpsInstance {
     return L_;
   }
 
-  /** @brief Returns the full time matrix */
-  inline const GOMA::matrix<int> &getT() const {
-    return T_;
+  /**
+   * @brief Get the time spent to process the object 'origin' and go to the
+   * object 'destiny'
+   *
+   * @param origin_index The index of the origin node
+   * @param destiny_index The index of the destiny node
+   */
+  inline int getT(const int origin_index, const int destiny_index) const {
+    return T_(origin_index, destiny_index);
   }
 
   /** @brief Gives read-only access to the scaling factor */
@@ -98,6 +104,30 @@ class OpsInstance {
   /** @brief Returns the Kj matrix */
   inline const std::vector<std::vector<int>> &getKj() const {
     return Kj_;
+  }
+
+  // ------------------------------ Setters -------------------------------- //
+
+  /**
+   * @brief Sets the element in the i-th row and j-th column of the time matrix
+   * to an infinite value (represents a transition that cannot be done).
+   *
+   * @param i The index of the row
+   * @param j The index of the column
+   */
+  inline void setTOutOfRange(const int i, const int j) {
+    T_(i, j) = OpsInstance::kInfiniteTime;
+  }
+
+  /**
+   * @brief Sets the element in the i-th row and j-th column of the time matrix
+   * to 0 (represents a transition with no time spent).
+   *
+   * @param i The index of the row
+   * @param j The index of the column
+   */
+  inline void setTZero(const int i, const int j) {
+    T_(i, j) = 0;
   }
 
   // ---------------------------- Statistcs Data --------------------------- //

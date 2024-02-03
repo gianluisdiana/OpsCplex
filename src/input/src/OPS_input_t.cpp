@@ -171,7 +171,7 @@ void OpsInput::processTMatrix() {
         // std::cout << dist[j - 1] - instance.get_T()(i,j) << '\n';
         // assert(dist[j - 1] <= instance.get_T()(i,j));
 
-        t_cost_(i, j) = get_T(i, j);
+        t_cost_(i, j) = getT(i, j);
       } else
         t_cost_(i, j) = OpsInstance::kInfiniteTime;
   }
@@ -394,22 +394,6 @@ void OpsInput::get_pos(int pos, int &k, int &i, int &j) const {
 
   i = res / n;
   j = res % n;
-}
-
-void OpsInput::get_path(
-  const std::vector<int> &v, int k, std::vector<int> &arcs,
-  std::vector<bool> &visited
-) const {
-  const int sz = v.size() - 1;
-  assert(sz > 0);
-
-  for (int l = 0; l < sz; l++) {
-    visited[v[l]] = true;
-    visited[v[l + 1]] = true;
-
-    const int p = get_inv_succ(k, v[l], v[l + 1]);
-    arcs.push_back(p);
-  }
 }
 
 #ifndef NDEBUG

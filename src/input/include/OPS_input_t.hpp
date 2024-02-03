@@ -71,32 +71,34 @@ class OpsInput : public OpsInstance {
 
   virtual ~OpsInput();
 
-  inline virtual int get_T(int i, int j) const {
-    return getT()(i, j);
-  }
-
   inline int get_t(int i, int j) const {
     return t_cost_(i + 1, j + 1);
   }
 
+  // getAmountOfSuccessors
   inline int get_nsucc(int k, int i) const {
     return succ_(k + 1, i + 1).size();
   }
 
+  // getAmountOfPredecessors
   inline int get_npred(int k, int i) const {
     return pred_(k + 1, i + 1).size();
   }
 
+// getAmountOfSuccessors
   int get_msucc(int k) const;
 
+  // getArcId(..., true)
   inline int get_succ_inx(int k, int i, int l) const {
     return succ_inx_(k + 1, i + 1)[l];
   }
 
+  // getArcId(..., false)
   inline int get_pred_inx(int k, int i, int l) const {
     return pred_inx_(k + 1, i + 1)[l];
   }
 
+  // getArcId
   inline int get_inv_succ(int k, int i, int j)
     const { /* assert (inv_succ_[k](i + 1, j + 1) != -1); */
     return inv_succ_[k](i + 1, j + 1);
@@ -116,25 +118,20 @@ class OpsInput : public OpsInstance {
 
   void get_pos(int pos, int &k, int &i, int &j) const;
 
+  // getBarsStats
   void get_sync_stat(int &nsync, int &maxgsync, int &mingsync, double &avggsync)
     const;
-  double get_avg_nodes() const;
-  int get_max_nodes() const;
-  int get_max_arc() const;
 
-  void get_path(
-    const std::vector<int> &v, int k, std::vector<int> &arcs,
-    std::vector<bool> &visited
-  ) const;
+  // getNodesStats
+  double get_avg_nodes() const;
+  // getNodesStats
+  int get_max_nodes() const;
+
+  // getMaxArc
+  int get_max_arc() const;
 
   void writeStatistics(std::ostream &os) const;
   void writeStatisticsHdr(std::ostream &os) const;
-
-  virtual void get_r(std::vector<int> &r) const {
-    r.resize(getN());
-
-    for (int &i : r) i = 0;
-  }
 
   // ------------------------------ Operators ------------------------------ //
 

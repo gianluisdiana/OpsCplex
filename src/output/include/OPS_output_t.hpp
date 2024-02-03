@@ -25,79 +25,29 @@ class OPS_output_t {
  public:
   OPS_output_t(const OpsInput &I);
 
-  OPS_output_t(const OPS_output_t &O);
-
   virtual ~OPS_output_t();
-
-  virtual int get_n() const {
-    return I_.getN();
-  }
-
-  virtual int get_m() const {
-    return I_.getM();
-  }
 
   bool set(
     const std::vector<double> &x, const std::vector<double> &y,
     const std::vector<double> &s, bool optimal = true
   );
-  bool set(
-    const std::vector<double> &x, const std::vector<double> &y,
-    bool optimal = true
-  );
-  void set(std::vector<double> &x, std::vector<int> &y);
 
   int get_x(int k, int i, int j) const;
-  virtual int &set_x(int k, int i, int j);
-  virtual int &set_x(GOMA::matrix<int> &M, int k, int i, int j) const;
-  int get_y(int j) const;
-  virtual int &set_y(int i);
-  double get_s(int j) const;
 
-  void get_Jk(std::vector<int> &Jk, int k) const;
+  virtual int &set_x(int k, int i, int j);
 
   int get_obj() const;
-  double length(int k) const;
   double length() const;
 
-  double slack(int i) const;
-  double slack() const;
-
-  bool found() const {
-    return found_;
-  }
-
-  bool optimal() const {
-    return optimal_;
-  }
-
   int n_customers() const;
-
-  const OpsInput &get_input() const {
-    return I_;
-  }
 
   std::ostream &write(std::ostream &os) const;
 
   void write_statistics(std::ostream &os) const;
 
-  int get_next(int i, int k) const;
-  int get_prev(int i, int k) const;
-
   void init_t_cost();
 
-  void set(const OPS_output_t &O, int k);
-  void set(const OPS_output_t &O);
-  void setADD(const OPS_output_t &O);
-
-  bool idle(int k) const {
-    const int n = get_n();
-    return (x_(1 + k * n, n) == 1);
-  }
-
   bool check();
-
-  // protected:
 
  private:
   // Maximum time margin for checking the feasibility of the solution
