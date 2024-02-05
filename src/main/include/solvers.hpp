@@ -6,13 +6,11 @@
 #include <iostream>
 
 #include <OPS_bc1.hpp>
-#include <OPS_input_t.hpp>
-#include <OPS_instance_t.hpp>
-#include <OPS_output_t.hpp>
 
-typedef void (*solver_ptr
-)(const emir::OpsInput *I, double tol, emir::OPS_output_t &O, std::ostream &os1,
-  std::ostream &os2);
+using solver_ptr = void (*)(
+  const emir::OpsInput *I, double tol, emir::OPS_output_t &O, std::ostream &os1,
+  std::ostream &os2
+);
 
 void solver1(
   const emir::OpsInput *I, double tol, emir::OPS_output_t &O, std::ostream &os1,

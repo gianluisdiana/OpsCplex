@@ -4,9 +4,6 @@
 #include <iostream>
 #include <string>
 
-#include <OPS_input_t.hpp>
-#include <OPS_instance_t.hpp>
-#include <OPS_output_t.hpp>
 #include <solvers.hpp>
 
 void read(const std::string &file_name, emir::OpsInput &input) {
