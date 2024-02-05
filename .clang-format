@@ -97,7 +97,7 @@ BitFieldColonSpacing: Both
 # The column limit.
 ColumnLimit: 80
 # A regular expression that describes comments with special meaning, which should not be split into lines or otherwise changed.
-CommentPragmas:  '^ TODO pragma:'
+CommentPragmas:  '^ PRAGMA: '
 # If true, consecutive namespace declarations will be on the same line. If false, each namespace is declared on a new line.
 CompactNamespaces: false
 # This option is deprecated
