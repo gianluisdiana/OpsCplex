@@ -6,7 +6,6 @@ add_library(${PROJECT_NAME} STATIC
     src/arc.cpp
     src/graph.cpp
     src/ops_input.cpp
-    src/OPS_input_t.cpp # TODO: remove this file after graph is implemented
     src/OPS_instance_t.cpp
 )
 

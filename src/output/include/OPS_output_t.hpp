@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include <OPS_input_t.hpp>
 #include <matrix.hpp>
+#include <ops_input.hpp>
 
 namespace emir {
 
@@ -32,9 +32,9 @@ class OPS_output_t {
     const std::vector<double> &s, bool optimal = true
   );
 
-  int get_x(int k, int i, int j) const;
+  int get_x(const int k, const int i, const int j) const;
 
-  virtual int &set_x(int k, int i, int j);
+  int &set_x(const int k, const int i, const int j);
 
   int get_obj() const;
   double length() const;

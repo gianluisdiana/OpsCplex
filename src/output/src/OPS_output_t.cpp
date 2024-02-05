@@ -47,7 +47,7 @@ void OPS_output_t::init_t_cost() {
   for (int i = 1; i <= n - 1; i++) {
     for (int j = 2; j <= n; j++)
       if ((i != j) && !((i == 1) && (j == n))) {
-        t_cost_(i, j) = I_.getT(i, j);
+        t_cost_(i, j) = I_.getT(i - 1, j - 1);
       } else
         t_cost_(i, j) = OpsInstance::kInfiniteTime;
   }
@@ -68,26 +68,39 @@ bool OPS_output_t::set(
 
   x_.init(0);
 
-  const int n = I_.getN();
+  for (int k = 0; k < I_.getM(); k++) {
+    auto graph = I_.getGraph(k);
+    for (const auto &arc : graph.getArcs()) {
+      const int i = std::stoi(arc.getOriginId());
+      const int j = std::stoi(arc.getDestinationId());
+      const int value = round(x[I_.calculateXIndex(k, i, j)]);
 
-  const int x_sz = x.size();
+      assert(value <= 1);
+      assert(value >= 0);
 
-  for (int l = 0; l < x_sz; l++) {
-    const int arc = I_.get_A_succ(l);
-
-    int i;
-    int j;
-    int k;
-
-    I_.get_pos(arc, k, i, j);
-
-    const int val = round(x[l]);
-
-    assert(val <= 1);
-    assert(val >= 0);
-
-    if (val == 1) set_x(k, i, j) = 1;
+      set_x(k, i, j) = 1;
+    }
   }
+
+  // const int x_sz = x.size();
+
+  // for (int l = 0; l < x_sz; l++) {
+  //   const int arc = I_.get_A_succ(l);
+
+  //   int i;
+  //   int j;
+  //   int k;
+
+  //   I_.get_pos(arc, k, i, j);
+
+  //   const int val = round(x[l]);
+
+  //   assert(val <= 1);
+  //   assert(val >= 0);
+
+  //   if (val == 1) set_x(k, i, j) = 1;
+  // }
+  const int n = I_.getN();
 
   y_[0] = 1;
   y_[n - 1] = 1;
@@ -175,12 +188,12 @@ std::ostream &OPS_output_t::write(std::ostream &os) const {
   return os;
 }
 
-int OPS_output_t::get_x(int k, int i, int j) const {
-  return x_(i + 1 + k * I_.getN(), j + 1);
+int OPS_output_t::get_x(const int k, const int i, const int j) const {
+  return x_(k * I_.getN() + i + 1, j + 1);
 }
 
-int &OPS_output_t::set_x(int k, int i, int j) {
-  return x_(i + 1 + k * I_.getN(), j + 1);
+int &OPS_output_t::set_x(const int k, const int i, const int j) {
+  return x_(k * I_.getN() + i + 1, j + 1);
 }
 
 int OPS_output_t::get_obj() const {

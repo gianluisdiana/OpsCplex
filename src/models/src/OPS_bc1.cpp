@@ -75,14 +75,14 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
   const int K = I_->getM();  // Number of vehicles
   const int L = I_->getL();  // Limit
 
-  const int max_arc = I_->get_max_arc() + 1;
+  const int max_arc = I_->getMaxArc() + 1;
   const int big_m = max_arc > L ? max_arc : L;
 
   char aux[80];
 
   int m = 0;
 
-  for (int k = 0; k < K; k++) m += I_->get_msucc(k);
+  for (int k = 0; k < K; k++) m += I_->getAmountOfSuccessors(k);
 
   // Variables
 
@@ -107,17 +107,27 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   // Variables x
 
-  const int sz = I_->get_A_succ_sz();
-
-  for (int l = 0; l < sz; l++) {
-    const int pos = I_->get_A_succ(l);
-
-    int i, j, k;
-    I_->get_pos(pos, k, i, j);
-
-    sprintf(aux, "x_%d_%d_%d", k + 1, i, j);
-    x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
+  for (int k = 0; k < K; k++) {
+    auto graph = I_->getGraph(k);
+    for (const auto &arc : graph.getArcs()) {
+      const auto &origin_id = std::stoi(arc.getOriginId());
+      const auto &destination_id = std::stoi(arc.getDestinationId());
+      sprintf(aux, "x_%d_%d_%d", k + 1, origin_id, destination_id);
+      x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
+    }
   }
+
+  // const int sz = I_->get_A_succ_sz();
+
+  // for (int l = 0; l < sz; l++) {
+  //   const int pos = I_->get_A_succ(l);
+
+  // int i, j, k;
+  // I_->get_pos(pos, k, i, j);
+
+  // sprintf(aux, "x_%d_%d_%d", k + 1, i, j);
+  // x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
+  // }
 
   model.add(x_);
 
@@ -136,50 +146,46 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
   IloRangeArray constraints(env_);
 
   for (int k = 0; k < K; k++) {
-    const int mki = I_->get_nsucc(k, 0);
+    const auto mki = I_->getAmountOfSuccessors(k, std::to_string(0));
+    if (mki == 0) continue;
 
-    if (mki != 0) {
-      IloExpr cut(env_);
+    IloExpr cut(env_);
 
-      for (int l = 0; l < mki; l++) cut += x_[I_->get_succ_inx(k, 0, l)];
-
-      sprintf(aux, "deltaplus_%d_%d", 0, k + 1);
-      constraints.add(IloRange(env_, 1.0, cut, 1.0, aux));
-      cut.end();
-    }
+    for (auto l = 0; l < mki; l++)
+      cut += x_[I_->getArcId(k, std::to_string(0), l, true)];
+    sprintf(aux, "deltaplus_%d_%d", 0, k + 1);
+    constraints.add(IloRange(env_, 1.0, cut, 1.0, aux));
+    cut.end();
   }
 
   for (int k = 0; k < K; k++) {
-    const int mki = I_->get_npred(k, n - 1);
+    const auto mki = I_->getAmountOfPredecessors(k, std::to_string(n - 1));
 
-    if (mki != 0) {
-      IloExpr cut(env_);
+    if (mki == 0) continue;
+    IloExpr cut(env_);
 
-      for (int l = 0; l < mki; l++) cut += x_[I_->get_pred_inx(k, n - 1, l)];
-
-      sprintf(aux, "deltaminus_%d_%d", n - 1, k + 1);
-      constraints.add(IloRange(env_, 1.0, cut, 1.0, aux));
-      cut.end();
-    }
+    for (int l = 0; l < mki; l++)
+      cut += x_[I_->getArcId(k, std::to_string(n - 1), l, false)];
+    sprintf(aux, "deltaminus_%d_%d", n - 1, k + 1);
+    constraints.add(IloRange(env_, 1.0, cut, 1.0, aux));
+    cut.end();
   }
 
   // DELTA PLUS
 
   for (int k = 0; k < K; k++) {
     for (int i = 1; i < n - 1; i++) {
-      const int mki = I_->get_nsucc(k, i);
+      const int mki = I_->getAmountOfSuccessors(k, std::to_string(i));
 
-      if (mki != 0) {
-        IloExpr cut(env_);
+      if (mki == 0) continue;
 
-        for (int l = 0; l < mki; l++) cut += x_[I_->get_succ_inx(k, i, l)];
-
-        cut -= y_[i - 1];
-
-        sprintf(aux, "deltaplus_%d_%d", i, k + 1);
-        constraints.add(IloRange(env_, 0.0, cut, 0.0, aux));
-        cut.end();
-      }
+      IloExpr cut(env_);
+      for (int l = 0; l < mki; l++)
+        cut += x_[I_->getArcId(k, std::to_string(i), l, true)];
+      cut -= y_[i - 1];
+      sprintf(aux, "deltaplus_%d_%d", i, k + 1);
+      constraints.add(IloRange(env_, 0.0, cut, 0.0, aux));
+      cut.end();
     }
   }
 
@@ -187,46 +193,62 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   for (int k = 0; k < K; k++) {
     for (int i = 1; i < n - 1; i++) {
-      const int mki = I_->get_npred(k, i);
+      const int mki = I_->getAmountOfPredecessors(k, std::to_string(i));
 
-      if (mki != 0) {
-        IloExpr cut(env_);
+      if (mki == 0) continue;
 
-        for (int l = 0; l < mki; l++) cut += x_[I_->get_pred_inx(k, i, l)];
-
-        cut -= y_[i - 1];
-
-        sprintf(aux, "deltaminus_%d_%d", i, k + 1);
-        constraints.add(IloRange(env_, 0.0, cut, 0.0, aux));
-        cut.end();
-      }
+      IloExpr cut(env_);
+      for (int l = 0; l < mki; l++)
+        cut += x_[I_->getArcId(k, std::to_string(i), l, false)];
+      cut -= y_[i - 1];
+      sprintf(aux, "deltaminus_%d_%d", i, k + 1);
+      constraints.add(IloRange(env_, 0.0, cut, 0.0, aux));
+      cut.end();
     }
   }
 
   // MTZ
 
-  for (int l = 0; l < sz; l++) {
-    int i;
-    int j;
-    int k;
+  int l = 0;
+  for (auto k = 0; k < K; ++k) {
+    const auto &graph = I_->getGraph(k);
+    for (const auto &arc : graph.getArcs()) {
+      const int i = std::stoi(arc.getOriginId());
+      const int j = std::stoi(arc.getDestinationId());
+      IloExpr cut(env_);
+      cut = big_m * x_[l] + s_[i] - s_[j];
 
-    const int arc = I_->get_A_succ(l);
-
-    I_->get_pos(arc, k, i, j);
-
-    IloExpr cut(env_);
-
-    cut = big_m * x_[l] + s_[i] - s_[j];
-
-    sprintf(aux, "MTZ_%d_%d_%d", i, j, k + 1);
-
-    // std::cout << "( "<< i << ", " << j << " ): " << I_->get_t(i,j) << '\n';
-
-    constraints.add(
-      IloRange(env_, -IloInfinity, cut, big_m - I_->get_t(i, j), aux)
-    );
-    cut.end();
+      sprintf(aux, "MTZ_%d_%d_%d", i, j, k + 1);
+      constraints.add(IloRange(
+        env_, -IloInfinity, cut, big_m - I_->getT(i, j), aux
+      ));
+      cut.end();
+      l++;
+    }
   }
+
+  // for (int l = 0; l < sz; l++) {
+  //   int i;
+  //   int j;
+  //   int k;
+
+  //   const int arc = I_->get_A_succ(l);
+
+  //   I_->get_pos(arc, k, i, j);
+
+  //   IloExpr cut(env_);
+
+  //   cut = big_m * x_[l] + s_[i] - s_[j];
+
+  //   sprintf(aux, "MTZ_%d_%d_%d", i, j, k + 1);
+
+  //   // std::cout << "( "<< i << ", " << j << " ): " << I_->get_t(i,j) << '\n';
+
+  //   constraints.add(
+  //     IloRange(env_, -IloInfinity, cut, big_m - I_->getT(i, j), aux)
+  //   );
+  //   cut.end();
+  // }
 
   // LIMIT
 
@@ -252,8 +274,6 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   model.add(constraints);
   constraints.end();
-
-  // std::cout << model << '\n';
 }
 
 }  // namespace emir

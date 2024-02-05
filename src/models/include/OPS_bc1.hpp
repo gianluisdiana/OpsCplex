@@ -3,8 +3,6 @@
 
 #include <iostream>
 
-#include <OPS_input_t.hpp>
-#include <OPS_output_t.hpp>
 #include <OPS_solver_t.hpp>
 
 #define IL_STD

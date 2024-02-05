@@ -4,7 +4,6 @@
 #include <cassert>
 #include <iostream>
 
-#include <OPS_input_t.hpp>
 #include <OPS_output_t.hpp>
 
 namespace emir {
