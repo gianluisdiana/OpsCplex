@@ -1,0 +1,44 @@
+name: Basic build and configuration
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the $default-branch branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Enviroment variables
+env:
+  # The CMake version to use
+  CMAKE_VERSION: 3.22.1
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "format"
+  format:
+    # The name of the job, this name is used in the GitHub user interface
+    name: Format using clang-format
+
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install clang-format
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang-format-14
+
+    - name: Format code
+      run: |
+        git diff --name-only --diff-filter=d origin/main...HEAD | grep -E '[^j][^s][^o][^n]\.(cpp|hpp)$' | xargs clang-format-14 -i -style=file
+        git diff --exit-code
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "gianluisbolivar1@gmail.com"
+        git config --local user.name "Gian Luis Bolivar Diana"
+        git commit -am "style: format code using clang-format (auto)""

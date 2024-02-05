@@ -1,230 +1,181 @@
 #ifndef _EMIR_BITSET_HPP_
 #define _EMIR_BITSET_HPP_
 
-#include <string>
 #include <cassert>
+#include <string>
 
 #define N_BITS_WORD (8 * sizeof(T))
 
 namespace emir {
 
-template <class T, size_t N>
-class bitset_t
-{
-	public:
-		T* block_;
-		int sz_;
-	
-	public:
-		bitset_t(void):
-			block_(NULL),
-			sz_(N/N_BITS_WORD) {
+template<class T, size_t N> class bitset_t {
+ public:
+  T *block_;
+  int sz_;
 
-			if ((N % N_BITS_WORD) != 0)
-				sz_ ++;
-		
-			block_ = new T[sz_];
+ public:
+  bitset_t() : block_(NULL), sz_(N / N_BITS_WORD) {
+    if ((N % N_BITS_WORD) != 0) sz_++;
 
-            clear();
-		};
+    block_ = new T[sz_];
 
-		bitset_t(const bitset_t& bs):
-		block_(NULL),
-		sz_(bs.sz_)
-		{
-			block_ = new T[bs.sz_];	
+    clear();
+  };
 
-			for (int i = 0; i < sz_; i++)
-				block_[i] = bs.block_[i];		
-		}
+  bitset_t(const bitset_t &bs) : block_(NULL), sz_(bs.sz_) {
+    block_ = new T[bs.sz_];
 
-		~bitset_t(void) {
-			if (block_) delete [] block_;
-		}
+    for (int i = 0; i < sz_; i++) block_[i] = bs.block_[i];
+  }
 
+  ~bitset_t() {
+    if (block_) delete[] block_;
+  }
 
-		const bitset_t& operator=(const bitset_t& bs)
-		{
-			for (int i = 0; i < sz_; i++)
-				block_[i] = bs.block_[i];		
-                
-            return bs;
-		}
-        
-        void clear(void) {
-            
- 			for (int i = 0; i < sz_; i++)
-				block_[i] = 0;                       
-        }
+  const bitset_t &operator=(const bitset_t &bs) {
+    for (int i = 0; i < sz_; i++) block_[i] = bs.block_[i];
 
-		void insert(unsigned int i) {
+    return bs;
+  }
 
-			assert(i <= N);
-			assert(i >= 1);
+  void clear() {
+    for (int i = 0; i < sz_; i++) block_[i] = 0;
+  }
 
-			i--;
+  void insert(unsigned int i) {
+    assert(i <= N);
+    assert(i >= 1);
 
-			const int pos    = i/N_BITS_WORD;
-			const int offset = i%N_BITS_WORD;
+    i--;
 
-			block_[pos] |= (T(0x1) << offset);
-		}
+    const int pos = i / N_BITS_WORD;
+    const int offset = i % N_BITS_WORD;
 
-		void remove(unsigned int i) {
+    block_[pos] |= (T(0x1) << offset);
+  }
 
-			assert(i <= N);
-			assert(i >= 1);
+  void remove(unsigned int i) {
+    assert(i <= N);
+    assert(i >= 1);
 
-			i--;
+    i--;
 
-			const int pos    = i/N_BITS_WORD;
-			const int offset = i%N_BITS_WORD;
+    const int pos = i / N_BITS_WORD;
+    const int offset = i % N_BITS_WORD;
 
-			block_[pos] &= ~(T(0x1) << offset);
-		}
+    block_[pos] &= ~(T(0x1) << offset);
+  }
 
-		bool contains(unsigned int i) const
-		{
+  bool contains(unsigned int i) const {
+    assert(i <= N);
+    assert(i >= 1);
 
-			assert(i <= N);
-			assert(i >= 1);
+    i--;
 
-			i--;
+    const int pos = i / N_BITS_WORD;
+    const int offset = i % N_BITS_WORD;
 
-			const int pos    = i/N_BITS_WORD;
-			const int offset = i%N_BITS_WORD;
+    return (block_[pos] & (T(0x1) << offset)) != T(0x0);
+  }
 
-			return (block_[pos] & (T(0x1) << offset)) != T(0x0);  
-		}
+  void insert(const bitset_t &bs) {
+    for (int i = 0; i < sz_; i++) block_[i] |= bs.block_[i];
+  }
 
-		void insert(const bitset_t& bs)
-		{
-			for (int i = 0; i < sz_; i++)
-				block_[i] |= bs.block_[i];
-		}
+  void remove(const bitset_t &bs) {
+    for (int i = 0; i < sz_; i++) block_[i] &= ~bs.block_[i];
+  }
 
-		void remove(const bitset_t& bs)
-		{
-			for (int i = 0; i < sz_; i++)
-				block_[i] &= ~bs.block_[i];
-		}
+  bool contains(const bitset_t &bs) const {
+    bool contains_set = true;
 
-		bool contains(const bitset_t& bs) const
-		{	
-			bool contains_set = true;
+    int i = 0;
 
-			int i = 0;
+    while ((i < sz_) && (contains_set)) {
+      contains_set =
+        contains_set && ((block_[i] & bs.block_[i]) == bs.block_[i]);
+      i++;
+    }
 
-			while ((i < sz_) && (contains_set)) {
-				contains_set = contains_set && ((block_[i] & bs.block_[i]) == bs.block_[i]);
-				i++;
-			}
+    return contains_set;
+  }
 
-			return contains_set;		
-		}
+  int first_item() const {
+    int sm = -1;
 
-		int first_item(void) const
-		{			
-			int sm = -1;
+    for (int i = 0; (i < sz_) && (sm == -1); i++) {
+      if (block_[i] != 0) sm = first_item(block_[i]) + N_BITS_WORD * i;
+    }
 
-			for (int i = 0; (i < sz_) && (sm == -1);i++)
-			{
-				if (block_[i] != 0)
-					sm = first_item(block_[i]) + N_BITS_WORD * i;
-			}
+    return sm;
+  }
 
-			return sm;
-			
-		}
+  int last_item() const {
+    int bg = -1;
 
-		int last_item(void) const
-		{		
-			int bg = -1;
+    for (int i = sz_ - 1; (i >= 0) && (bg == -1); i--) {
+      if (block_[i] != 0) bg = last_item(block_[i]) + N_BITS_WORD * i;
+    }
 
-			for (int i = sz_ - 1; (i >= 0) && (bg == -1);i--)
-			{
-				if (block_[i] != 0)
-					bg = last_item(block_[i]) + N_BITS_WORD * i;
-			}
+    return bg;
+  }
 
-			return bg;
-			
-		}
+  int cardinality() const {
+    int card = 0;
 
-		int cardinality(void) const
-		{
-			int card = 0;
+    for (int i = 0; i < sz_; i++) card += cardinality(block_[i]);
 
-			for (int i = 0; i < sz_; i++)
-				card += cardinality(block_[i]);
+    return card;
+  }
 
-			return card;
-		}
+  std::ostream &write(std::ostream &os) const {
+    std::string s;
+    to_std::string(s);
+    os << s;
 
-		std::ostream& write(std::ostream& os) const 
-		{
+    return os;
+  }
 
-			std::string s;
-			to_std::string(s);
-			os << s;
+  void union_set(const bitset_t &B, bitset_t &C) const {
+    for (int j = 0; j < sz_; j++) C.block_[j] = block_[j] | B.block_[j];
+  }
 
-			return os;
-		}
+  void intersec_set(const bitset_t &B, bitset_t &C) const {
+    for (int j = 0; j < sz_; j++) C.block_[j] = block_[j] & B.block_[j];
+  }
 
+  void diff_set(const bitset_t &B, bitset_t &C) const {
+    for (int j = 0; j < sz_; j++) C.block_[j] = block_[j] & ~B.block_[j];
+  }
 
-		void union_set(const bitset_t&  B, bitset_t& C) const
-		{
-			for (int j = 0; j < sz_; j++)				
-				C.block_[j] = block_[j] | B.block_[j];						
-		}	
+ private:
+  int first_item(T block) const {
+    return __builtin_ffsl(block);
+  }
 
-		void intersec_set(const bitset_t&  B, bitset_t& C) const
-		{
-			for (int j = 0; j < sz_; j++)				
-				C.block_[j] = block_[j] & B.block_[j];						
-		}
+  int last_item(T block) const {
+    return N_BITS_WORD - __builtin_clzl(block);
+  }
 
-		void diff_set(const bitset_t&  B, bitset_t& C) const
-		{
-			for (int j = 0; j < sz_; j++)				
-				C.block_[j] = block_[j] & ~B.block_[j];						
-		}
+  int cardinality(T block) const {
+    return __builtin_popcount(block);
+  }
 
-	private:
+  void to_std::string(std::string &s) const {
+    for (int j = 0; j < sz_; j++) {
+      const int sz = min(N_BITS_WORD, N - j * N_BITS_WORD);
 
-		int first_item(T block) const
-		{
-            return __builtin_ffsl(block);
-		}
+      T block = block_[j];
 
-		int last_item(T block) const
-		{
-            return N_BITS_WORD - __builtin_clzl(block);
-		}
-
-		int cardinality(T block) const
-		{
-            return __builtin_popcount(block);
-		}
-	
-		 void to_std::string(std::string& s) const 
-		 {
-			for (int j = 0; j < sz_; j++) {
-
-				const int sz = min(N_BITS_WORD, N - j * N_BITS_WORD);
-
-				T block = block_[j];		
-
-				for (int i = 0; i < sz; i++)
-				{
-					const char c = '0' + (block & T(0x1));
-					s.insert(s.begin(),c); 
-					block >>= 1;
-				}
-			}
-		 }
+      for (int i = 0; i < sz; i++) {
+        const char c = '0' + (block & T(0x1));
+        s.insert(s.begin(), c);
+        block >>= 1;
+      }
+    }
+  }
 };
 
-} // namespace emir
+}  // namespace emir
 
-#endif // _EMIR_BITSET_HPP_
+#endif  // _EMIR_BITSET_HPP_

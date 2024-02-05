@@ -3,10 +3,17 @@ cmake_minimum_required(VERSION 3.22)
 
 # Set project basic information
 project(emir_cplex
-  VERSION 0.1.0
+  VERSION 0.1.1
   DESCRIPTION "Exact algorithm for the optimization of the use of the astronomical instrument EMIR"
   HOMEPAGE_URL "https://github.com/gianluisdiana/OpsCplex"
   LANGUAGES CXX
+)
+
+# -------------------------------- Variables -------------------------------- #
+
+set(CMAKE_CXX_CLANG_TIDY
+  clang-tidy;
+  -config-file=${CMAKE_SOURCE_DIR}/../.clang-tidy;
 )
 
 # ----------------------------- Subdirectories ----------------------------- #

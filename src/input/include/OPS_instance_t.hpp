@@ -1,120 +1,226 @@
+/**
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
+ *
+ * @file OPS_instance_t.hpp
+ * @author Gian Luis Bolivar Diana
+ * @version 0.1.1
+ * @date January 21, 2024
+ * @copyright Copyright (c) 2024
+ *
+ * @brief File containing the basic description of an instance for the O.P.S.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex
+ * @endlink
+ * @see Selective routing problem with synchronization @link
+ * https://www.sciencedirect.com/science/article/pii/S0305054821002161?ref=cra_js_challenge&fr=RR-1
+ * @endlink
+ * @see EMIR Telescope @link https://www.gtc.iac.es/instruments/emir/ @endlink
+ * @see Google style guide: @link
+ * https://google.github.io/styleguide/cppguide.html @endlink
+ */
+
 #ifndef _EMIR_OPS_INSTANCE_HPP_
 #define _EMIR_OPS_INSTANCE_HPP_
 
-#include <vector>
 #include <iostream>
 #include <string>
+#include <vector>
 
-#include "matrix.hpp"
-#include "json.hpp"
+#include <json.hpp>
+#include <matrix.hpp>
 
 using json = nlohmann::json;
 
-#define N_ITEM 2
-
 namespace emir {
 
-    enum
-    {
-        NAME,
-        STAMP
-    };
+/** @brief Represents a basic instance for the O.P.S. */
+class OpsInstance {
+ public:
+  // Constant to represent an infinite time to process an object and go to
+  // another
+  static const unsigned int kInfiniteTime;
 
-    /**
-     * @class OPS_instance_t
-     * @author Jorge Riera-Ledesma
-     * @date 06/12/17
-     * @file OPS_instance_t.hpp
-     * @brief Class describing an instance for the OPS
-     */
+  OpsInstance();
+  virtual ~OpsInstance();
 
-    class OPS_instance_t
-    {
-    private:
-        std::vector<std::string> id_; /**< Id of the instance Id of the source target points @see target_set_t.hpp */
+  // ------------------------------ Getters -------------------------------- //
 
-        int type_; /**< Type of instance generation @see instance_code_type.hpp */
+  /** @brief Get the amount of objects to visualize */
+  inline int getN() const {
+    return b_.size();
+  }
 
-        std::vector<std::vector<int>> Jk_; /**< Assignment of jobs to processors \f$ J_k \f$ */
-        std::vector<std::vector<int>> Kj_; /**< Assignment of processors to jobs \f$ K_j \f$ */
-        GOMA::matrix<int> T_;    /**< Cost matrix \f$ T \f$ */
-        std::vector<int> b_;          /**< Profit for each job \f$ b \f$ */
+  /** @brief Get the amount of sliding bars */
+  inline int getM() const {
+    return Jk_.size();
+  }
 
-        double alpha_; /**< Percentage of the total tour */
-        int L_;        /**< Time limit  \f$ L \f$ */
+  /**
+   * @brief Get the objects that can be observed by the 'k' sliding bar
+   *
+   * @param k The index of the sliding bar
+   * @return The objects that can be observed by the sliding bar selected
+   */
+  inline const std::vector<int> &getJk(int k) const {
+    return Jk_[k];
+  }
 
-        double scal_factor_;
+  /**
+   * @brief Get the profit (or priority) for the object 'j'
+   *
+   * @param j The index of the object
+   * @return The profit (or priority) for the object selected
+   */
+  inline int getB(int j) const {
+    return b_[j];
+  }
 
-    public:
-        // Constant to represent an infinite time to process an object and go to another
-        static const unsigned int kInfiniteTime;
+  /** @brief Returns the time limit to use the telescope */
+  inline int getL() const {
+    return L_;
+  }
 
-        OPS_instance_t(void);
-        virtual ~OPS_instance_t(void);
+  /**
+   * @brief Get the time spent to process the object 'origin' and go to the
+   * object 'destiny'
+   *
+   * @param origin_index The index of the origin node
+   * @param destiny_index The index of the destiny node
+   */
+  inline int getT(const int origin_index, const int destiny_index) const {
+    return T_(origin_index, destiny_index);
+  }
 
-        std::istream &read(std::istream &is);
-        std::ostream &write(std::ostream &os) const;
+  /** @brief Gives read-only access to the scaling factor */
+  inline double getScalingFactor() const {
+    return scal_factor_;
+  }
 
-        inline const std::string &get_instance_name(void) const
-        {
-            return id_[NAME];
-        }
-        inline const std::string &get_instance_stamp(void) const
-        {
-            return id_[STAMP];
-        }
+  /** @brief Returns the Kj matrix */
+  inline const std::vector<std::vector<int>> &getKj() const {
+    return Kj_;
+  }
 
-        inline int get_n(void) const
-        {
-            return b_.size();
-        }
-        inline int get_m(void) const
-        {
-            return Jk_.size();
-        }
-        inline const std::vector<int> &get_Jk(int k) const
-        {
-            return Jk_[k];
-        }
-        inline int get_b(int j) const
-        {
-            return b_[j];
-        }
-        inline int get_L(void) const
-        {
-            return L_;
-        }
-        inline const GOMA::matrix<int> &get_T(void) const
-        {
-            return T_;
-        }
-        inline double get_scal_factor(void) const
-        {
-            return scal_factor_;
-        }
+  // ------------------------------ Setters -------------------------------- //
 
-        int get_max_Jk(void) const;
+  /**
+   * @brief Sets the element in the i-th row and j-th column of the time matrix
+   * to an infinite value (represents a transition that cannot be done).
+   *
+   * @param i The index of the row
+   * @param j The index of the column
+   */
+  inline void setTOutOfRange(const int i, const int j) {
+    T_(i, j) = OpsInstance::kInfiniteTime;
+  }
 
-        const std::vector<std::vector<int>> &get_Kj(void) const { return Kj_; }
+  /**
+   * @brief Sets the element in the i-th row and j-th column of the time matrix
+   * to 0 (represents a transition with no time spent).
+   *
+   * @param i The index of the row
+   * @param j The index of the column
+   */
+  inline void setTZero(const int i, const int j) {
+    T_(i, j) = 0;
+  }
 
-        void set(const std::string &source_name, const std::string &source_stamp, const std::string &desc, int type, const std::vector<std::vector<int>> &Jk, const GOMA::matrix<int> &T, const std::vector<int> &b);
-        void set(const OPS_instance_t &O);
-        void set(const std::string &name, const std::string &stamp, const std::string &desc);
-        void set_L(double alpha, int L);
+  // ---------------------------- Statistcs Data --------------------------- //
 
-        void write_statistics(std::ostream &os) const;
-        void write_statistics_hdr(std::ostream &os) const;
+  void writeStatistics(std::ostream &os) const;
+  void writeStatisticsHdr(std::ostream &os) const;
 
-    private:
-        void get_json(json &instance) const;
-        void set_json(const json &instance);
+  // ------------------------------ Operators ------------------------------ //
 
-        void make_Kj(void);
-    };
+  /**
+   * @brief Overload of the >> operator to read an instance from a json file.
+   *
+   * @param is Represents the inflow
+   * @param ops_instance The OPS instance to read from the inflow
+   * @return The inflow with the instance read
+   */
+  friend std::istream &operator>>(std::istream &is, OpsInstance &ops_instance);
 
-} // namespace emir
+  /**
+   * @brief Overload of the << operator to display a json format of the
+   * instance.
+   *
+   * @param os Represents the outflow
+   * @param ops_instance The OPS instance to display
+   * @return The outflow with the string that represents the state.
+   */
+  friend std::ostream &
+  operator<<(std::ostream &os, const OpsInstance &ops_instance);
 
-std::istream &operator>>(std::istream &is, emir::OPS_instance_t &input);
-std::ostream &operator<<(std::ostream &os, const emir::OPS_instance_t &input);
+ private:
+  // ----------------------------------------------------------------------- //
+  // ----------------------------- Attributes ------------------------------ //
+  // ----------------------------------------------------------------------- //
 
-#endif // _EMIR_OPS_INSTANCE_HPP_
+  // ------------------------- Instance Attributes ------------------------- //
+
+  // Name of the instance, typically the name of the file
+  std::string name_;
+  // Date stamp of the instance creation
+  std::time_t date_stamp_;
+  // Type of instance generation @see instance_code_type.hpp
+  int type_;
+
+  // -------------------- Mathematical model attributes -------------------- //
+
+  // Objects that can be observed by the 'k' sliding bar
+  std::vector<std::vector<int>> Jk_;
+  // Necessary sliding bars to observe the object 'j' (inverse of Jk_)
+  std::vector<std::vector<int>> Kj_;
+  // Time matrix to represent the time spent to process the object 'i'
+  // and go to the object 'j'
+  GOMA::matrix<int> T_;
+  // Profit (or priority) for each job
+  std::vector<int> b_;
+  // Time limit to use the telescope
+  int L_;
+
+  // --------------------------- Extra attributes -------------------------- //
+
+  double alpha_; /**< Percentage of the total tour */
+  double scal_factor_;
+
+  // ----------------------------------------------------------------------- //
+  // ------------------------------- Methods ------------------------------- //
+  // ----------------------------------------------------------------------- //
+
+  /**
+   * @brief Formats the instance to a json file
+   *
+   * @return The json file with the ops information
+   */
+  json toJson() const;
+
+  /**
+   * @brief Set the OPS instance from a json file
+   *
+   * @param json_instance The json file with the ops information
+   */
+  void setFromJson(const json &json_instance);
+
+  /**
+   * @brief Truncate the T matrix, checking if the current value of a cell
+   * exceeds the maximum value allowed (the time limit to use the
+   * telescope)
+   */
+  void truncateTMatrix();
+
+  /**
+   * @brief Resets the Kj matrix and fills it with the correct values
+   */
+  void resetKjMatrix();
+};
+
+}  // namespace emir
+
+#endif  // _EMIR_OPS_INSTANCE_HPP_

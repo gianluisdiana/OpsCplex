@@ -1,13 +1,12 @@
-#include "OPS_input_t.hpp"
-
 #include <set>
-#include "matrix.hpp"
+
+#include <OPS_input_t.hpp>
+#include <matrix.hpp>
 
 namespace emir {
 
-/*OPS_input_t::OPS_input_t(const OPS_instance_t& instance, const std::vector<int>& nJ, const std::vector<int>& nK):
-    instance_(instance),
-    succ_(),
+/*OPS_input_t::OPS_input_t(const OpsInstance& instance, const
+std::vector<int>& nJ, const std::vector<int>& nK): instance_(instance), succ_(),
     pred_(),
     succ_inx_(),
     pred_inx_(),
@@ -38,7 +37,7 @@ namespace emir {
 
         const int k = nK[ki];
 
-        const std::vector<int>& Jk = instance.get_Jk(k);
+        const std::vector<int>& Jk = instance.getJk(k);
         const int nJ = Jk.size();
 
         matrix<int>& A_inv  = inv_succ_[ki];
@@ -121,706 +120,429 @@ namespace emir {
 
 } */
 
-void OPS_input_t::resize_structures(void)
-{
-    const int m = get_m();
-    const int n = get_n();
-	
-	//std::cout << "CREANDO ESTRUCTURAS: " << m << " " << n << '\n';
-    
-    nodes_k_.resize(m);
+void OpsInput::resizeGraphStructures() {
+  const int m = getM();
+  const int n = getN();
 
-    succ_.resize(m,n);
-    pred_.resize(m,n);
-
-    succ_inx_.resize(m,n);
-    pred_inx_.resize(m,n);
-
-    inv_succ_.resize(m);
-
-    arcs_k_.resize(m);
-
-    t_cost_.resize(n,n);
+  nodes_k_.resize(m);
+  succ_.resize(m, n);
+  pred_.resize(m, n);
+  succ_inx_.resize(m, n);
+  pred_inx_.resize(m, n);
+  inv_succ_.resize(m);
+  arcs_k_.resize(m);
+  t_cost_.resize(n, n);
 }
 
+void OpsInput::updateGraphStructures(
+  int k, int Ji, int Jj, int &l, GOMA::matrix<int> &A_inv,
+  std::vector<int> &arcs_k, std::vector<int> &nodes
+) {
+  // std::cout <<"Arco: " << Ji << ", " << Jj << '\n';
 
-void OPS_input_t::update_structures(int k, int Ji, int Jj, int& l, GOMA::matrix<int>& A_inv, std::vector<int>& arcs_k, std::vector<int>& nodes)
-{
-	//std::cout <<"Arco: " << Ji << ", " << Jj << '\n';
-	
-    succ_(k + 1, Ji + 1).push_back(Jj);
-    succ_inx_(k + 1, Ji + 1).push_back(l);
-    A_succ_.push_back(get_pos(k, Ji, Jj));
+  succ_(k + 1, Ji + 1).push_back(Jj);
+  succ_inx_(k + 1, Ji + 1).push_back(l);
+  A_succ_.push_back(get_pos(k, Ji, Jj));
 
-    A_inv(Ji + 1, Jj + 1) = l;
+  A_inv(Ji + 1, Jj + 1) = l;
 
-    arcs_k.push_back(l);
+  arcs_k.push_back(l);
 
-    nodes[Ji]++;
-    nodes[Jj]++;
+  nodes[Ji]++;
+  nodes[Jj]++;
 
-    l++;
+  l++;
 }
 
-void OPS_input_t::update_pred(int k, int Ji, int Jj, int& l)
-{
-    pred_(k + 1, Jj + 1).push_back(Ji);
-    pred_inx_(k + 1, Jj + 1).push_back(l);
+void OpsInput::addPredecessor(int k, int Ji, int Jj, int &l) {
+  pred_(k + 1, Jj + 1).push_back(Ji);
+  pred_inx_(k + 1, Jj + 1).push_back(l);
 
-    l++;
+  l++;
 }
 
-void OPS_input_t::init_t_cost(void)
+void OpsInput::processTMatrix() {
+  const int n = getN();
+
+  for (int i = 1; i <= n - 1; i++) {
+    // shortest_path(aux, i - 1, dist, prev);
+    for (int j = 2; j <= n; j++)
+      if (i != j) {
+        // std::cout << dist[j - 1] - instance.get_T()(i,j) << '\n';
+        // assert(dist[j - 1] <= instance.get_T()(i,j));
+
+        t_cost_(i, j) = getT(i, j);
+      } else
+        t_cost_(i, j) = OpsInstance::kInfiniteTime;
+  }
+
+  t_cost_(1, n) = 0;
+
+  for (int j = 1; j <= n; j++) t_cost_(n, j) = OpsInstance::kInfiniteTime;
+
+  for (int i = 1; i <= n; i++) t_cost_(i, 1) = OpsInstance::kInfiniteTime;
+
+  // t_cost_.write_raw(std::cout);
+}
+
+void OpsInput::makeGraphArcs()  // AQUÍ!!!!!!!!!
 {
-    const int n = get_n();
-    
-    for (int i = 1; i <= n - 1; i++) {
+  int l = 0;
 
-        //shortest_path(aux, i - 1, dist, prev);
-        for (int j = 2; j <= n; j++)
-            if (i != j) {
+  const int n = getN();
+  const int m = getM();
 
-                //std::cout << dist[j - 1] - instance.get_T()(i,j) << '\n';
-                //assert(dist[j - 1] <= instance.get_T()(i,j));
+  for (int k = 0; k < m; k++) {
+    const std::vector<int> &Jk = getJk(k);
 
-                t_cost_(i, j) = get_T(i,j);
-            } else
-                t_cost_(i, j) = OPS_instance_t::kInfiniteTime;
+    const int nJ = Jk.size();
 
+    GOMA::matrix<int> &A_inv = inv_succ_[k];
+    A_inv.resize(n, n);
+    A_inv.init(-1);
+
+    std::vector<int> &arcs_k = arcs_k_[k];
+
+    std::vector<int> nodes(n, 0);
+
+    for (auto j : Jk) {
+      if (t_cost_(1, j + 1) < OpsInstance::kInfiniteTime)
+        updateGraphStructures(k, 0, j, l, A_inv, arcs_k, nodes);
     }
 
-    t_cost_(1, n) = 0;
+    updateGraphStructures(k, 0, n - 1, l, A_inv, arcs_k, nodes);
 
-    for (int j = 1; j <= n; j++)
-        t_cost_(n, j) = OPS_instance_t::kInfiniteTime;
+    for (int i = 0; i < nJ; i++) {
+      const int Ji = Jk[i];
 
-    for (int i = 1; i <= n; i++)
-        t_cost_(i, 1) = OPS_instance_t::kInfiniteTime;
-        
-    //t_cost_.write_raw(std::cout);
+      for (int j = 0; j < nJ; j++)
+        if (i != j) {
+          const int Jj = Jk[j];
 
-}
-
-void OPS_input_t::get_L(std::vector<int>& L) const
-{
-    const int n = get_n();
-    
-    L.resize(n);
-    
-    for (int i = 0; i < n - 1; i++)
-        L[i] = 0;
-        
-    L[n - 1] = get_L();
-}
-
-void OPS_input_t::make_structures(void) // AQUÍ!!!!!!!!!
-{
-    int l = 0;
-    
-    const int n = get_n();
-    const int m = get_m();
-
-    for (int k = 0; k < m; k++) {
-
-        const std::vector<int>& Jk = get_Jk(k);
-
-        const int nJ = Jk.size();
-
-        GOMA::matrix<int>& A_inv  = inv_succ_[k];
-        A_inv.resize(n, n);
-        A_inv.init(-1);
-
-        std::vector<int>& arcs_k = arcs_k_[k];
-
-        std::vector<int> nodes(n, 0);
-
-        for (auto j: Jk) {
-			if (t_cost_(1, j + 1) < OPS_instance_t::kInfiniteTime)
-				update_structures(k, 0, j, l, A_inv, arcs_k,  nodes);			
-		}
-
-        update_structures(k, 0, n - 1, l, A_inv, arcs_k, nodes);
-
-        for (int i = 0; i < nJ; i++) {
-
-            const int Ji = Jk[i];
-
-            for (int j = 0; j < nJ; j++)
-                if (i != j) {
-
-                    const int Jj = Jk[j];
-
-					if (t_cost_(Ji + 1, Jj + 1) < OPS_instance_t::kInfiniteTime)
-						update_structures(k, Ji, Jj, l, A_inv, arcs_k, nodes);
-                }
-
-            update_structures(k, Ji, n - 1, l, A_inv, arcs_k, nodes);
+          if (t_cost_(Ji + 1, Jj + 1) < OpsInstance::kInfiniteTime)
+            updateGraphStructures(k, Ji, Jj, l, A_inv, arcs_k, nodes);
         }
-		
-		//std::cout << "Concluido" << '\n';
 
-        std::vector<int>& nodes_k = nodes_k_[k];
-        for (int i = 1; i < n - 1; i++)
-            if (nodes[i] > 0)
-                nodes_k.push_back(i);
-
+      updateGraphStructures(k, Ji, n - 1, l, A_inv, arcs_k, nodes);
     }
+
+    // std::cout << "Concluido" << '\n';
+
+    std::vector<int> &nodes_k = nodes_k_[k];
+    for (int i = 1; i < n - 1; i++)
+      if (nodes[i] > 0) nodes_k.push_back(i);
+  }
 }
 
-void OPS_input_t::make_prev(void)
-{
-    const int m = get_m();
-    const int n = get_n();
-    
-    int l = 0;
+void OpsInput::makePredecessors() {
+  const int m = getM();
+  const int n = getN();
 
-    for (int k = 0; k < m; k++) {
+  int l = 0;
 
-        const std::vector<int>& Jk = get_Jk(k);
-        const int nJ = Jk.size();
+  for (int k = 0; k < m; k++) {
+    const std::vector<int> &Jk = getJk(k);
+    const int nJ = Jk.size();
 
-        for (auto j: Jk)
-            update_pred(k, 0, j, l);
+    for (auto j : Jk) addPredecessor(k, 0, j, l);
 
-        update_pred(k, 0, n - 1, l);
+    addPredecessor(k, 0, n - 1, l);
 
-        for (int i = 0; i < nJ; i++) {
+    for (int i = 0; i < nJ; i++) {
+      const int Ji = Jk[i];
 
-            const int Ji = Jk[i];
+      for (int j = 0; j < nJ; j++)
+        if (i != j) {
+          const int Jj = Jk[j];
 
-            for (int j = 0; j < nJ; j++)
-                if (i != j) {
-
-                    const int Jj = Jk[j];
-
-                    update_pred(k, Ji, Jj, l);
-                }
-
-            update_pred(k, Ji, n - 1, l);
+          addPredecessor(k, Ji, Jj, l);
         }
-    }    
+
+      addPredecessor(k, Ji, n - 1, l);
+    }
+  }
 }
 
-void OPS_input_t::build_input(void)
-{
+void OpsInput::build() {
+  resizeGraphStructures();
 
-    resize_structures();
+  makeGraphArcs();
 
-    make_structures();
+  makePredecessors();
 
-    make_prev();
-
-    init_t_cost();
+  processTMatrix();
 
 #ifndef NDEBUG
-    test_succ();
-    test_pred();
-    test_A_succ();
+  test_succ();
+  test_pred();
+  test_A_succ();
 #endif
 }
 
-
-void OPS_input_t::write_arc_inx(std::ostream& os, int inx) const
-{
-    const int pos = get_A_succ(inx);
-    int s, t, k;
-    get_pos(pos, k, s, t);                
-    
-    os << "(" << std::setw(3) << s << ", " << std::setw(3) << t << ")[" << std::setw(2) << k << " ]";    
+OpsInput::OpsInput(bool build) :
+  OpsInstance(), succ_(), pred_(), succ_inx_(), pred_inx_(), A_succ_(),
+  inv_succ_(), t_cost_() {
+  if (build) this->build();
 }
 
-OPS_input_t::OPS_input_t(const OPS_instance_t& instance, bool build):
-    instance_(instance),
-    succ_(),
-    pred_(),
-    succ_inx_(),
-    pred_inx_(),
-    A_succ_(),
-    inv_succ_(),
-    t_cost_()
-{
-    if (build) 
-        build_input();        
+int OpsInput::get_max_arc() const {
+  int max = 0;
+
+  const int sz = get_A_succ_sz();
+
+  for (int l = 0; l < sz; l++) {
+    const int pos = get_A_succ(l);
+
+    int i, j, k;
+    get_pos(pos, k, i, j);
+
+    if (max < t_cost_(i + 1, j + 1)) max = t_cost_(i + 1, j + 1);
+  }
+
+  return max;
 }
 
-int OPS_input_t::get_max_arc(void) const
-{
-    int max = 0;
+int OpsInput::get_max_nodes() const {
+  int m = -1;
+  const int K = getM();
 
-	const int sz = get_A_succ_sz();
+  for (int k = 0; k < K; k++) {
+    const int csz = nodes_k_[k].size();
 
-	for (int l = 0; l < sz; l++) {
-  
-		const int pos = get_A_succ(l);
-  
-		int i, j, k;          
-		get_pos(pos, k, i, j);   
+    m = m < csz ? csz : m;
+  }
 
-		if (max < t_cost_(i + 1,j + 1))
-			max = t_cost_(i + 1,j + 1 );	
-	}	
- 	
-	return max;
+  return m;
 }
 
-int OPS_input_t::get_max_nodes(void) const
-{
-    int m = -1;
-    const int K = get_m();
+void OpsInput::get_sync_stat(
+  int &nsync, int &maxgsync, int &mingsync, double &avggsync
+) const {
+  const int K = getM();
+  const int n = getN();
 
-    for (int k = 0; k < K; k++) {
+  std::vector<int> V(n);
 
-        const int csz = nodes_k_[k].size();
+  for (int &v : V) v = 0;
 
-        m = m < csz? csz: m;
+  for (int k = 0; k < K; k++) {
+    const std::vector<int> &nk = nodes_k_[k];
+
+    for (auto v : nk) V[v]++;
+  }
+
+  nsync = 0;
+  maxgsync = 1;
+  mingsync = n;
+  avggsync = 0;
+
+  int cnt = 0;
+
+  for (int i = 1; i < n - 1; i++) {
+    assert(V[i] > 0);
+
+    if (V[i] > 1) {
+      cnt++;
+
+      nsync++;
+
+      if (V[i] > maxgsync) maxgsync = V[i];
+
+      if (V[i] < mingsync) mingsync = V[i];
+
+      avggsync += V[i];
     }
+  }
 
-    return m;
-}
-
-const std::vector<int> OPS_input_t::get_inv_succ(int i, int j)  const
-{
-	std::vector<int> aux;
-	const int K = get_m();
-
-    for (int k = 0; k < K; k++) {
-		
-		const int inx = get_inv_succ(k, i, j);
-		
-		if (inx >= 0)
-			aux.push_back(inx);			
-	}
-	
-	return aux;
-}
-
-
-void OPS_input_t::get_sync_stat(int& nsync, int& maxgsync, int& mingsync, double& avggsync) const
-{
-    const int K = get_m();
-    const int n = get_n();
-
-    std::vector<int> V(n);
-
-    for (int& v: V)
-        v = 0;
-
-    for (int k = 0; k < K; k++) {
-
-        const std::vector<int>& nk =  nodes_k_[k];
-
-        for (auto v: nk)
-            V[v] ++;
-    }
-
-    nsync = 0;
-    maxgsync = 1;
-    mingsync = n;
+  if (cnt > 0)
+    avggsync /= (double)(cnt);
+  else {
+    maxgsync = 0;
+    mingsync = 0;
     avggsync = 0;
-
-    int cnt = 0;
-
-    for (int i = 1; i < n - 1; i++) {
-
-        assert(V[i] > 0);
-
-        if (V[i] > 1) {
-
-            cnt ++;
-
-            nsync++;
-
-            if (V[i] > maxgsync)
-                maxgsync = V[i];
-
-            if (V[i] < mingsync)
-                mingsync = V[i];
-
-            avggsync += V[i];
-        }
-    }
-
-    if (cnt > 0)
-        avggsync /= (double)(cnt);
-    else {
-        maxgsync = 0;
-        mingsync = 0;
-        avggsync = 0;
-    }
+  }
 }
 
-double OPS_input_t::get_avg_nodes(void) const
-{
-    double m = 0;
-    const int K = get_m();
+double OpsInput::get_avg_nodes() const {
+  double m = 0;
+  const int K = getM();
 
-    for (int k = 0; k < K; k++) {
+  for (int k = 0; k < K; k++) {
+    const int csz = nodes_k_[k].size();
+    m += csz;
+  }
 
-        const int csz = nodes_k_[k].size();
-        m += csz;
-    }
-
-    return m/(double)(K);
+  return m / (double)(K);
 }
 
-OPS_input_t::~OPS_input_t(void)
-{}
+OpsInput::~OpsInput() {}
 
+int OpsInput::get_msucc(int k) const {
+  int m = 0;
 
-int OPS_input_t::get_msucc(int k) const
-{
-    int m = 0;
+  for (int i = 0; i < getN(); i++) m += get_nsucc(k, i);
 
-    for (int i = 0; i < get_n(); i++)
-        m += get_nsucc(k, i);
-
-    return m;
+  return m;
 }
 
+void OpsInput::get_pos(int pos, int &k, int &i, int &j) const {
+  const int n = getN();
+  const int m = n * n;
 
-int OPS_input_t::get_mm(void) const
-{
-    const int K = get_m();
-    int m = 0;
+  k = pos / m;
+  int res = pos % m;
 
-    for ( int k = 0; k < K; k++)
-        m += get_msucc(k);
-
-    return m;
+  i = res / n;
+  j = res % n;
 }
-
-void OPS_input_t::get_pos(int pos, int& k, int& i, int& j) const
-{
-    const int n = get_n();
-    const int m = n * n;
-
-    k = pos / m;
-    int res = pos % m;
-
-    i = res / n;
-    j = res % n;
-}
-
-
-bool OPS_input_t::check_path (const std::vector<int>& p) const
-{
-    int k, i, j;
-
-    const int first = get_A_succ(p[0]);
-
-    get_pos(first, k, i,j);
-
-    const bool depot1 = (i == 0);
-
-    const int last  = get_A_succ(p[p.size() - 1]);
-
-    get_pos(last, k, i,j);
-
-    const bool depot2 = (j == (get_n() - 1));
-
-    return (depot1 && depot2);
-}
-
-int  OPS_input_t::length_path(const std::vector<int>& p) const
-{
-    const int sz = p.size();
-
-    int len = 0;
-
-    for (int l = 0; l < sz; l++) {
-
-        const int inx = get_A_succ(p[l]);
-
-        int k, i, j;
-
-        get_pos(inx, k, i,j);
-
-        std::cout << get_t(i, j) << " - ";
-
-        len += get_t(i, j);
-    }
-
-    std::cout << '\n';
-    std::cout << len << '\n';
-
-
-
-    return len;
-
-}
-
-void OPS_input_t::get_path(const std::vector<int>& v, int k, std::vector<int>& arcs, std::vector<bool>& visited) const
-{
-    const int sz = v.size() - 1;
-    assert(sz > 0);
-
-    for (int l = 0; l < sz; l++) {
-
-        visited[v[l]] = true;
-        visited[v[l+1]] = true;
-
-        const int p = get_inv_succ(k, v[l], v[l + 1]);
-        arcs.push_back(p);
-    }
-}
-
-void OPS_input_t::get_path(const std::vector<int>& v, int k, std::vector<int>& arcs) const
-{
-    const int sz = v.size() - 1;
-    assert(sz > 0);
-
-    for (int l = 0; l < sz; l++) {
-
-        const int p = get_inv_succ(k, v[l], v[l + 1]);
-        arcs.push_back(p);
-    }
-}
-
-void OPS_input_t::get_mpath(const std::vector<int>& v, int k, std::vector<int>& arcs, std::vector<bool>& visited) const
-{
-    if (v.size() == 0) return;
-
-    get_path(v, k, arcs, visited);
-
-    const int sz = v.size();
-
-    for (int i = 0; i < sz - 2; i++)
-        for (int  j = i + 2; j < sz; j++) {
-
-            const int p = get_inv_succ(k, v[i], v[j]);
-            arcs.push_back(p);
-        }
-
-
-    for (int i = sz - 2; i >= 2; i--)
-        for (int j = i - 1; j >= 1; j--) {
-
-            const int p = get_inv_succ(k, v[i], v[j]);
-            arcs.push_back(p);
-        }
-
-
-}
-
-
-
-
-
-void OPS_input_t::shortest_path(const GOMA::matrix<int>& M, int source, int* dist, int* prev )
-{
-
-    //M.write_raw(std::cout);
-
-    std::set<int> Q;
-    std::set<int>::iterator it;
-
-    const int n = M.get_m();
-
-
-    dist[source] = 0;
-    prev[source] = -1;
-
-    for ( int i = 0; i < n; i++ ) {
-
-        if ( i != source ) {
-
-            dist[i] = OPS_instance_t::kInfiniteTime;
-            prev[i] = -1;
-        }
-        Q.insert( i );
-    }
-
-
-    while (!Q.empty()) {
-
-
-        int u = -1;
-        int best_val = OPS_instance_t::kInfiniteTime + 1;
-
-        for ( int i = 0; i < n; i++ )
-            if ( (Q.find( i ) != Q.end()) && ( dist[i] < best_val ) ) {
-
-                best_val = dist[i];
-                u = i;
-            }
-
-        assert(u >= 0);
-
-        Q.erase( Q.find (u) );
-
-        for ( int i = 0; i < n; i++ ) {
-
-            const int t = M(u + 1, i + 1);
-
-            //if (M(u + 1, i + 1) > 0)
-            {
-
-                const int alt = best_val + t;
-                const int v = i;
-
-                if ( alt < dist[v] ) {
-
-                    dist[v] = alt;
-                    prev[v] = u;
-                }
-            }
-        }
-
-        /* for (int i = 0; i < n; i++)
-            std::cout << dist[i] << " ";
-        std::cout << '\n'; */
-    }
-}
-
 
 #ifndef NDEBUG
 
-void OPS_input_t::test_succ(void)
-{
-    const int K = get_m();
+void OpsInput::test_succ() {
+  const int K = getM();
 
-    for (int k = 0; k < K; k++) {
+  for (int k = 0; k < K; k++) {
+    std::set<int> SJk;
+    const std::vector<int> &Jk = getJk(k);
+    const int nJ = Jk.size();
 
-        std::set<int> SJk;
-        const std::vector<int>& Jk = get_Jk(k);
-        const int nJ = Jk.size();
+    // std::cout << "Grupo: " << k << '\n';
 
-		//std::cout << "Grupo: " << k << '\n';
+    // std::cout << "     ";
 
-		//std::cout << "     ";
+    for (auto i : Jk) {
+      SJk.insert(i);
 
-        for (auto i: Jk) {
-            SJk.insert(i);
-			
-			//std::cout << std::setw(3) << i << " ";
-			
-		}
-		//std::cout << '\n';
-
-        for (int i = 0; i < nJ; i++) {
-
-            const int Ji = Jk[i];
-            const std::vector<int>& v = succ_(k + 1, Ji + 1);
-            const int sz = v.size();
-
-			//std::cout << "    Sucesores de : " << Ji << '\n';
-			
-			//for (int j: v)
-			//	std::cout << std::setw(3) << j << " ";
-			//std::cout << '\n';
-
-            for (int l = 0; l < sz - 1; l++) {
-				
-                const int j = v[l];
-				
-				//std::cout << j << "      Checking: ";
-				
-				//if (SJk.find(j)== SJk.end())
-					//exit(1);
-				
-                assert(SJk.find(j)!= SJk.end());
-				
-				//std::cout << "OK" << '\n';
-            }
-        }
+      // std::cout << std::setw(3) << i << " ";
     }
+    // std::cout << '\n';
+
+    for (int i = 0; i < nJ; i++) {
+      const int Ji = Jk[i];
+      const std::vector<int> &v = succ_(k + 1, Ji + 1);
+      const int sz = v.size();
+
+      // std::cout << "    Sucesores de : " << Ji << '\n';
+
+      // for (int j: v)
+      //	std::cout << std::setw(3) << j << " ";
+      // std::cout << '\n';
+
+      for (int l = 0; l < sz - 1; l++) {
+        const int j = v[l];
+
+        // std::cout << j << "      Checking: ";
+
+        // if (SJk.find(j)== SJk.end())
+        // exit(1);
+
+        assert(SJk.find(j) != SJk.end());
+
+        // std::cout << "OK" << '\n';
+      }
+    }
+  }
 }
 
-void OPS_input_t::test_pred(void)
-{
-    const int K = get_m();
+void OpsInput::test_pred() {
+  const int K = getM();
 
-    for (int k = 0; k < K; k++) {
+  for (int k = 0; k < K; k++) {
+    std::set<int> SJk;
+    const std::vector<int> &Jk = getJk(k);
+    const int nJ = Jk.size();
 
-        std::set<int> SJk;
-        const std::vector<int>& Jk = get_Jk(k);
-        const int nJ = Jk.size();
+    for (auto i : Jk) SJk.insert(i);
 
-        for (auto i: Jk)
-            SJk.insert(i);
+    for (int i = 0; i < nJ; i++) {
+      const int Ji = Jk[i];
+      std::vector<int> &v = pred_(k + 1, i + 1);
+      const int sz = v.size();
 
-        for (int i = 0; i < nJ; i++) {
-
-            const int Ji = Jk[i];
-            std::vector<int>& v = pred_(k + 1,i + 1);
-            const int sz = v.size();
-
-            for (int l = 1; l < sz; l++) {
-
-                const int j = v[l];
-                assert((SJk.find(Ji) != SJk.end()) && (SJk.find(j)!= SJk.end()));
-            }
-        }
+      for (int l = 1; l < sz; l++) {
+        const int j = v[l];
+        assert((SJk.find(Ji) != SJk.end()) && (SJk.find(j) != SJk.end()));
+      }
     }
+  }
 }
 
+void OpsInput::test_A_succ() {
+  const int sz = A_succ_.size();
+  const int n = getN();
 
-void OPS_input_t::test_A_succ(void)
-{
-    const int sz = A_succ_.size();
-    const int n  = get_n();
+  for (int l = 0; l < sz; l++) {
+    const int pos = A_succ_[l];
 
-    for (int l = 0; l < sz; l++) {
+    int i, j, k;
+    get_pos(pos, k, i, j);
 
-        const int pos = A_succ_[l];
+    if ((i != 0) && (j != n - 1)) {
+      std::set<int> SJk;
+      const std::vector<int> &Jk = getJk(k);
 
-        int i, j, k;
-        get_pos(pos, k, i, j);
+      for (auto Ji : Jk) SJk.insert(Ji);
 
-        if ((i != 0) && (j != n - 1)) {
-
-            std::set<int> SJk;
-            const std::vector<int>& Jk = get_Jk(k);
-
-            for (auto Ji: Jk)
-                SJk.insert(Ji);
-
-            assert((SJk.find(i) != SJk.end()) && (SJk.find(j)!= SJk.end()));
-        }
+      assert((SJk.find(i) != SJk.end()) && (SJk.find(j) != SJk.end()));
     }
+  }
 }
-
 
 #endif
 
-void OPS_input_t::write_statistics_hdr(std::ostream& os) const
-{
-    instance_.write_statistics_hdr(os);
+void OpsInput::writeStatisticsHdr(std::ostream &os) const {
+  OpsInstance::writeStatisticsHdr(os);
 
-    os << "$n$" << "\t";
-    os << "$m$" << "\t";
+  os << "$n$"
+     << "\t";
+  os << "$m$"
+     << "\t";
 
-    os << "$\\max|J_k|$" << "\t";
-    os << "$\\bar{|J_k|}$" << "\t";
+  os << "$\\max|J_k|$"
+     << "\t";
+  os << "$\\bar{|J_k|}$"
+     << "\t";
 
-    os << "nsync" << "\t";
-    os << "$\\max\\partial\\mbox{sync}$" << "\t";
-    os << "$\\bar{\\partial\\mbox{sync}$" << "\t";
+  os << "nsync"
+     << "\t";
+  os << "$\\max\\partial\\mbox{sync}$"
+     << "\t";
+  os << "$\\bar{\\partial\\mbox{sync}$"
+     << "\t";
 
-    os << "$L$" << "\t";
+  os << "$L$"
+     << "\t";
 }
 
-void OPS_input_t::write_statistics(std::ostream& os) const
-{
-    instance_.write_statistics(os);
+void OpsInput::writeStatistics(std::ostream &os) const {
+  OpsInstance::writeStatistics(os);
 
-    int nsync, maxgsync, mingsync;
-    double avggsync;
+  int nsync, maxgsync, mingsync;
+  double avggsync;
 
-    get_sync_stat(nsync, maxgsync, mingsync, avggsync);
+  get_sync_stat(nsync, maxgsync, mingsync, avggsync);
 
-    os << std::setw(4)  << get_n() << "\t";
-    os << std::setw(4)  << get_m() << "\t";
+  os << std::setw(4) << getN() << "\t";
+  os << std::setw(4) << getM() << "\t";
 
-    os << std::setw(4)  << get_max_nodes() << "\t";
-    os << std::setw(6)  << std::fixed << std::setprecision(1) << get_avg_nodes() << "\t";
+  os << std::setw(4) << get_max_nodes() << "\t";
+  os << std::setw(6) << std::fixed << std::setprecision(1) << get_avg_nodes()
+     << "\t";
 
-    os << std::setw(4)  << nsync << "\t";
-    os << std::setw(4)  << maxgsync << "\t";
-    os << std::setw(6)  << std::fixed << std::setprecision(1) << avggsync << "\t";
+  os << std::setw(4) << nsync << "\t";
+  os << std::setw(4) << maxgsync << "\t";
+  os << std::setw(6) << std::fixed << std::setprecision(1) << avggsync << "\t";
 
-    os << std::setw(6)  << get_L() << "\t";
-    os << "\t";
+  os << std::setw(6) << getL() << "\t";
+  os << "\t";
 }
 
+// ------------------------------- Operators ------------------------------- //
+
+std::istream &operator>>(std::istream &is, OpsInput &ops_input) {
+  is >> static_cast<OpsInstance &>(ops_input);
+  ops_input.build();
+  return is;
 }
+
+}  // namespace emir
