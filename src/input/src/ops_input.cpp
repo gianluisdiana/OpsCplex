@@ -112,8 +112,8 @@ void OpsInput::createGraphArcs() {
           graph.addArc(Ji, Jj, getT(Ji, Jj));
         }
       }
-      graphs_.push_back(graph);
     }
+    graphs_.push_back(graph);
   }
 }
 
