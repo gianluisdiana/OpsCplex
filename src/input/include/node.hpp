@@ -117,7 +117,7 @@ class Node {
    */
   inline void
   addPredecessor(std::shared_ptr<Node> predecessor, std::shared_ptr<Arc> arc) {
-    successors_[predecessor] = arc;
+    predecessors_[predecessor] = arc;
   }
 
  private:
