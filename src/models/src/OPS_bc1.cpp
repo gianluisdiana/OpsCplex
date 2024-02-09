@@ -109,25 +109,19 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   for (int k = 0; k < K; k++) {
     auto graph = I_->getGraph(k);
-    for (const auto &arc : graph.getArcs()) {
-      const auto &origin_id = std::stoi(arc.getOriginId());
-      const auto &destination_id = std::stoi(arc.getDestinationId());
-      sprintf(aux, "x_%d_%d_%d", k + 1, origin_id, destination_id);
-      x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
+    for (const auto &origin_node : graph.getNodesId()) {
+      if (origin_node == std::to_string(n - 1)) continue;
+      for (const auto &destination_node : graph.getNodesId()) {
+        if (destination_node == std::to_string(0) || origin_node == destination_node)
+          continue;
+        sprintf(
+          aux, "x_%d_%d_%d", k + 1, std::stoi(origin_node),
+          std::stoi(destination_node)
+        );
+        x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
+      }
     }
   }
-
-  // const int sz = I_->get_A_succ_sz();
-
-  // for (int l = 0; l < sz; l++) {
-  //   const int pos = I_->get_A_succ(l);
-
-  // int i, j, k;
-  // I_->get_pos(pos, k, i, j);
-
-  // sprintf(aux, "x_%d_%d_%d", k + 1, i, j);
-  // x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
-  // }
 
   model.add(x_);
 
@@ -219,9 +213,9 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
       cut = big_m * x_[l] + s_[i] - s_[j];
 
       sprintf(aux, "MTZ_%d_%d_%d", i, j, k + 1);
-      constraints.add(IloRange(
-        env_, -IloInfinity, cut, big_m - I_->getT(i, j), aux
-      ));
+      constraints.add(
+        IloRange(env_, -IloInfinity, cut, big_m - I_->getT(i, j), aux)
+      );
       cut.end();
       l++;
     }
@@ -232,22 +226,22 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
   //   int j;
   //   int k;
 
-  //   const int arc = I_->get_A_succ(l);
+  // const int arc = I_->get_A_succ(l);
 
-  //   I_->get_pos(arc, k, i, j);
+  // I_->get_pos(arc, k, i, j);
 
-  //   IloExpr cut(env_);
+  // IloExpr cut(env_);
 
-  //   cut = big_m * x_[l] + s_[i] - s_[j];
+  // cut = big_m * x_[l] + s_[i] - s_[j];
 
-  //   sprintf(aux, "MTZ_%d_%d_%d", i, j, k + 1);
+  // sprintf(aux, "MTZ_%d_%d_%d", i, j, k + 1);
 
-  //   // std::cout << "( "<< i << ", " << j << " ): " << I_->get_t(i,j) << '\n';
+  // // std::cout << "( "<< i << ", " << j << " ): " << I_->get_t(i,j) << '\n';
 
-  //   constraints.add(
-  //     IloRange(env_, -IloInfinity, cut, big_m - I_->getT(i, j), aux)
-  //   );
-  //   cut.end();
+  // constraints.add(
+  //   IloRange(env_, -IloInfinity, cut, big_m - I_->getT(i, j), aux)
+  // );
+  // cut.end();
   // }
 
   // LIMIT
