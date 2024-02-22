@@ -68,38 +68,19 @@ bool OPS_output_t::set(
 
   x_.init(0);
 
-  for (int k = 0; k < I_.getM(); k++) {
-    auto graph = I_.getGraph(k);
-    for (const auto &arc : graph.getArcs()) {
-      const int i = std::stoi(arc.getOriginId());
-      const int j = std::stoi(arc.getDestinationId());
-      const int value = round(x[I_.calculateXIndex(k, i, j)]);
-
-      assert(value <= 1);
-      assert(value >= 0);
-
-      set_x(k, i, j) = 1;
+  for (int k = 0; k < I_.getM(); ++k) {
+    const auto& graph = I_.getGraph(k);
+    for (const auto& arc : graph.getArcs()) {
+      const int value = x[arc.getId()];
+      assert(value == 1 || value == 0);
+      if (value == 1) {
+        const int i = std::stoi(arc.getOriginId());
+        const int j = std::stoi(arc.getDestinationId());
+        set_x(k, i, j) = 1;
+      }
     }
   }
 
-  // const int x_sz = x.size();
-
-  // for (int l = 0; l < x_sz; l++) {
-  //   const int arc = I_.get_A_succ(l);
-
-  //   int i;
-  //   int j;
-  //   int k;
-
-  //   I_.get_pos(arc, k, i, j);
-
-  //   const int val = round(x[l]);
-
-  //   assert(val <= 1);
-  //   assert(val >= 0);
-
-  //   if (val == 1) set_x(k, i, j) = 1;
-  // }
   const int n = I_.getN();
 
   y_[0] = 1;

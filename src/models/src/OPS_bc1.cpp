@@ -108,18 +108,14 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
   // Variables x
 
   for (int k = 0; k < K; k++) {
-    auto graph = I_->getGraph(k);
-    for (const auto &origin_node : graph.getNodesId()) {
-      if (origin_node == std::to_string(n - 1)) continue;
-      for (const auto &destination_node : graph.getNodesId()) {
-        if (destination_node == std::to_string(0) || origin_node == destination_node)
-          continue;
-        sprintf(
-          aux, "x_%d_%d_%d", k + 1, std::stoi(origin_node),
-          std::stoi(destination_node)
-        );
-        x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
-      }
+    const auto graph = I_->getGraph(k);
+    for (const auto& arc : graph.getArcs()) {
+      const auto origin_node = std::stoi(arc.getOriginId());
+      const auto destination_node = std::stoi(arc.getDestinationId());
+      sprintf(
+        aux, "x_%d_%d_%d", k + 1, origin_node, destination_node
+      );
+      x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
     }
   }
 
