@@ -55,8 +55,7 @@ unsigned int OpsInput::getMaxArc() const {
   return max_arc;
 }
 
-// ------------------------------ Stats Getters ------------------------------
-// //
+// ----------------------------- Stats Getters ----------------------------- //
 
 const std::string OpsInput::getStatistics() const {
   auto bars_stats = getBarsStats();

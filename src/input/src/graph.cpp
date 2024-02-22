@@ -23,11 +23,17 @@ const std::vector<std::string> Graph::getNodesId() const {
   return nodes_id;
 }
 
-void Graph::addArc(const std::string &from_id, const std::string &to_id, const int cost) {
+// -------------------------------- Adders -------------------------------- //
+
+void Graph::addArc(
+  const std::string &from_id, const std::string &to_id, const int cost
+) {
   auto from_node = searchNode(from_id);
   auto to_node = searchNode(to_id);
   arcs_.emplace_back(from_node, to_node, cost);
 }
+
+// ---------------------------- Private Methods ---------------------------- //
 
 std::shared_ptr<Node> Graph::searchNode(const std::string &id) {
   auto it = nodes_.find(id);
