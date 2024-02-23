@@ -70,11 +70,7 @@ class Node {
    * @param i Index of the successor
    * @return The arc that conects to the i-th successor of the node
    */
-  inline std::shared_ptr<Arc> getSuccessorArc(const int &i) const {
-    auto it = successors_.begin();
-    std::advance(it, i);
-    return it->second;
-  }
+  std::shared_ptr<Arc> getSuccessorArc(const int &i) const;
 
   /**
    * @brief Gets the arc that conects to the i-th predecessor of the node
@@ -82,11 +78,7 @@ class Node {
    * @param i Index of the predecessor
    * @return The arc that conects to the i-th predecessor of the node
    */
-  inline std::shared_ptr<Arc> getPredecessorArc(const int &i) const {
-    auto it = predecessors_.begin();
-    std::advance(it, i);
-    return it->second;
-  }
+  std::shared_ptr<Arc> getPredecessorArc(const int &i) const;
 
   /**
    * @brief Gets the arc that connects the node with the given node

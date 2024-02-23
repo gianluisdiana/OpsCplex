@@ -5,6 +5,7 @@ project(input)
 add_library(${PROJECT_NAME} STATIC
     src/arc.cpp
     src/graph.cpp
+    src/node.cpp
     src/ops_input.cpp
     src/OPS_instance_t.cpp
 )
