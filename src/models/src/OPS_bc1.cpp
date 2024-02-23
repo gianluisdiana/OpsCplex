@@ -29,6 +29,7 @@ void OPS_cplex_solver1::solve(std::ostream &r_os, double ub, bool root_node) {
     set_param(r_os);
 
     cplex_.extract(model);
+    std::cout << model;
 
     cplex_.solve();
   } catch (IloException &ex) {
@@ -109,12 +110,10 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   for (int k = 0; k < K; k++) {
     const auto graph = I_->getGraph(k);
-    for (const auto& arc : graph.getArcs()) {
+    for (const auto &arc : graph.getArcs()) {
       const auto origin_node = std::stoi(arc.getOriginId());
       const auto destination_node = std::stoi(arc.getDestinationId());
-      sprintf(
-        aux, "x_%d_%d_%d", k + 1, origin_node, destination_node
-      );
+      sprintf(aux, "x_%d_%d_%d", k + 1, origin_node, destination_node);
       x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
     }
   }
@@ -136,19 +135,6 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
   IloRangeArray constraints(env_);
 
   for (int k = 0; k < K; k++) {
-    const auto mki = I_->getAmountOfSuccessors(k, std::to_string(0));
-    if (mki == 0) continue;
-
-    IloExpr cut(env_);
-
-    for (auto l = 0; l < mki; l++)
-      cut += x_[I_->getArcId(k, std::to_string(0), l, true)];
-    sprintf(aux, "deltaplus_%d_%d", 0, k + 1);
-    constraints.add(IloRange(env_, 1.0, cut, 1.0, aux));
-    cut.end();
-  }
-
-  for (int k = 0; k < K; k++) {
     const auto mki = I_->getAmountOfPredecessors(k, std::to_string(n - 1));
 
     if (mki == 0) continue;
@@ -163,18 +149,19 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   // DELTA PLUS
 
-  for (int k = 0; k < K; k++) {
-    for (int i = 1; i < n - 1; i++) {
-      const int mki = I_->getAmountOfSuccessors(k, std::to_string(i));
-
+  for (auto k = 0; k < K; ++k) {
+    for (auto node_idx = 0; node_idx < n - 1; ++node_idx) {
+      const auto mki = I_->getAmountOfSuccessors(k, std::to_string(node_idx));
       if (mki == 0) continue;
 
       IloExpr cut(env_);
-      for (int l = 0; l < mki; l++)
-        cut += x_[I_->getArcId(k, std::to_string(i), l, true)];
-      cut -= y_[i - 1];
-      sprintf(aux, "deltaplus_%d_%d", i, k + 1);
-      constraints.add(IloRange(env_, 0.0, cut, 0.0, aux));
+      for (auto l = 0; l < mki; ++l)
+        cut += x_[I_->getArcId(k, std::to_string(node_idx), l, true)];
+      if (node_idx > 0) cut -= y_[node_idx - 1];
+
+      sprintf(aux, "deltaplus_%d_%d", node_idx, k + 1);
+      const double is_root_node = node_idx == 0 ? 1.0 : 0.0;
+      constraints.add(IloRange(env_, is_root_node, cut, is_root_node, aux));
       cut.end();
     }
   }
@@ -216,29 +203,6 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
       l++;
     }
   }
-
-  // for (int l = 0; l < sz; l++) {
-  //   int i;
-  //   int j;
-  //   int k;
-
-  // const int arc = I_->get_A_succ(l);
-
-  // I_->get_pos(arc, k, i, j);
-
-  // IloExpr cut(env_);
-
-  // cut = big_m * x_[l] + s_[i] - s_[j];
-
-  // sprintf(aux, "MTZ_%d_%d_%d", i, j, k + 1);
-
-  // // std::cout << "( "<< i << ", " << j << " ): " << I_->get_t(i,j) << '\n';
-
-  // constraints.add(
-  //   IloRange(env_, -IloInfinity, cut, big_m - I_->getT(i, j), aux)
-  // );
-  // cut.end();
-  // }
 
   // LIMIT
 
