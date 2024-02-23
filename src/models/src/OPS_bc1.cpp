@@ -76,7 +76,7 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
   const int L = I_->getL();  // Limit
 
   const int max_arc = I_->getMaxArc() + 1;
-  const int big_m = max_arc > L ? max_arc : L;
+  const int big_m = max_arc > (L + 1) ? max_arc : (L + 1);
 
   char aux[80];
 
