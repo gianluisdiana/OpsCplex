@@ -15,7 +15,6 @@ project(source)
 
 add_subdirectory(main)
 add_subdirectory(util)
-add_subdirectory(json)
 add_subdirectory(input)
 add_subdirectory(output)
 add_subdirectory(models)
