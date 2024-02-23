@@ -134,19 +134,6 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   IloRangeArray constraints(env_);
 
-  for (int k = 0; k < K; k++) {
-    const auto mki = I_->getAmountOfPredecessors(k, std::to_string(n - 1));
-
-    if (mki == 0) continue;
-    IloExpr cut(env_);
-
-    for (int l = 0; l < mki; l++)
-      cut += x_[I_->getArcId(k, std::to_string(n - 1), l, false)];
-    sprintf(aux, "deltaminus_%d_%d", n - 1, k + 1);
-    constraints.add(IloRange(env_, 1.0, cut, 1.0, aux));
-    cut.end();
-  }
-
   // DELTA PLUS
 
   for (auto k = 0; k < K; ++k) {
@@ -168,18 +155,19 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   // DELTA MINUS
 
-  for (int k = 0; k < K; k++) {
-    for (int i = 1; i < n - 1; i++) {
-      const int mki = I_->getAmountOfPredecessors(k, std::to_string(i));
-
+  for (auto k = 0; k < K; ++k) {
+    for (auto node_idx = 1; node_idx < n; ++node_idx) {
+      const auto mki = I_->getAmountOfPredecessors(k, std::to_string(node_idx));
       if (mki == 0) continue;
 
       IloExpr cut(env_);
-      for (int l = 0; l < mki; l++)
-        cut += x_[I_->getArcId(k, std::to_string(i), l, false)];
-      cut -= y_[i - 1];
-      sprintf(aux, "deltaminus_%d_%d", i, k + 1);
-      constraints.add(IloRange(env_, 0.0, cut, 0.0, aux));
+      for (auto l = 0; l < mki; ++l)
+        cut += x_[I_->getArcId(k, std::to_string(node_idx), l, false)];
+      if (node_idx < n - 1) cut -= y_[node_idx - 1];
+
+      sprintf(aux, "deltaminus_%d_%d", node_idx, k + 1);
+      const double is_last_node = node_idx == (n - 1) ? 1.0 : 0.0;
+      constraints.add(IloRange(env_, is_last_node, cut, is_last_node, aux));
       cut.end();
     }
   }
