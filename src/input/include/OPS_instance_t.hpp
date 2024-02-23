@@ -93,7 +93,7 @@ class OpsInstance {
    * @param destiny_index The index of the destiny node
    */
   inline int getT(const int origin_index, const int destiny_index) const {
-    return T_(origin_index, destiny_index);
+    return T_(origin_index + 1, destiny_index + 1);
   }
 
   /** @brief Gives read-only access to the scaling factor */
