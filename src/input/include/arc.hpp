@@ -29,10 +29,9 @@
 #include <memory>
 #include <string>
 
-namespace emir {
+#include <node.fwd.hpp>
 
-/** @see Node class: src/input/include/node.hpp */
-class Node;
+namespace emir {
 
 /** @brief Represents an arc in the graph */
 class Arc {
