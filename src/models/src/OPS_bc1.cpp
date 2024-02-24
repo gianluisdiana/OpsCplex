@@ -26,6 +26,7 @@ void OPS_cplex_solver1::solve(std::ostream &r_os, double ub, bool root_node) {
     auto model = makeModel();
     set_param(r_os);
     cplex_.extract(model);
+    std::cout << model;
     cplex_.solve();
   } catch (IloException &ex) {
     std::cerr << "Error: " << ex << '\n';
@@ -80,32 +81,35 @@ IloModel OPS_cplex_solver1::makeModel() {
 }
 
 void OPS_cplex_solver1::addYVariable(IloModel &model) {
-  char aux[80];
   for (int j = 1; j < I_->getN() - 1; ++j) {
-    sprintf(aux, "y_%d", j);
-    y_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
+    y_.add(
+      IloNumVar(env_, 0, 1, IloNumVar::Bool, ("y_" + std::to_string(j)).c_str())
+    );
   }
   model.add(y_);
 }
 
 void OPS_cplex_solver1::addSVariable(IloModel &model) {
-  char aux[80];
   for (int j = 0; j < I_->getN(); j++) {
-    sprintf(aux, "s_%d", j);
-    s_.add(IloNumVar(env_, 0, IloInfinity, IloNumVar::Float, aux));
+    s_.add(IloNumVar(
+      env_, 0, IloInfinity, IloNumVar::Float, ("s_" + std::to_string(j)).c_str()
+    ));
   }
   model.add(s_);
 }
 
 void OPS_cplex_solver1::addXVariable(IloModel &model) {
-  char aux[80];
   for (int k = 0; k < I_->getM(); ++k) {
     const auto graph = I_->getGraph(k);
     for (const auto &arc : graph.getArcs()) {
-      const auto origin_node = std::stoi(arc.getOriginId());
-      const auto destination_node = std::stoi(arc.getDestinationId());
-      sprintf(aux, "x_%d_%d_%d", k + 1, origin_node, destination_node);
-      x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
+      const auto &origin_node = arc.getOriginId();
+      const auto &destination_node = arc.getDestinationId();
+      x_.add(IloNumVar(
+        env_, 0, 1, IloNumVar::Bool,
+        ("x_" + std::to_string(k + 1) + "_" + origin_node + "_" +
+         destination_node)
+          .c_str()
+      ));
     }
   }
   model.add(x_);
@@ -131,45 +135,45 @@ void OPS_cplex_solver1::addConstraints(IloModel &model) {
 }
 
 void OPS_cplex_solver1::addDeltaPlusConstraints(IloRangeArray &constraints) {
-  char aux[80];
   for (auto k = 0; k < I_->getM(); ++k) {
     for (auto node_idx = 0; node_idx < I_->getN() - 1; ++node_idx) {
-      const auto mki = I_->getAmountOfSuccessors(k, std::to_string(node_idx));
+      const auto &node_string = std::to_string(node_idx);
+      const auto mki = I_->getAmountOfSuccessors(k, node_string);
       if (mki == 0) continue;
 
       IloExpr expression(env_);
       for (auto l = 0; l < mki; ++l) {
-        expression += x_[I_->getArcId(k, std::to_string(node_idx), l, true)];
+        expression += x_[I_->getArcId(k, node_string, l, true)];
       }
       if (node_idx > 0) expression -= y_[node_idx - 1];
 
-      sprintf(aux, "deltaplus_%d_%d", node_idx, k + 1);
       const double is_root_node = node_idx == 0 ? 1.0 : 0.0;
-      constraints.add(
-        IloRange(env_, is_root_node, expression, is_root_node, aux)
-      );
+      constraints.add(IloRange(
+        env_, is_root_node, expression, is_root_node,
+        ("deltaplus_" + node_string + "_" + std::to_string(k + 1)).c_str()
+      ));
       expression.end();
     }
   }
 }
 
 void OPS_cplex_solver1::addDeltaMinusConstraints(IloRangeArray &constraints) {
-  char aux[80];
   for (auto k = 0; k < I_->getM(); ++k) {
     for (auto node_idx = 1; node_idx < I_->getN(); ++node_idx) {
-      const auto mki = I_->getAmountOfPredecessors(k, std::to_string(node_idx));
+      const auto &node_string = std::to_string(node_idx);
+      const auto mki = I_->getAmountOfPredecessors(k, node_string);
       if (mki == 0) continue;
 
       IloExpr expression(env_);
       for (auto l = 0; l < mki; ++l)
-        expression += x_[I_->getArcId(k, std::to_string(node_idx), l, false)];
+        expression += x_[I_->getArcId(k, node_string, l, false)];
       if (node_idx < I_->getN() - 1) expression -= y_[node_idx - 1];
 
-      sprintf(aux, "deltaminus_%d_%d", node_idx, k + 1);
       const double is_last_node = node_idx == (I_->getN() - 1) ? 1.0 : 0.0;
-      constraints.add(
-        IloRange(env_, is_last_node, expression, is_last_node, aux)
-      );
+      constraints.add(IloRange(
+        env_, is_last_node, expression, is_last_node,
+        ("deltaminus_" + node_string + '_' + std::to_string(k + 1)).c_str()
+      ));
       expression.end();
     }
   }
@@ -177,19 +181,19 @@ void OPS_cplex_solver1::addDeltaMinusConstraints(IloRangeArray &constraints) {
 
 void OPS_cplex_solver1::addMTZConstraints(IloRangeArray &constraints) {
   const int BIG_M = std::max<int>(I_->getMaxArc(), I_->getL()) + 1;
-  char aux[80];
   for (auto k = 0, x_idx = 0; k < I_->getM(); ++k) {
     const auto &graph = I_->getGraph(k);
     for (const auto &arc : graph.getArcs()) {
-      const int i = std::stoi(arc.getOriginId());
-      const int j = std::stoi(arc.getDestinationId());
+      const auto &i = arc.getOriginId();
+      const auto &j = arc.getDestinationId();
       IloExpr expression(env_);
-      expression = BIG_M * x_[x_idx] + s_[i] - s_[j];
+      expression = BIG_M * x_[x_idx] + s_[std::stoi(i)] - s_[std::stoi(j)];
 
-      sprintf(aux, "MTZ_%d_%d_%d", i, j, k + 1);
-      constraints.add(
-        IloRange(env_, -IloInfinity, expression, BIG_M - I_->getT(i, j), aux)
-      );
+      constraints.add(IloRange(
+        env_, -IloInfinity, expression,
+        BIG_M - I_->getT(std::stoi(i), std::stoi(j)),
+        ("MTZ_" + i + "_" + j + "_" + std::to_string(k + 1)).c_str()
+      ));
       expression.end();
       x_idx++;
     }
@@ -197,20 +201,17 @@ void OPS_cplex_solver1::addMTZConstraints(IloRangeArray &constraints) {
 }
 
 void OPS_cplex_solver1::addLimitConstraints(IloRangeArray &constraints) {
-  char aux[80];
-  IloExpr start_expression(env_);
-  start_expression = s_[0];
+  IloExpr start_time_expression(env_);
+  start_time_expression = s_[0];
+  constraints.add(IloRange(env_, 0, start_time_expression, 0, "Limit0"));
+  start_time_expression.end();
 
-  sprintf(aux, "Limit0");
-  constraints.add(IloRange(env_, 0, start_expression, 0, aux));
-  start_expression.end();
-
-  IloExpr end_expression(env_);
-  end_expression = s_[I_->getN() - 1];
-
-  sprintf(aux, "Limit");
-  constraints.add(IloRange(env_, -IloInfinity, end_expression, I_->getL(), aux));
-  end_expression.end();
+  IloExpr last_time_expression(env_);
+  last_time_expression = s_[I_->getN() - 1];
+  constraints.add(
+    IloRange(env_, -IloInfinity, last_time_expression, I_->getL(), "Limit")
+  );
+  last_time_expression.end();
 }
 
 }  // namespace emir
