@@ -26,11 +26,12 @@ class OPS_cplex_solver1 : public OPS_solver_t {
   IloNumVarArray y_;
   IloNumVarArray s_;
   IloCplex cplex_;
+  IloModel model_;
 
   double tol_;
 
   /** @brief Creates the model for the problem, using the input data. */
-  IloModel makeModel();
+  void makeModel();
 
   /**
    * @brief Add the 'y' variables to the model.
@@ -39,7 +40,7 @@ class OPS_cplex_solver1 : public OPS_solver_t {
    *
    * @param model The model to add the variables to.
    */
-  void addYVariable(IloModel &model);
+  void addYVariable();
 
   /**
    * @brief Add the 's' variables to the model.
@@ -49,7 +50,7 @@ class OPS_cplex_solver1 : public OPS_solver_t {
    *
    * @param model The model to add the variables to.
    */
-  void addSVariable(IloModel &model);
+  void addSVariable();
 
   /**
    * @brief Add the 'x' variables to the model.
@@ -58,7 +59,7 @@ class OPS_cplex_solver1 : public OPS_solver_t {
    *
    * @param model The model to add the variables to.
    */
-  void addXVariable(IloModel &model);
+  void addXVariable();
 
   /**
    * @brief Add what is the objective equation to the model.
@@ -67,7 +68,7 @@ class OPS_cplex_solver1 : public OPS_solver_t {
    *
    * @param model The model to add the constraints to.
    */
-  void addObjective(IloModel &model);
+  void addObjective();
 
   /**
    * @brief Add all the constraints to the model.
@@ -82,7 +83,7 @@ class OPS_cplex_solver1 : public OPS_solver_t {
    *
    * @param model The model to add the constraints to.
    */
-  void addConstraints(IloModel &model);
+  void addConstraints();
 
   /**
    * @brief Add the delta plus constraints to the model.

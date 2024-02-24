@@ -6,7 +6,7 @@ OPS_cplex_solver1::OPS_cplex_solver1(
   const OpsInput *I, OPS_output_t &O, double eps
 ) :
   OPS_solver_t(I, O, eps),
-  env_(), x_(env_), y_(env_), s_(env_), cplex_(env_) {}
+  env_(), x_(env_), y_(env_), s_(env_), cplex_(env_), model_(env_) {}
 
 OPS_cplex_solver1::~OPS_cplex_solver1() {
   env_.end();
@@ -23,10 +23,9 @@ void OPS_cplex_solver1::set_param(std::ostream &r_os) {
 
 void OPS_cplex_solver1::solve(std::ostream &r_os, double ub, bool root_node) {
   try {
-    auto model = makeModel();
+    makeModel();
     set_param(r_os);
-    cplex_.extract(model);
-    std::cout << model;
+    cplex_.extract(model_);
     cplex_.solve();
   } catch (IloException &ex) {
     std::cerr << "Error: " << ex << '\n';
@@ -70,35 +69,33 @@ void OPS_cplex_solver1::set_output(OPS_output_t &output) {
 // ---------------------------- Private Methods ---------------------------- //
 // ------------------------------------------------------------------------- //
 
-IloModel OPS_cplex_solver1::makeModel() {
-  IloModel model(env_);
-  addYVariable(model);
-  addSVariable(model);
-  addXVariable(model);
-  addObjective(model);
-  addConstraints(model);
-  return model;
+void OPS_cplex_solver1::makeModel() {
+  addYVariable();
+  addSVariable();
+  addXVariable();
+  addObjective();
+  addConstraints();
 }
 
-void OPS_cplex_solver1::addYVariable(IloModel &model) {
+void OPS_cplex_solver1::addYVariable() {
   for (int j = 1; j < I_->getN() - 1; ++j) {
     y_.add(
       IloNumVar(env_, 0, 1, IloNumVar::Bool, ("y_" + std::to_string(j)).c_str())
     );
   }
-  model.add(y_);
+  model_.add(y_);
 }
 
-void OPS_cplex_solver1::addSVariable(IloModel &model) {
+void OPS_cplex_solver1::addSVariable() {
   for (int j = 0; j < I_->getN(); j++) {
     s_.add(IloNumVar(
       env_, 0, IloInfinity, IloNumVar::Float, ("s_" + std::to_string(j)).c_str()
     ));
   }
-  model.add(s_);
+  model_.add(s_);
 }
 
-void OPS_cplex_solver1::addXVariable(IloModel &model) {
+void OPS_cplex_solver1::addXVariable() {
   for (int k = 0; k < I_->getM(); ++k) {
     const auto graph = I_->getGraph(k);
     for (const auto &arc : graph.getArcs()) {
@@ -112,25 +109,25 @@ void OPS_cplex_solver1::addXVariable(IloModel &model) {
       ));
     }
   }
-  model.add(x_);
+  model_.add(x_);
 }
 
-void OPS_cplex_solver1::addObjective(IloModel &model) {
+void OPS_cplex_solver1::addObjective() {
   IloExpr expression(env_);
   for (auto node_idx = 1; node_idx < I_->getN() - 1; ++node_idx) {
     expression += I_->getB(node_idx) * y_[node_idx - 1];
   }
-  model.add(IloMaximize(env_, expression));
+  model_.add(IloMaximize(env_, expression));
   expression.end();
 }
 
-void OPS_cplex_solver1::addConstraints(IloModel &model) {
+void OPS_cplex_solver1::addConstraints() {
   IloRangeArray constraints(env_);
   addDeltaPlusConstraints(constraints);
   addDeltaMinusConstraints(constraints);
   addMTZConstraints(constraints);
   addLimitConstraints(constraints);
-  model.add(constraints);
+  model_.add(constraints);
   constraints.end();
 }
 
