@@ -1,23 +1,18 @@
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
-#include <iostream>
-#include <string>
 
+#include <OPS_bc1.hpp>
 #include <solvers.hpp>
-
-void read(const std::string &file_name, emir::OpsInput &input) {
-  std::ifstream input_file(file_name);
-  input_file >> input;
-  input_file.close();
-}
 
 int processor(
   const std::string &ins_file, const std::string &sta_file,
   const std::string &log_file, const int id
 ) {
   emir::OpsInput In;
-  read(ins_file, In);
+  std::ifstream input_file(ins_file);
+  input_file >> In;
+  input_file.close();
 
   const double tol = 1e-4;
 
@@ -26,7 +21,7 @@ int processor(
   std::ofstream O_file(sta_file, std::ios_base::app);
   std::ofstream L_file(log_file);
 
-  (*solver_array[id])(&In, tol, Out, L_file, O_file);
+  solve<emir::OPS_cplex_solver1>(&In, tol, Out, L_file, O_file);
 
   O_file << '\n';
   O_file.close();
@@ -37,34 +32,11 @@ int processor(
   return 0;
 }
 
-int main(int argc, char **argv) {
-  int exit_code = 0;
-
-  /*if (argc == 7)
-  {*/
-
-  /*
-   *  argv[1]       Target file
-   *  argv[2]       Instance file
-   *  argv[3]       Output log file
-   *  argv[4]       Output sol file
-   *  argv[5]       Output sta file
-   *  argv[6]       Solver ID
-   */
-
-  /*const std::string sta_file(argv[1]);
-  const std::string ins_file(argv[2]);
-  const std::string log_file(argv[3]);
-
-  const int id = atoi(argv[4]) - 1;*/
-
+int main(int argc, char *argv[]) {
   const std::string sta_file("data/temporal.txt");
   const std::string ins_file("data/test_instance.json");
   const std::string log_file("data/test_log.txt");
   const int id = 0;
 
-  exit_code = processor(ins_file, sta_file, log_file, id);
-  /*}*/
-
-  return exit_code;
+  return processor(ins_file, sta_file, log_file, id);
 }
