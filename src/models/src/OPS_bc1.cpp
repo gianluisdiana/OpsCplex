@@ -23,13 +23,11 @@ void OPS_cplex_solver1::set_param(std::ostream &r_os) {
 
 void OPS_cplex_solver1::solve(std::ostream &r_os, double ub, bool root_node) {
   try {
-    IloModel model(env_);
-    makeModel(model);
+    auto model = makeModel();
 
     set_param(r_os);
 
     cplex_.extract(model);
-    std::cout << model;
 
     cplex_.solve();
   } catch (IloException &ex) {
@@ -71,7 +69,13 @@ void OPS_cplex_solver1::set_output(OPS_output_t &output) {
   output.set(xv, yv, sv);
 }
 
-void OPS_cplex_solver1::makeModel(IloModel &model) {
+// ------------------------------------------------------------------------- //
+// ---------------------------- Private Methods ---------------------------- //
+// ------------------------------------------------------------------------- //
+
+IloModel OPS_cplex_solver1::makeModel() {
+  IloModel model(env_);
+
   const int n = I_->getN();  // Number of vertices plus two depots
   const int K = I_->getM();  // Number of vehicles
   const int L = I_->getL();  // Limit
@@ -81,54 +85,12 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   char aux[80];
 
-  int m = 0;
-
-  for (int k = 0; k < K; k++) m += I_->getAmountOfSuccessors(k);
-
   // Variables
 
-  // n - 2 variables y
-
-  for (int j = 1; j < n - 1; j++) {
-    sprintf(aux, "y_%d", j);
-    y_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
-  }
-
-  model.add(y_);
-
-  // n - 1 variables s
-  // n - 1 variables s
-
-  for (int j = 0; j < n; j++) {
-    sprintf(aux, "s_%d", j);
-    s_.add(IloNumVar(env_, 0, IloInfinity, IloNumVar::Float, aux));
-  }
-
-  model.add(s_);
-
-  // Variables x
-
-  for (int k = 0; k < K; k++) {
-    const auto graph = I_->getGraph(k);
-    for (const auto &arc : graph.getArcs()) {
-      const auto origin_node = std::stoi(arc.getOriginId());
-      const auto destination_node = std::stoi(arc.getDestinationId());
-      sprintf(aux, "x_%d_%d_%d", k + 1, origin_node, destination_node);
-      x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
-    }
-  }
-
-  model.add(x_);
-
-  // Objective
-
-  IloExpr obj(env_);
-
-  for (int i = 1; i < n - 1; i++) obj += I_->getB(i) * y_[i - 1];
-
-  model.add(IloMaximize(env_, obj));
-
-  obj.end();
+  addYVariable(model);
+  addSVariable(model);
+  addXVariable(model);
+  addObjective(model);
 
   // Constraints
 
@@ -141,15 +103,15 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
       const auto mki = I_->getAmountOfSuccessors(k, std::to_string(node_idx));
       if (mki == 0) continue;
 
-      IloExpr cut(env_);
+      IloExpr expression(env_);
       for (auto l = 0; l < mki; ++l)
-        cut += x_[I_->getArcId(k, std::to_string(node_idx), l, true)];
-      if (node_idx > 0) cut -= y_[node_idx - 1];
+        expression += x_[I_->getArcId(k, std::to_string(node_idx), l, true)];
+      if (node_idx > 0) expression -= y_[node_idx - 1];
 
       sprintf(aux, "deltaplus_%d_%d", node_idx, k + 1);
       const double is_root_node = node_idx == 0 ? 1.0 : 0.0;
-      constraints.add(IloRange(env_, is_root_node, cut, is_root_node, aux));
-      cut.end();
+      constraints.add(IloRange(env_, is_root_node, expression, is_root_node, aux));
+      expression.end();
     }
   }
 
@@ -160,15 +122,15 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
       const auto mki = I_->getAmountOfPredecessors(k, std::to_string(node_idx));
       if (mki == 0) continue;
 
-      IloExpr cut(env_);
+      IloExpr expression(env_);
       for (auto l = 0; l < mki; ++l)
-        cut += x_[I_->getArcId(k, std::to_string(node_idx), l, false)];
-      if (node_idx < n - 1) cut -= y_[node_idx - 1];
+        expression += x_[I_->getArcId(k, std::to_string(node_idx), l, false)];
+      if (node_idx < n - 1) expression -= y_[node_idx - 1];
 
       sprintf(aux, "deltaminus_%d_%d", node_idx, k + 1);
       const double is_last_node = node_idx == (n - 1) ? 1.0 : 0.0;
-      constraints.add(IloRange(env_, is_last_node, cut, is_last_node, aux));
-      cut.end();
+      constraints.add(IloRange(env_, is_last_node, expression, is_last_node, aux));
+      expression.end();
     }
   }
 
@@ -216,6 +178,47 @@ void OPS_cplex_solver1::makeModel(IloModel &model) {
 
   model.add(constraints);
   constraints.end();
+  return model;
+}
+
+void OPS_cplex_solver1::addYVariable(IloModel &model) {
+  char aux[80];
+  for (int j = 1; j < I_->getN() - 1; ++j) {
+    sprintf(aux, "y_%d", j);
+    y_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
+  }
+  model.add(y_);
+}
+
+void OPS_cplex_solver1::addSVariable(IloModel &model) {
+  char aux[80];
+  for (int j = 0; j < I_->getN(); j++) {
+    sprintf(aux, "s_%d", j);
+    s_.add(IloNumVar(env_, 0, IloInfinity, IloNumVar::Float, aux));
+  }
+  model.add(s_);
+}
+
+void OPS_cplex_solver1::addXVariable(IloModel &model) {
+  char aux[80];
+  for (int k = 0; k < I_->getM(); ++k) {
+    const auto graph = I_->getGraph(k);
+    for (const auto &arc : graph.getArcs()) {
+      const auto origin_node = std::stoi(arc.getOriginId());
+      const auto destination_node = std::stoi(arc.getDestinationId());
+      sprintf(aux, "x_%d_%d_%d", k + 1, origin_node, destination_node);
+      x_.add(IloNumVar(env_, 0, 1, IloNumVar::Bool, aux));
+    }
+  }
+  model.add(x_);
+}
+
+void OPS_cplex_solver1::addObjective(IloModel &model) {
+  IloExpr expression(env_);
+  for (auto node_idx = 1; node_idx < I_->getN() - 1; ++node_idx)
+    expression += I_->getB(node_idx) * y_[node_idx - 1];
+  model.add(IloMaximize(env_, expression));
+  expression.end();
 }
 
 }  // namespace emir

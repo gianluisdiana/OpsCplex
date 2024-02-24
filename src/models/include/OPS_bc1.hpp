@@ -5,21 +5,11 @@
 
 #include <OPS_solver_t.hpp>
 
-#define IL_STD
 #include <ilcplex/ilocplex.h>
 
 namespace emir {
 
 class OPS_cplex_solver1 : public OPS_solver_t {
- public:
-  IloEnv env_;
-  IloNumVarArray x_;
-  IloNumVarArray y_;
-  IloNumVarArray s_;
-  IloCplex cplex_;
-
-  double tol_;
-
  public:
   OPS_cplex_solver1(const OpsInput *I, OPS_output_t &O, double eps);
   virtual ~OPS_cplex_solver1();
@@ -31,7 +21,55 @@ class OPS_cplex_solver1 : public OPS_solver_t {
 
   void set_output(OPS_output_t &output);
 
-  void makeModel(IloModel &model);
+
+ private:
+  IloEnv env_;
+  IloNumVarArray x_;
+  IloNumVarArray y_;
+  IloNumVarArray s_;
+  IloCplex cplex_;
+
+  double tol_;
+
+  /** @brief Creates the model for the problem, using the input data. */
+  IloModel makeModel();
+
+  /**
+   * @brief Add the 'y' variables to the model.
+   * Y is a binary vector of length n (number of objects in the problem), that
+   * indicates whether an object is beeing observed or not.
+   *
+   * @param model The model to add the variables to.
+   */
+  void addYVariable(IloModel &model);
+
+  /**
+   * @brief Add the 's' variables to the model.
+   * S is a float vector of length n + 2 (number of objects in the problem plus
+   * the initial and final nodes), that stores how much time has passed since
+   * the beginning of the observation to the moment the object is observed.
+   *
+   * @param model The model to add the variables to.
+   */
+  void addSVariable(IloModel &model);
+
+  /**
+   * @brief Add the 'x' variables to the model.
+   * X is a binary vector which length depends on the number of arcs in the
+   * problem. It indicates whether an arc is beeing used or not.
+   *
+   * @param model The model to add the variables to.
+  */
+  void addXVariable(IloModel &model);
+
+  /**
+   * @brief Add what is the objective equation to the model.
+   * In this case, the objective is to maximize the number of objects observed
+   * (based on its priority).
+   *
+   * @param model The model to add the constraints to.
+   */
+  void addObjective(IloModel &model);
 };
 
 }  // namespace emir
