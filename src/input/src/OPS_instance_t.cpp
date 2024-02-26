@@ -27,7 +27,7 @@ std::istream &operator>>(std::istream &is, OpsInstance &ops_instance) {
   json json_instance;
   is >> json_instance;
   ops_instance.setFromJson(json_instance);
-  ops_instance.truncateTMatrix();
+  // ops_instance.truncateTMatrix();
   return is;
 }
 

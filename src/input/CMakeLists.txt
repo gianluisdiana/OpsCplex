@@ -5,8 +5,8 @@ project(input)
 add_library(${PROJECT_NAME} STATIC
     src/arc.cpp
     src/graph.cpp
+    src/node.cpp
     src/ops_input.cpp
-    src/OPS_input_t.cpp # TODO: remove this file after graph is implemented
     src/OPS_instance_t.cpp
 )
 
@@ -22,6 +22,6 @@ target_include_directories(${PROJECT_NAME}
 
 # Include the subprojects gomautil and json
 target_link_libraries(${PROJECT_NAME}
+    lib::nlohmann_json
     sub::gomautil
-    sub::json
 )
