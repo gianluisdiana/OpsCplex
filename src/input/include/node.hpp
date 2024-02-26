@@ -32,10 +32,9 @@
 #include <string>
 #include <vector>
 
-namespace emir {
+#include <arc.fwd.hpp>
 
-/** @see Arc class: src/input/include/arc.hpp */
-class Arc;
+namespace emir {
 
 /** @brief Represents a node in the graph */
 class Node {

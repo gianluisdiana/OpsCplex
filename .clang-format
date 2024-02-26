@@ -130,6 +130,9 @@ IncludeBlocks: Regroup
 # Regular expressions denoting the different #include categories used for ordering #includes.
 IncludeCategories:
   - Regex:           '<.*\.hpp>'
+    Priority:        3
+    SortPriority:    0
+  - Regex:           '<.*\.h>'
     Priority:        2
     SortPriority:    0
   - Regex:           '^<.*>$'

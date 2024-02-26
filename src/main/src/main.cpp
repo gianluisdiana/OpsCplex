@@ -1,70 +1,10 @@
-#include <cstdio>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <string>
-
 #include <solvers.hpp>
 
-void read(const std::string &file_name, emir::OpsInput &input) {
-  std::ifstream input_file(file_name);
-  input_file >> input;
-  input_file.close();
-}
-
-int processor(
-  const std::string &ins_file, const std::string &sta_file,
-  const std::string &log_file, const int id
-) {
-  emir::OpsInput In;
-  read(ins_file, In);
-
-  const double tol = 1e-4;
-
-  emir::OPS_output_t Out(In);
-
-  std::ofstream O_file(sta_file, std::ios_base::app);
-  std::ofstream L_file(log_file);
-
-  (*solver_array[id])(&In, tol, Out, L_file, O_file);
-
-  O_file << '\n';
-  O_file.close();
-
-  L_file << '\n';
-  L_file.close();
-
-  return 0;
-}
-
-int main(int argc, char **argv) {
-  int exit_code = 0;
-
-  /*if (argc == 7)
-  {*/
-
-  /*
-   *  argv[1]       Target file
-   *  argv[2]       Instance file
-   *  argv[3]       Output log file
-   *  argv[4]       Output sol file
-   *  argv[5]       Output sta file
-   *  argv[6]       Solver ID
-   */
-
-  /*const std::string sta_file(argv[1]);
-  const std::string ins_file(argv[2]);
-  const std::string log_file(argv[3]);
-
-  const int id = atoi(argv[4]) - 1;*/
-
-  const std::string sta_file("data/temporal.txt");
-  const std::string ins_file("data/test_instance.json");
-  const std::string log_file("data/test_log.txt");
+int main(int argc, char *argv[]) {
+  const auto output_file_name = "data/temporal.txt";
+  const auto instance_file_name = "data/test_instance.json";
+  const auto log_file_name = "data/test_log.txt";
   const int id = 0;
 
-  exit_code = processor(ins_file, sta_file, log_file, id);
-  /*}*/
-
-  return exit_code;
+  return processor(instance_file_name, output_file_name, log_file_name, id);
 }

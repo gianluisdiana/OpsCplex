@@ -1,10 +1,6 @@
 #ifndef _EMIR_GANTT_TIKZ_HPP_
 #define _EMIR_GANTT_TIKZ_HPP_
 
-#include <string>
-#include <vector>
-
-#include <input/OPS_input_t.hpp>
 #include <output/OPS_output_t.hpp>
 #include <output/OPS_tikz.hpp>
 #include <target_set_t.hpp>

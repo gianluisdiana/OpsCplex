@@ -25,7 +25,6 @@
 
 #include <OPS_instance_t.hpp>
 #include <graph.hpp>
-#include <matrix.hpp>
 #include <stats.hpp>
 
 namespace emir {

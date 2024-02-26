@@ -34,11 +34,6 @@ jobs:
 
     - name: Format code
       run: |
-        git diff --name-only --diff-filter=d origin/main...HEAD | grep -E '[^j][^s][^o][^n]\.(cpp|hpp)$' | xargs clang-format-14 -i -style=file
-        git diff --exit-code
-
-    - name: Commit changes
-      run: |
-        git config --local user.email "gianluisbolivar1@gmail.com"
-        git config --local user.name "Gian Luis Bolivar Diana"
-        git commit -am "style: format code using clang-format (auto)""
+        git diff --name-only --diff-filter=d origin/main...HEAD |
+        grep -E '[^j][^s][^o][^n]\.(cpp|hpp)$' |
+        xargs clang-format-14 -style=file --Werror -n
