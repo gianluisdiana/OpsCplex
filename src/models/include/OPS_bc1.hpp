@@ -10,7 +10,7 @@ namespace emir {
 
 class OPS_cplex_solver1 : public OPS_solver_t {
  public:
-  OPS_cplex_solver1(const OpsInput *I, OPS_output_t &O, double eps);
+  OPS_cplex_solver1(const OpsInput &I, double eps);
   virtual ~OPS_cplex_solver1();
 
   virtual void set_param(std::ostream &r_os);
