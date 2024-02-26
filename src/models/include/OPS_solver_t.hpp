@@ -1,9 +1,6 @@
 #ifndef _EMIR_OPS_SOLVER_HPP_
 #define _EMIR_OPS_SOLVER_HPP_
 
-#include <cassert>
-#include <iostream>
-
 #include <OPS_output_t.hpp>
 
 namespace emir {

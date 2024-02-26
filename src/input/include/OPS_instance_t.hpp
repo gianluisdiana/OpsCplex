@@ -27,14 +27,9 @@
 #ifndef _EMIR_OPS_INSTANCE_HPP_
 #define _EMIR_OPS_INSTANCE_HPP_
 
-#include <iostream>
 #include <string>
-#include <vector>
 
-#include <json.hpp>
 #include <matrix.hpp>
-
-using json = nlohmann::json;
 
 namespace emir {
 

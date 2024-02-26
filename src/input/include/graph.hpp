@@ -26,8 +26,6 @@
 #ifndef _EMIR_GRAPH_HPP_
 #define _EMIR_GRAPH_HPP_
 
-#include <map>
-
 #include <arc.hpp>
 #include <node.hpp>
 

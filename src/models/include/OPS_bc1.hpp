@@ -1,8 +1,6 @@
 #ifndef _EMIR_OPS_BC1_HPP_
 #define _EMIR_OPS_BC1_HPP_
 
-#include <iostream>
-
 #include <ilcplex/ilocplex.h>
 
 #include <OPS_solver_t.hpp>
