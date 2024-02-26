@@ -21,19 +21,18 @@ find_library(CPX_LIBRARY libcplex.a HINTS ${CPX_LIB_PATH})
 find_library(ILO_LIBRARY libilocplex.a HINTS ${ILO_LIB_PATH})
 find_library(CON_LIBRARY libconcert.a HINTS ${CON_LIB_PATH})
 
+# ----------------------------- Header files ----------------------------- #
+
 # Add the include directories to access the headers
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${PROJECT_SOURCE_DIR}/include
-    PRIVATE ${CPX_PATH}/cplex/include/
-    PRIVATE ${CPX_PATH}/concert/include/
+    PRIVATE ${CPX_PATH}/cplex/include
+    PRIVATE ${CPX_PATH}/concert/include
 )
 
 # Link the static libraries form the subprojects and cplex
 target_link_libraries(${PROJECT_NAME}
-    sub::gomautil
-    sub::input
-    sub::output
-    sub::solver
+    sub::models
     ${CON_LIBRARY}
     ${ILO_LIBRARY}
     ${CPX_LIBRARY}
