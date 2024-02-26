@@ -9,7 +9,7 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 
 # ----------------------- Path variables (for cplex) ------------------------ #
 
-set(CPX_PATH ~/dev/external_libraries/CPLEX_Studio2211)
+set(CPX_PATH ${CMAKE_SOURCE_DIR}/lib/CplexStudio2211)
 set(CPX_LIB_PATH ${CPX_PATH}/cplex/lib/x86-64_linux/static_pic/)
 set(ILO_LIB_PATH ${CPX_PATH}/cplex/lib/x86-64_linux/static_pic/)
 set(CON_LIB_PATH ${CPX_PATH}/concert/lib/x86-64_linux/static_pic/)

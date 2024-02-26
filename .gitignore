@@ -3,3 +3,6 @@
 
 # Cmake directory
 build
+
+# Cplex directory
+lib/CplexStudio2211

@@ -11,7 +11,8 @@ add_library(sub::models ALIAS ${PROJECT_NAME})
 
 # ----------------------- Path variable (for cplex) ------------------------ #
 
-set(CPX_PATH ~/dev/external_libraries/CPLEX_Studio2211)
+# Set the path to the cplex library
+set(CPX_PATH ${CMAKE_SOURCE_DIR}/lib/CplexStudio2211/)
 
 # ----------------------------- Header files ----------------------------- #
 
