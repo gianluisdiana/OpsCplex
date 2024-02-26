@@ -6,6 +6,6 @@ namespace emir {
 /** @see Arc class: src/input/include/arc.hpp */
 class Arc;
 
-} // namespace emir
+}  // namespace emir
 
 #endif  // _EMIR_ARC_FWD_HPP_

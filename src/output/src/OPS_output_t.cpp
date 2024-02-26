@@ -69,8 +69,8 @@ bool OPS_output_t::set(
   x_.init(0);
 
   for (int k = 0; k < I_.getM(); ++k) {
-    const auto& graph = I_.getGraph(k);
-    for (const auto& arc : graph.getArcs()) {
+    const auto &graph = I_.getGraph(k);
+    for (const auto &arc : graph.getArcs()) {
       const int value = x[arc.getId()];
       assert(value == 1 || value == 0);
       if (value == 1) {

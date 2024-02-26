@@ -6,6 +6,6 @@ namespace emir {
 /** @see Node class: src/input/include/node.hpp */
 class Node;
 
-} // namespace emir
+}  // namespace emir
 
 #endif  // _EMIR_NODE_FWD_HPP_
