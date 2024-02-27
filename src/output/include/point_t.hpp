@@ -32,10 +32,6 @@
 #include <iostream>
 #include <utility>
 
-#include <json.hpp>
-
-using json = nlohmann::json;
-
 namespace emir {
 
 class Point : public std::pair<double, double> {

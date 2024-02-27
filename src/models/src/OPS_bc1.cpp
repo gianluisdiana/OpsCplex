@@ -3,26 +3,18 @@
 namespace emir {
 
 OPS_cplex_solver1::OPS_cplex_solver1(const OpsInput &I, double eps) :
-  OPS_solver_t(I, eps), env_(), x_(env_), y_(env_), s_(env_), cplex_(env_),
-  model_(env_) {}
+  OPS_solver_t(I, eps), env_(), cplex_(env_), model_(env_), x_(env_), y_(env_),
+  s_(env_) {}
 
 OPS_cplex_solver1::~OPS_cplex_solver1() {
   env_.end();
 }
 
-void OPS_cplex_solver1::set_param(std::ostream &r_os) {
-  cplex_.setParam(IloCplex::Param::TimeLimit, 3600);
-
-  cplex_.setParam(IloCplex::Param::MIP::Tolerances::AbsMIPGap, 1E-3);
-  cplex_.setParam(IloCplex::Param::Emphasis::MIP, CPX_MIPEMPHASIS_OPTIMALITY);
-
-  cplex_.setOut(r_os);
-}
-
-void OPS_cplex_solver1::solve(std::ostream &r_os, double ub, bool root_node) {
+void OPS_cplex_solver1::solve(std::ostream &r_os) {
   try {
     makeModel();
-    set_param(r_os);
+    setParameters();
+    cplex_.setOut(r_os);
     cplex_.extract(model_);
     cplex_.solve();
   } catch (IloException &ex) {
@@ -32,35 +24,7 @@ void OPS_cplex_solver1::solve(std::ostream &r_os, double ub, bool root_node) {
     std::cerr << "Error" << '\n';
     return;
   }
-  set_output(O_);
-}
-
-void OPS_cplex_solver1::set_output(OPS_output_t &output) {
-  IloNumArray x(env_);
-  cplex_.getValues(x_, x);
-
-  IloNumArray y(env_);
-  cplex_.getValues(y_, y);
-
-  IloNumArray s(env_);
-  cplex_.getValues(s_, s);
-
-  std::vector<double> xv(x.getSize());
-
-  for (int i = x.getSize() - 1; i >= 0; i--) xv[i] = x[i];
-
-  std::vector<double> yv(y.getSize());
-
-  for (int i = y.getSize() - 1; i >= 0; i--) yv[i] = y[i];
-
-  std::vector<double> sv(s.getSize());
-
-  sv[0] = s[0];
-  sv[s.getSize() - 1] = s[s.getSize() - 1];
-
-  for (int i = s.getSize() - 2; i > 0; i--) sv[i] = s[i] * y[i - 1];
-
-  output.set(xv, yv, sv);
+  setOutput();
 }
 
 // ------------------------------------------------------------------------- //
@@ -207,6 +171,30 @@ void OPS_cplex_solver1::addLimitConstraints(IloRangeArray &constraints) {
     IloRange(env_, -IloInfinity, last_time_expression, I_.getL(), "Limit")
   );
   last_time_expression.end();
+}
+
+void OPS_cplex_solver1::setParameters() {
+  cplex_.setParam(IloCplex::Param::TimeLimit, 3600);
+  cplex_.setParam(IloCplex::Param::MIP::Tolerances::AbsMIPGap, 1e-3);
+  cplex_.setParam(IloCplex::Param::Emphasis::MIP, CPX_MIPEMPHASIS_OPTIMALITY);
+}
+
+void OPS_cplex_solver1::setOutput() {
+  const auto x = IloNumVarArrayToVector(x_);
+  const auto y = IloNumVarArrayToVector(y_);
+  auto s = IloNumVarArrayToVector(s_);
+  for (int i = 1; i < s.size() - 1; ++i) s[i] = s[i] * y[i - 1];
+  O_.set(x, y, s);
+}
+
+const std::vector<double>
+OPS_cplex_solver1::IloNumVarArrayToVector(const IloNumVarArray &variable
+) const {
+  IloNumArray values(env_);
+  cplex_.getValues(variable, values);
+  std::vector<double> result;
+  for (auto i = 0; i < values.getSize(); ++i) { result.push_back(values[i]); }
+  return result;
 }
 
 }  // namespace emir

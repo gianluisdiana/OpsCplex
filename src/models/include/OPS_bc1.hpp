@@ -10,24 +10,29 @@ namespace emir {
 class OPS_cplex_solver1 : public OPS_solver_t {
  public:
   OPS_cplex_solver1(const OpsInput &I, double eps);
-  virtual ~OPS_cplex_solver1();
+  ~OPS_cplex_solver1();
 
-  virtual void set_param(std::ostream &r_os);
-
-  virtual void
-  solve(std::ostream &r_os, double ub = 1E10, bool root_node = false);
-
-  void set_output(OPS_output_t &output);
+  void solve(std::ostream &r_os) override;
 
  private:
+ // An environment, manage the memory and identifiers for modeling objects.
   IloEnv env_;
-  IloNumVarArray x_;
-  IloNumVarArray y_;
-  IloNumVarArray s_;
+  // Algorithm used to solve the Linear Programming problem.
   IloCplex cplex_;
+  // Model that represents the Linear Programming problem.
   IloModel model_;
 
-  double tol_;
+  // --------------------------- Model Variables --------------------------- //
+
+  // Binary vector (1 and 0) that indicates whether an arc is beeing used or
+  // not.
+  IloNumVarArray x_;
+  // Binary vector (1 and 0) that indicates whether an object is beeing observed
+  // or not.
+  IloNumVarArray y_;
+  // Float vector that stores how much time has passed since the beginning of
+  // the observation to the moment the object is observed.
+  IloNumVarArray s_;
 
   /** @brief Creates the model for the problem, using the input data. */
   void makeModel();
@@ -120,6 +125,27 @@ class OPS_cplex_solver1 : public OPS_solver_t {
    * @param constraints The constraints to add the limit constraints to.
    */
   void addLimitConstraints(IloRangeArray &constraints);
+
+  /**
+   * @brief Set some configuration parameters to the CPLEX solver.
+   * - The maximum time to solve the problem is 3600 seconds.
+   * - The absolute tolerance on the gap between the best integer objective and
+   * the objective of the best node remaining is 0.001.
+   * - Emphasize optimality over feasibility.
+   */
+  void setParameters();
+
+  /** @brief Set the output with the models solution. */
+  void setOutput();
+
+  /**
+   * @brief Gets the values from the cplex solver and converts them.
+   *
+   * @param variable The variable to get the values from.
+   * @return The values from the variable in a vector.
+   */
+  const std::vector<double>
+  IloNumVarArrayToVector(const IloNumVarArray &variable) const;
 };
 
 }  // namespace emir
