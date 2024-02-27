@@ -5,18 +5,18 @@
 
 namespace emir {
 
-class OPS_solver_t {
+class OpsSolver {
  public:
-  OPS_solver_t(const OpsInput &input, double eps) :
+  OpsSolver(const OpsInput &input, double eps) :
     input_(input), output_(input), tol_(eps) {}
 
-  virtual ~OPS_solver_t() {}
+  virtual ~OpsSolver() {}
 
   virtual void solve(std::ostream &r_os) = 0;
 
  protected:
   const OpsInput &input_;
-  OPS_output_t output_;
+  OpsOutput output_;
   const double tol_;
 };
 

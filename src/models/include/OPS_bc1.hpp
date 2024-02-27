@@ -7,10 +7,10 @@
 
 namespace emir {
 
-class OPS_cplex_solver1 : public OPS_solver_t {
+class OpsCplexSolver : public OpsSolver {
  public:
-  OPS_cplex_solver1(const OpsInput &input, double eps);
-  ~OPS_cplex_solver1();
+  OpsCplexSolver(const OpsInput &input, double eps);
+  ~OpsCplexSolver();
 
   void solve(std::ostream &r_os) override;
 

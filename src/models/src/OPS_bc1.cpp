@@ -2,15 +2,15 @@
 
 namespace emir {
 
-OPS_cplex_solver1::OPS_cplex_solver1(const OpsInput &input, double eps) :
-  OPS_solver_t(input, eps), env_(), cplex_(env_), model_(env_), x_(env_),
-  y_(env_), s_(env_) {}
+OpsCplexSolver::OpsCplexSolver(const OpsInput &input, double eps) :
+  OpsSolver(input, eps), env_(), cplex_(env_), model_(env_), x_(env_), y_(env_),
+  s_(env_) {}
 
-OPS_cplex_solver1::~OPS_cplex_solver1() {
+OpsCplexSolver::~OpsCplexSolver() {
   env_.end();
 }
 
-void OPS_cplex_solver1::solve(std::ostream &r_os) {
+void OpsCplexSolver::solve(std::ostream &r_os) {
   try {
     makeModel();
     setParameters();
@@ -31,7 +31,7 @@ void OPS_cplex_solver1::solve(std::ostream &r_os) {
 // ---------------------------- Private Methods ---------------------------- //
 // ------------------------------------------------------------------------- //
 
-void OPS_cplex_solver1::makeModel() {
+void OpsCplexSolver::makeModel() {
   addYVariable();
   addSVariable();
   addXVariable();
@@ -39,7 +39,7 @@ void OPS_cplex_solver1::makeModel() {
   addConstraints();
 }
 
-void OPS_cplex_solver1::addYVariable() {
+void OpsCplexSolver::addYVariable() {
   for (int j = 1; j < input_.getN() - 1; ++j) {
     y_.add(
       IloNumVar(env_, 0, 1, IloNumVar::Bool, ("y_" + std::to_string(j)).c_str())
@@ -48,7 +48,7 @@ void OPS_cplex_solver1::addYVariable() {
   model_.add(y_);
 }
 
-void OPS_cplex_solver1::addSVariable() {
+void OpsCplexSolver::addSVariable() {
   for (int j = 0; j < input_.getN(); j++) {
     s_.add(IloNumVar(
       env_, 0, IloInfinity, IloNumVar::Float, ("s_" + std::to_string(j)).c_str()
@@ -57,7 +57,7 @@ void OPS_cplex_solver1::addSVariable() {
   model_.add(s_);
 }
 
-void OPS_cplex_solver1::addXVariable() {
+void OpsCplexSolver::addXVariable() {
   for (int k = 0; k < input_.getM(); ++k) {
     const auto graph = input_.getGraph(k);
     for (const auto &arc : graph.getArcs()) {
@@ -74,7 +74,7 @@ void OPS_cplex_solver1::addXVariable() {
   model_.add(x_);
 }
 
-void OPS_cplex_solver1::addObjective() {
+void OpsCplexSolver::addObjective() {
   IloExpr expression(env_);
   for (auto node_idx = 1; node_idx < input_.getN() - 1; ++node_idx) {
     expression += input_.getB(node_idx) * y_[node_idx - 1];
@@ -83,7 +83,7 @@ void OPS_cplex_solver1::addObjective() {
   expression.end();
 }
 
-void OPS_cplex_solver1::addConstraints() {
+void OpsCplexSolver::addConstraints() {
   IloRangeArray constraints(env_);
   addDeltaPlusConstraints(constraints);
   addDeltaMinusConstraints(constraints);
@@ -93,7 +93,7 @@ void OPS_cplex_solver1::addConstraints() {
   constraints.end();
 }
 
-void OPS_cplex_solver1::addDeltaPlusConstraints(IloRangeArray &constraints) {
+void OpsCplexSolver::addDeltaPlusConstraints(IloRangeArray &constraints) {
   for (auto k = 0; k < input_.getM(); ++k) {
     for (auto node_idx = 0; node_idx < input_.getN() - 1; ++node_idx) {
       const auto &node_string = std::to_string(node_idx);
@@ -116,7 +116,7 @@ void OPS_cplex_solver1::addDeltaPlusConstraints(IloRangeArray &constraints) {
   }
 }
 
-void OPS_cplex_solver1::addDeltaMinusConstraints(IloRangeArray &constraints) {
+void OpsCplexSolver::addDeltaMinusConstraints(IloRangeArray &constraints) {
   for (auto k = 0; k < input_.getM(); ++k) {
     for (auto node_idx = 1; node_idx < input_.getN(); ++node_idx) {
       const auto &node_string = std::to_string(node_idx);
@@ -138,7 +138,7 @@ void OPS_cplex_solver1::addDeltaMinusConstraints(IloRangeArray &constraints) {
   }
 }
 
-void OPS_cplex_solver1::addMTZConstraints(IloRangeArray &constraints) {
+void OpsCplexSolver::addMTZConstraints(IloRangeArray &constraints) {
   const int BIG_M = std::max<int>(input_.getMaxArc(), input_.getL()) + 1;
   for (auto k = 0, x_idx = 0; k < input_.getM(); ++k) {
     const auto &graph = input_.getGraph(k);
@@ -159,7 +159,7 @@ void OPS_cplex_solver1::addMTZConstraints(IloRangeArray &constraints) {
   }
 }
 
-void OPS_cplex_solver1::addLimitConstraints(IloRangeArray &constraints) {
+void OpsCplexSolver::addLimitConstraints(IloRangeArray &constraints) {
   IloExpr start_time_expression(env_);
   start_time_expression = s_[0];
   constraints.add(IloRange(env_, 0, start_time_expression, 0, "Limit0"));
@@ -173,13 +173,13 @@ void OPS_cplex_solver1::addLimitConstraints(IloRangeArray &constraints) {
   last_time_expression.end();
 }
 
-void OPS_cplex_solver1::setParameters() {
+void OpsCplexSolver::setParameters() {
   cplex_.setParam(IloCplex::Param::TimeLimit, 3600);
   cplex_.setParam(IloCplex::Param::MIP::Tolerances::AbsMIPGap, 1e-3);
   cplex_.setParam(IloCplex::Param::Emphasis::MIP, CPX_MIPEMPHASIS_OPTIMALITY);
 }
 
-void OPS_cplex_solver1::setOutput() {
+void OpsCplexSolver::setOutput() {
   const auto x = IloNumVarArrayToVector(x_);
   const auto y = IloNumVarArrayToVector(y_);
   auto s = IloNumVarArrayToVector(s_);
@@ -188,8 +188,7 @@ void OPS_cplex_solver1::setOutput() {
 }
 
 const std::vector<double>
-OPS_cplex_solver1::IloNumVarArrayToVector(const IloNumVarArray &variable
-) const {
+OpsCplexSolver::IloNumVarArrayToVector(const IloNumVarArray &variable) const {
   IloNumArray values(env_);
   cplex_.getValues(variable, values);
   std::vector<double> result;

@@ -5,7 +5,7 @@
 
 namespace emir {
 
-class OPS_output_t {
+class OpsOutput {
  public:
   const OpsInput &input_;
 
@@ -20,9 +20,9 @@ class OPS_output_t {
   bool found_;
 
  public:
-  OPS_output_t(const OpsInput &input);
+  OpsOutput(const OpsInput &input);
 
-  ~OPS_output_t();
+  ~OpsOutput();
 
   bool set(
     const std::vector<double> &x, const std::vector<double> &y,

@@ -7,9 +7,9 @@
 
 namespace emir {
 
-const double OPS_output_t::kMaxTimeMargin = 1.0e-2;
+const double OpsOutput::kMaxTimeMargin = 1.0e-2;
 
-OPS_output_t::OPS_output_t(const OpsInput &input) :
+OpsOutput::OpsOutput(const OpsInput &input) :
   input_(input), x_(input_.getN() * input_.getM(), input_.getN()),
   y_(input_.getN()), s_(input_.getN()), h_(input_.getN()),
   t_cost_(input_.getN(), input_.getN()), optimal_(false), found_(false) {
@@ -40,9 +40,9 @@ OPS_output_t::OPS_output_t(const OpsInput &input) :
   check();
 }
 
-OPS_output_t::~OPS_output_t() {}
+OpsOutput::~OpsOutput() {}
 
-void OPS_output_t::init_t_cost() {
+void OpsOutput::init_t_cost() {
   const int n = input_.getN();
 
   for (int i = 1; i <= n - 1; i++) {
@@ -60,7 +60,7 @@ void OPS_output_t::init_t_cost() {
   for (int i = 1; i <= n; i++) t_cost_(i, 1) = OpsInstance::kInfiniteTime;
 }
 
-bool OPS_output_t::set(
+bool OpsOutput::set(
   const std::vector<double> &x, const std::vector<double> &y,
   const std::vector<double> &s, bool optimal
 ) {
@@ -119,7 +119,7 @@ bool OPS_output_t::set(
   return found_;
 }
 
-void OPS_output_t::write_statistics(std::ostream &os) const {
+void OpsOutput::write_statistics(std::ostream &os) const {
   os << std::setw(4) << n_customers() << "\t";
 
   if (found_)
@@ -144,7 +144,7 @@ void OPS_output_t::write_statistics(std::ostream &os) const {
     os << std::setw(4) << 0 << "\t";
 }
 
-std::ostream &OPS_output_t::write(std::ostream &os) const {
+std::ostream &OpsOutput::write(std::ostream &os) const {
   /* x_.write_raw(os);
 
   os << '\n';*/
@@ -170,15 +170,15 @@ std::ostream &OPS_output_t::write(std::ostream &os) const {
   return os;
 }
 
-int OPS_output_t::get_x(const int k, const int i, const int j) const {
+int OpsOutput::get_x(const int k, const int i, const int j) const {
   return x_(k * input_.getN() + i + 1, j + 1);
 }
 
-int &OPS_output_t::set_x(const int k, const int i, const int j) {
+int &OpsOutput::set_x(const int k, const int i, const int j) {
   return x_(k * input_.getN() + i + 1, j + 1);
 }
 
-int OPS_output_t::get_obj() const {
+int OpsOutput::get_obj() const {
   assert((s_.size() > 0) && (s_[0] != -1));
 
   int obj = 0;
@@ -192,7 +192,7 @@ int OPS_output_t::get_obj() const {
   return obj;
 }
 
-int OPS_output_t::n_customers() const {
+int OpsOutput::n_customers() const {
   int cnt = 0;
   const int nc = y_.size() - 1;
 
@@ -202,11 +202,11 @@ int OPS_output_t::n_customers() const {
   return cnt;
 }
 
-double OPS_output_t::length() const {
+double OpsOutput::length() const {
   return s_[y_.size() - 1];
 }
 
-bool OPS_output_t::check() {
+bool OpsOutput::check() {
   found_ = true;
 
   const int n = input_.getN();
@@ -250,7 +250,7 @@ bool OPS_output_t::check() {
   std::setprecision(1) << rL << '\n'; std::cout << '\n'; */
 
   for (int i = 0; i < n; i++) {
-    if (s_[i] > rL + OPS_output_t::kMaxTimeMargin) {
+    if (s_[i] > rL + OpsOutput::kMaxTimeMargin) {
       found_ = false;
 
       std::cout << "Nodo: " << i << ": " << s_[i] << " -> " << rL << '\n';
@@ -262,7 +262,7 @@ bool OPS_output_t::check() {
                   << '\n';
       std::cout << '\n';
 
-      assert(s_[i] <= rL + OPS_output_t::kMaxTimeMargin);
+      assert(s_[i] <= rL + OpsOutput::kMaxTimeMargin);
       exit(1);
     }
   }

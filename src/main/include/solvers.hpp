@@ -5,9 +5,8 @@
 #include <functions.hpp>
 
 template<
-  typename T,
-  typename std::enable_if<std::is_base_of<emir::OPS_solver_t, T>::value>::type
-    * = nullptr>
+  typename T, typename std::enable_if<
+                std::is_base_of<emir::OpsSolver, T>::value>::type * = nullptr>
 void solve(
   const emir::OpsInput &input, double tol, std::ostream &os1, std::ostream &os2
 ) {
@@ -24,7 +23,7 @@ int processor(
   const double tol = 1e-4;
   const auto input = createFromFile<emir::OpsInput>(instance_file_name);
 
-  solve<emir::OPS_cplex_solver1>(input, tol, log_file, output_file);
+  solve<emir::OpsCplexSolver>(input, tol, log_file, output_file);
 
   output_file << '\n';
   output_file.close();

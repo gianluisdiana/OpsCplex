@@ -31,7 +31,7 @@ class gantt_TIKZ_t {
 
   ~gantt_TIKZ_t() {}
 
-  std::ostream &write(std::ostream &os, const OPS_output_t &O) const {
+  std::ostream &write(std::ostream &os, const OpsOutput &O) const {
     OPS_TIKZ TIKZ_w;
 
     os << TIKZ_w.TIKZ_HEADER << '\n';
@@ -74,8 +74,7 @@ class gantt_TIKZ_t {
     return os;
   }
 
-  std::ostream &
-  full_description(std::ostream &os, const OPS_output_t &O) const {
+  std::ostream &full_description(std::ostream &os, const OpsOutput &O) const {
     os << "\t \t \\begin{tabular}{ llcr }" << '\n';
     os << "\\\\" << '\n';
     os << "\t \t  $|V^*|$ & \\hspace{3.3cm} &  &" << std::setw(8)
@@ -97,7 +96,7 @@ class gantt_TIKZ_t {
     return os;
   }
 
-  std::ostream &name(std::ostream &os, const OPS_output_t &O) const {
+  std::ostream &name(std::ostream &os, const OpsOutput &O) const {
     std::string name = input.get_instance().get_instance_name();
 
     const std::string bar = "_";
@@ -122,7 +121,7 @@ class gantt_TIKZ_t {
     return os;
   }
 
-  void setup(std::ostream &os, const OPS_output_t &O) const {
+  void setup(std::ostream &os, const OpsOutput &O) const {
     const int n = input.getN();
     const int K = input.getM();
 
@@ -151,7 +150,7 @@ class gantt_TIKZ_t {
   }
 
   void
-  g_setup(std::ostream &os, const OPS_output_t &O, int k, int i, int j) const {
+  g_setup(std::ostream &os, const OpsOutput &O, int k, int i, int j) const {
     const int n = input.getN();
     const int K = input.getM();
 
@@ -211,7 +210,7 @@ class gantt_TIKZ_t {
        << '\n';
   }
 
-  void axis(std::ostream &os, const OPS_output_t &O) const {
+  void axis(std::ostream &os, const OpsOutput &O) const {
     const int K = input.getM();
     const int n = input.getN();
 
