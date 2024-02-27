@@ -9,13 +9,14 @@ namespace emir {
 
 const double OPS_output_t::kMaxTimeMargin = 1.0e-2;
 
-OPS_output_t::OPS_output_t(const OpsInput &I) :
-  I_(I), x_(I_.getN() * I_.getM(), I_.getN()), y_(I_.getN()), s_(I_.getN()),
-  h_(I_.getN()), t_cost_(I_.getN(), I_.getN()), optimal_(false), found_(false) {
+OPS_output_t::OPS_output_t(const OpsInput &input) :
+  input_(input), x_(input_.getN() * input_.getM(), input_.getN()),
+  y_(input_.getN()), s_(input_.getN()), h_(input_.getN()),
+  t_cost_(input_.getN(), input_.getN()), optimal_(false), found_(false) {
   x_.init(0);
 
-  const int n = I_.getN();
-  const int K = I_.getM();
+  const int n = input_.getN();
+  const int K = input_.getM();
 
   for (int k = 0; k < K; k++) x_(1 + k * n, n) = 1;
 
@@ -29,8 +30,8 @@ OPS_output_t::OPS_output_t(const OpsInput &I) :
 
   const int sz_h = h_.size();
 
-  const int L = I.getL();
-  const double scal_factor = I.getScalingFactor();
+  const int L = input.getL();
+  const double scal_factor = input.getScalingFactor();
 
   for (int i = 0; i < sz_h; i++) h_[i] = L / scal_factor;
 
@@ -42,12 +43,12 @@ OPS_output_t::OPS_output_t(const OpsInput &I) :
 OPS_output_t::~OPS_output_t() {}
 
 void OPS_output_t::init_t_cost() {
-  const int n = I_.getN();
+  const int n = input_.getN();
 
   for (int i = 1; i <= n - 1; i++) {
     for (int j = 2; j <= n; j++)
       if ((i != j) && !((i == 1) && (j == n))) {
-        t_cost_(i, j) = I_.getT(i - 1, j - 1);
+        t_cost_(i, j) = input_.getT(i - 1, j - 1);
       } else
         t_cost_(i, j) = OpsInstance::kInfiniteTime;
   }
@@ -68,8 +69,8 @@ bool OPS_output_t::set(
 
   x_.init(0);
 
-  for (int k = 0; k < I_.getM(); ++k) {
-    const auto &graph = I_.getGraph(k);
+  for (int k = 0; k < input_.getM(); ++k) {
+    const auto &graph = input_.getGraph(k);
     for (const auto &arc : graph.getArcs()) {
       const int value = x[arc.getId()];
       assert(value == 1 || value == 0);
@@ -81,7 +82,7 @@ bool OPS_output_t::set(
     }
   }
 
-  const int n = I_.getN();
+  const int n = input_.getN();
 
   y_[0] = 1;
   y_[n - 1] = 1;
@@ -109,7 +110,7 @@ bool OPS_output_t::set(
     }
   }
 
-  for (int i = 0; i < n; i++) s_[i] /= I_.getScalingFactor();
+  for (int i = 0; i < n; i++) s_[i] /= input_.getScalingFactor();
 
   // x_.write_raw(std::cout);
 
@@ -147,9 +148,9 @@ std::ostream &OPS_output_t::write(std::ostream &os) const {
   /* x_.write_raw(os);
 
   os << '\n';*/
-  std::vector<int> r(I_.getN(), 0);
+  std::vector<int> r(input_.getN(), 0);
 
-  const int n = I_.getN();
+  const int n = input_.getN();
 
   /*for (int i = 0; i < n; i++)
       os << std::setw(5) << y_[i];
@@ -170,11 +171,11 @@ std::ostream &OPS_output_t::write(std::ostream &os) const {
 }
 
 int OPS_output_t::get_x(const int k, const int i, const int j) const {
-  return x_(k * I_.getN() + i + 1, j + 1);
+  return x_(k * input_.getN() + i + 1, j + 1);
 }
 
 int &OPS_output_t::set_x(const int k, const int i, const int j) {
-  return x_(k * I_.getN() + i + 1, j + 1);
+  return x_(k * input_.getN() + i + 1, j + 1);
 }
 
 int OPS_output_t::get_obj() const {
@@ -184,7 +185,7 @@ int OPS_output_t::get_obj() const {
 
   for (int j = y_.size() - 1; j >= 0; j--)
     if (y_[j] > 0) {
-      const double b = I_.OpsInput::getB(j);
+      const double b = input_.OpsInput::getB(j);
       obj += y_[j] * b;
     }
 
@@ -208,9 +209,9 @@ double OPS_output_t::length() const {
 bool OPS_output_t::check() {
   found_ = true;
 
-  const int n = I_.getN();
-  const int K = I_.getM();
-  const int L = I_.getL();
+  const int n = input_.getN();
+  const int K = input_.getM();
+  const int L = input_.getL();
 
   std::vector<int> i_degree(n);
   std::vector<int> o_degree(n);
@@ -240,7 +241,7 @@ bool OPS_output_t::check() {
     else
       assert(y_[i] == 0);
 
-  const double rL = (double)(L) / I_.getScalingFactor();
+  const double rL = (double)(L) / input_.getScalingFactor();
 
   /*for (int j = 0; j < n; j++)
                   std::cout << "Nodo: " << std::setw(3) << j << ": " <<

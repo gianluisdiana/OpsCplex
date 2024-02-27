@@ -9,13 +9,13 @@ namespace emir {
 
 class OPS_cplex_solver1 : public OPS_solver_t {
  public:
-  OPS_cplex_solver1(const OpsInput &I, double eps);
+  OPS_cplex_solver1(const OpsInput &input, double eps);
   ~OPS_cplex_solver1();
 
   void solve(std::ostream &r_os) override;
 
  private:
- // An environment, manage the memory and identifiers for modeling objects.
+  // An environment, manage the memory and identifiers for modeling objects.
   IloEnv env_;
   // Algorithm used to solve the Linear Programming problem.
   IloCplex cplex_;

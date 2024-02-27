@@ -10,7 +10,7 @@ namespace emir {
 class gantt_TIKZ_t {
  private:
   const TargetSet &T_;
-  const OpsInput &I_;
+  const OpsInput &input;
 
   GOMA::matrix<double> D_;
 
@@ -23,8 +23,8 @@ class gantt_TIKZ_t {
   const double axis_y_gap_;
 
  public:
-  gantt_TIKZ_t(const TargetSet &T, const OpsInput &I) :
-    T_(T), I_(I), D_(), gantt_w_(30), task_h_(1.0), slit_gap_(0.1),
+  gantt_TIKZ_t(const TargetSet &T, const OpsInput &input) :
+    T_(T), input(input), D_(), gantt_w_(30), task_h_(1.0), slit_gap_(0.1),
     task_gap_(0.2), axis_x_gap_(0.1), axis_y_gap_(0.1) {
     T.get_time_matrix(T.get_CSU_setup().b_spd(), D_);
   }
@@ -98,7 +98,7 @@ class gantt_TIKZ_t {
   }
 
   std::ostream &name(std::ostream &os, const OPS_output_t &O) const {
-    std::string name = I_.get_instance().get_instance_name();
+    std::string name = input.get_instance().get_instance_name();
 
     const std::string bar = "_";
 
@@ -116,15 +116,15 @@ class gantt_TIKZ_t {
 
     } while (pos != std::string::npos);
 
-    const std::string stam = I_.get_instance().get_instance_stamp();
+    const std::string stam = input.get_instance().get_instance_stamp();
 
     os << "{" << name << "};" << '\n';
     return os;
   }
 
   void setup(std::ostream &os, const OPS_output_t &O) const {
-    const int n = I_.getN();
-    const int K = I_.getM();
+    const int n = input.getN();
+    const int K = input.getM();
 
     std::vector<int> Jk;
 
@@ -152,10 +152,10 @@ class gantt_TIKZ_t {
 
   void
   g_setup(std::ostream &os, const OPS_output_t &O, int k, int i, int j) const {
-    const int n = I_.getN();
-    const int K = I_.getM();
+    const int n = input.getN();
+    const int K = input.getM();
 
-    const double rL = (double)(I_.getL()) / I_.getScalingFactor();
+    const double rL = (double)(input.getL()) / input.getScalingFactor();
 
     const double pi = (i == 0) ? 0 : T_[i - 1].get_p();
     const double pj = (j == (n - 1)) ? 0 : T_[j - 1].get_p();
@@ -212,10 +212,10 @@ class gantt_TIKZ_t {
   }
 
   void axis(std::ostream &os, const OPS_output_t &O) const {
-    const int K = I_.getM();
-    const int n = I_.getN();
+    const int K = input.getM();
+    const int n = input.getN();
 
-    const double rL = (double)(I_.getL()) / I_.getScalingFactor();
+    const double rL = (double)(input.getL()) / input.getScalingFactor();
 
     const double x = gantt_w_ + 0.5;
     const double y = -K * task_h_ + slit_gap_ - task_gap_;

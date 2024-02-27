@@ -7,7 +7,7 @@ namespace emir {
 
 class OPS_output_t {
  public:
-  const OpsInput &I_;
+  const OpsInput &input_;
 
   GOMA::matrix<int> x_;
   std::vector<int> y_;
@@ -20,9 +20,9 @@ class OPS_output_t {
   bool found_;
 
  public:
-  OPS_output_t(const OpsInput &I);
+  OPS_output_t(const OpsInput &input);
 
-  virtual ~OPS_output_t();
+  ~OPS_output_t();
 
   bool set(
     const std::vector<double> &x, const std::vector<double> &y,
