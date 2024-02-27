@@ -1,5 +1,5 @@
-#include <OPS_instance_t.hpp>
 #include <functions.hpp>
+#include <ops_instance.hpp>
 
 namespace emir {
 

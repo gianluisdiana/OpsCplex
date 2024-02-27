@@ -3,7 +3,7 @@ project(models)
 
 # Specify the files to compile
 add_library(${PROJECT_NAME} STATIC
-    src/OPS_bc1.cpp
+    src/ops_bc.cpp
 )
 
 # Add an alias to the project

@@ -7,7 +7,7 @@
  * Course: Fifth
  * Institutional email: gian.diana.28@ull.edu.es
  *
- * @file OPS_input_t.hpp
+ * @file ops_input.hpp
  * @author Gian Luis Bolivar Diana
  * @version 0.2.0
  * @date January 21, 2024
@@ -23,8 +23,8 @@
  */
 // clang-format on
 
-#include <OPS_instance_t.hpp>
 #include <graph.hpp>
+#include <ops_instance.hpp>
 #include <stats.hpp>
 
 namespace emir {

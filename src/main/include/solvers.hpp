@@ -1,8 +1,8 @@
 #ifndef _SOLVERS_HPP_
 #define _SOLVERS_HPP_
 
-#include <OPS_bc1.hpp>
 #include <functions.hpp>
+#include <ops_bc.hpp>
 
 template<
   typename T, typename std::enable_if<

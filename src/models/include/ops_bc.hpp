@@ -3,7 +3,7 @@
 
 #include <ilcplex/ilocplex.h>
 
-#include <OPS_solver_t.hpp>
+#include <ops_solver.hpp>
 
 namespace emir {
 

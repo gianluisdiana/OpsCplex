@@ -1,7 +1,7 @@
 #ifndef _EMIR_OPS_SOLVER_HPP_
 #define _EMIR_OPS_SOLVER_HPP_
 
-#include <OPS_output_t.hpp>
+#include <ops_output.hpp>
 
 namespace emir {
 

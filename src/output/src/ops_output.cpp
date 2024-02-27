@@ -3,11 +3,11 @@
 #include <iomanip>
 #include <set>
 
-#include <OPS_output_t.hpp>
+#include <ops_output.hpp>
 
 namespace emir {
 
-const double OpsOutput::kMaxTimeMargin = 1.0e-2;
+const double OpsOutput::kMaxTimeMargin = 1e-2;
 
 OpsOutput::OpsOutput(const OpsInput &input) :
   input_(input), x_(input_.getN() * input_.getM(), input_.getN()),

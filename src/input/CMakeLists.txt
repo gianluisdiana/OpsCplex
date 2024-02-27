@@ -7,7 +7,7 @@ add_library(${PROJECT_NAME} STATIC
     src/graph.cpp
     src/node.cpp
     src/ops_input.cpp
-    src/OPS_instance_t.cpp
+    src/ops_instance.cpp
 )
 
 # Add an alias to the project
