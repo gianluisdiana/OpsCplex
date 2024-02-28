@@ -143,6 +143,7 @@ class Graph {
    * returns it.
    *
    * @param id Id of the node to search
+   * @return The node with the given id.
    */
   std::shared_ptr<Node> searchNode(const std::string &id);
 };

@@ -170,14 +170,6 @@ std::ostream &OpsOutput::write(std::ostream &os) const {
   return os;
 }
 
-int OpsOutput::get_x(const int k, const int i, const int j) const {
-  return x_(k * input_.getN() + i + 1, j + 1);
-}
-
-int &OpsOutput::set_x(const int k, const int i, const int j) {
-  return x_(k * input_.getN() + i + 1, j + 1);
-}
-
 int OpsOutput::get_obj() const {
   assert((s_.size() > 0) && (s_[0] != -1));
 
@@ -200,10 +192,6 @@ int OpsOutput::n_customers() const {
     if (y_[i] > 0) cnt++;
 
   return cnt;
-}
-
-double OpsOutput::length() const {
-  return s_[y_.size() - 1];
 }
 
 bool OpsOutput::check() {
@@ -276,4 +264,17 @@ bool OpsOutput::check() {
 
   return found_;
 }
+
+// ------------------------------- Operators ------------------------------- //
+
+std::ostream &operator<<(std::ostream &os, const OpsOutput &output) {
+  json x_json, t_cost;
+  output.x_.get_json(x_json);
+  output.t_cost_.get_json(t_cost);
+  const json output_json = {{"x", x_json},      {"y", output.y_},
+                            {"s", output.s_},   {"h", output.h_},
+                            {"t_cost", t_cost}, {"optimal", output.optimal_}};
+  return os << output_json.dump(2);
+}
+
 }  // namespace emir

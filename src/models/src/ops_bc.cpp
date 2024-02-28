@@ -2,22 +2,22 @@
 
 namespace emir {
 
-OpsCplexSolver::OpsCplexSolver(const OpsInput &input, double eps) :
-  OpsSolver(input, eps), env_(), cplex_(env_), model_(env_), x_(env_), y_(env_),
-  s_(env_) {}
+OpsCplexSolver::OpsCplexSolver(const OpsInput &input, double tolerance) :
+  OpsSolver(input, tolerance), env_(), cplex_(env_), model_(env_), x_(env_),
+  y_(env_), s_(env_) {}
 
 OpsCplexSolver::~OpsCplexSolver() {
   env_.end();
 }
 
-void OpsCplexSolver::solve(std::ostream &r_os) {
+void OpsCplexSolver::solve(std::ostream &log_os) {
+  makeModel();
+  setParameters();
+  cplex_.setOut(log_os);
+  cplex_.extract(model_);
   try {
-    makeModel();
-    setParameters();
-    cplex_.setOut(r_os);
-    cplex_.extract(model_);
     cplex_.solve();
-  } catch (IloException &ex) {
+  } catch (const IloException &ex) {
     std::cerr << "Error: " << ex << '\n';
     return;
   } catch (...) {

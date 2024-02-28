@@ -7,12 +7,28 @@
 
 namespace emir {
 
+/**
+ * @brief Implements the algorithm that solves the O.P.S. problem using a
+ * CPLEX.
+ */
 class OpsCplexSolver : public OpsSolver {
  public:
-  OpsCplexSolver(const OpsInput &input, double eps);
+  /**
+   * @brief Assign the input and max tolerance to the solver.
+   *
+   * @param input The input of the solver with the instance data.
+   * @param tolerance The tolerance to be used in the solver.
+   */
+  OpsCplexSolver(const OpsInput &input, double tolerance);
   ~OpsCplexSolver();
 
-  void solve(std::ostream &r_os) override;
+  /**
+   * @brief Solve the Linear Programming problem.
+   * The problem is solved using the CPLEX solver.
+   *
+   * @param log_os The output stream to write the logs to.
+   */
+  void solve(std::ostream &log_os) override;
 
  private:
   // An environment, manage the memory and identifiers for modeling objects.
