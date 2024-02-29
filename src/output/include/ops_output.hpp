@@ -5,26 +5,33 @@
 
 namespace emir {
 
+/** @brief This class represents the output of the O.P.S. problem. */
 class OpsOutput {
  public:
+  /**
+   * @brief Assign the input and resize the attributes.
+   *
+   * @param input The input of the O.P.S. problem.
+   */
   OpsOutput(const OpsInput &input);
 
+  /** @brief Empty destructor. */
   ~OpsOutput();
 
-  bool set(
+  /**
+   * @brief Set the output of the O.P.S. problem.
+   * @details Assigns the values of the solution to the attributes of the class,
+   * checking if they have with the expected format.
+   *
+   * @param x The values of the arcs of the graph.
+   * @param y The values of the nodes of the graph.
+   * @param s The values of the time spent in each node.
+   * @param isOptimal Whether the solution is optimal or not.
+   */
+  void set(
     const std::vector<double> &x, const std::vector<double> &y,
-    const std::vector<double> &s, bool optimal = true
+    const std::vector<double> &s, bool isOptimal = true
   );
-
-  inline int get_x(const int k, const int i, const int j) const {
-    return x_(k * input_.getN() + i + 1, j + 1);
-  }
-
-  inline int &set_x(const int k, const int i, const int j) {
-    return x_(k * input_.getN() + i + 1, j + 1);
-  }
-
-  int get_obj() const;
 
   inline double length() const {
     return s_[y_.size() - 1];
@@ -35,8 +42,6 @@ class OpsOutput {
   std::ostream &write(std::ostream &os) const;
 
   void write_statistics(std::ostream &os) const;
-
-  void init_t_cost();
 
   bool check();
 
@@ -63,10 +68,49 @@ class OpsOutput {
   std::vector<double> s_;
   std::vector<double> h_;
 
-  GOMA::matrix<int> t_cost_;
-
   bool optimal_;
   bool found_;
+
+  inline int get_x(const int k, const int i, const int j) const {
+    return x_(k * input_.getN() + i + 1, j + 1);
+  }
+
+  // ------------------------------ Setters -------------------------------- //
+
+  /**
+   * @brief Set the value of the arc (i, j) of the graph k as true.
+   *
+   * @param k The index of the graph.
+   * @param i The origin of the arc.
+   * @param j The destination of the arc.
+   */
+  inline void setXAsTrue(const int k, const int i, const int j) {
+    x_(k * input_.getN() + i + 1, j + 1) = 1;
+  }
+
+  /**
+   * @brief Get each arc of every graph and check if the value in the given vector
+   * is 1 or 0. If it is 1, set the value of the arc as true.
+   *
+   * @param x The vector with the values of the arcs of the graph.
+   */
+  void setX(const std::vector<double> &x);
+
+  /**
+   * @brief Sets which nodes are visited in the solution.
+   *
+   * @param y The vector with the values of the nodes of the graph.
+   */
+  void setY(const std::vector<double> &y);
+
+  /**
+   * @brief Set the time spent in each node.
+   *
+   * @param s The vector with the values of the time spent in each node.
+   */
+  void setS(const std::vector<double> &s);
+
+  int get_obj() const;
 };
 
 }  // namespace emir

@@ -10,113 +10,23 @@ namespace emir {
 const double OpsOutput::kMaxTimeMargin = 1e-2;
 
 OpsOutput::OpsOutput(const OpsInput &input) :
-  input_(input), x_(input_.getN() * input_.getM(), input_.getN()),
-  y_(input_.getN()), s_(input_.getN()), h_(input_.getN()),
-  t_cost_(input_.getN(), input_.getN()), optimal_(false), found_(false) {
-  x_.init(0);
-
-  const int n = input_.getN();
-  const int K = input_.getM();
-
-  for (int k = 0; k < K; k++) x_(1 + k * n, n) = 1;
-
-  const int sz_y = y_.size();
-
-  for (int i = 0; i < sz_y; i++) y_[i] = 0;
-
-  const int sz_s = s_.size();
-
-  for (int i = 0; i < sz_s; i++) s_[i] = 0;
-
-  const int sz_h = h_.size();
-
-  const int L = input.getL();
-  const double scal_factor = input.getScalingFactor();
-
-  for (int i = 0; i < sz_h; i++) h_[i] = L / scal_factor;
-
-  init_t_cost();
-
-  check();
-}
+  input_(input), x_(input.getN() * input.getM(), input.getN()),
+  y_(input.getN(), 0), s_(input.getN(), 0),
+  h_(input.getN(), double(input.getL()) / input.getScalingFactor()),
+  optimal_(false), found_(false) {}
 
 OpsOutput::~OpsOutput() {}
 
-void OpsOutput::init_t_cost() {
-  const int n = input_.getN();
-
-  for (int i = 1; i <= n - 1; i++) {
-    for (int j = 2; j <= n; j++)
-      if ((i != j) && !((i == 1) && (j == n))) {
-        t_cost_(i, j) = input_.getT(i - 1, j - 1);
-      } else
-        t_cost_(i, j) = OpsInstance::kInfiniteTime;
-  }
-
-  t_cost_(1, n) = 0;
-
-  for (int j = 1; j <= n - 1; j++) t_cost_(n, j) = OpsInstance::kInfiniteTime;
-
-  for (int i = 1; i <= n; i++) t_cost_(i, 1) = OpsInstance::kInfiniteTime;
-}
-
-bool OpsOutput::set(
+void OpsOutput::set(
   const std::vector<double> &x, const std::vector<double> &y,
-  const std::vector<double> &s, bool optimal
+  const std::vector<double> &s, bool isOptimal
 ) {
   found_ = true;
-  optimal_ = optimal;
-
-  x_.init(0);
-
-  for (int k = 0; k < input_.getM(); ++k) {
-    const auto &graph = input_.getGraph(k);
-    for (const auto &arc : graph.getArcs()) {
-      const int value = x[arc.getId()];
-      assert(value == 1 || value == 0);
-      if (value == 1) {
-        const int i = std::stoi(arc.getOriginId());
-        const int j = std::stoi(arc.getDestinationId());
-        set_x(k, i, j) = 1;
-      }
-    }
-  }
-
-  const int n = input_.getN();
-
-  y_[0] = 1;
-  y_[n - 1] = 1;
-
-  if (y.size() > 0) {
-    for (int i = 1; i < n - 1; i++) {
-      const int val = round(y[i - 1]);
-
-      assert(val <= 1);
-      assert(val >= 0);
-
-      y_[i] = val;
-    }
-  }
-
-  s_[0] = 0;
-
-  if (s.size() > 0) {
-    for (int i = 1; i < n; i++) {
-      const int val = s[i - 1];
-
-      assert(val >= 0);
-
-      s_[i] = val;
-    }
-  }
-
-  for (int i = 0; i < n; i++) s_[i] /= input_.getScalingFactor();
-
-  // x_.write_raw(std::cout);
-
+  optimal_ = isOptimal;
+  setX(x);
+  setY(y);
+  setS(s);
   check();
-
-  return found_;
 }
 
 void OpsOutput::write_statistics(std::ostream &os) const {
@@ -270,11 +180,53 @@ bool OpsOutput::check() {
 std::ostream &operator<<(std::ostream &os, const OpsOutput &output) {
   json x_json, t_cost;
   output.x_.get_json(x_json);
-  output.t_cost_.get_json(t_cost);
-  const json output_json = {{"x", x_json},      {"y", output.y_},
-                            {"s", output.s_},   {"h", output.h_},
-                            {"t_cost", t_cost}, {"optimal", output.optimal_}};
+  const json output_json = {
+    {"x", x_json},
+    {"y", output.y_},
+    {"s", output.s_},
+    {"h", output.h_},
+    {"optimal", output.optimal_}};
   return os << output_json.dump(2);
+}
+
+// ------------------------------- Setters --------------------------------- //
+
+void OpsOutput::setX(const std::vector<double> &x) {
+  x_.init(0);
+  for (int k = 0; k < input_.getM(); ++k) {
+    const auto &graph = input_.getGraph(k);
+    for (const auto &arc : graph.getArcs()) {
+      const int value = x[arc.getId()];
+      assert(value == 1 || value == 0);
+      if (value == 0) continue;
+      const int i = std::stoi(arc.getOriginId());
+      const int j = std::stoi(arc.getDestinationId());
+      setXAsTrue(k, i, j);
+    }
+  }
+}
+
+void OpsOutput::setY(const std::vector<double> &y) {
+  const int n = input_.getN();
+  y_[0] = 1;
+  y_[n - 1] = 1;
+  if (y.size() == 0) return;
+  for (int i = 1; i < n - 1; ++i) {
+    const int value = y[i - 1];
+    assert(value == 1 || value == 0);
+    y_[i] = value;
+  }
+}
+
+void OpsOutput::setS(const std::vector<double> &s) {
+  const int n = input_.getN();
+  s_[0] = 0;
+  if (s.size() == 0) return;
+  for (int i = 1; i < n ; i++) {
+    const int val = s[i - 1];
+    assert(val >= 0);
+    s_[i] = val / input_.getScalingFactor();
+  }
 }
 
 }  // namespace emir
