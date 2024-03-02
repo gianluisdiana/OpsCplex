@@ -37,13 +37,9 @@ class OpsOutput {
     return s_[y_.size() - 1];
   }
 
-  int n_customers() const;
-
   std::ostream &write(std::ostream &os) const;
 
   void write_statistics(std::ostream &os) const;
-
-  bool check();
 
   // ------------------------------ Operators ------------------------------ //
 
@@ -63,17 +59,17 @@ class OpsOutput {
 
   const OpsInput &input_;
 
+  // The matrix that represents the arcs of the graph.
   GOMA::matrix<int> x_;
+  // Represents which nodes are visited in the solution.
   std::vector<int> y_;
+  // Represents the time spent in each node.
   std::vector<double> s_;
+
   std::vector<double> h_;
 
   bool optimal_;
   bool found_;
-
-  inline int get_x(const int k, const int i, const int j) const {
-    return x_(k * input_.getN() + i + 1, j + 1);
-  }
 
   // ------------------------------ Setters -------------------------------- //
 
@@ -89,8 +85,8 @@ class OpsOutput {
   }
 
   /**
-   * @brief Get each arc of every graph and check if the value in the given vector
-   * is 1 or 0. If it is 1, set the value of the arc as true.
+   * @brief Get each arc of every graph and check if the value in the given
+   * vector is 1 or 0. If it is 1, set the value of the arc as true.
    *
    * @param x The vector with the values of the arcs of the graph.
    */
@@ -110,7 +106,50 @@ class OpsOutput {
    */
   void setS(const std::vector<double> &s);
 
-  int get_obj() const;
+  // ------------------------------ Getters -------------------------------- //
+
+  /** @brief Gives readonly access to the x_ value in the given position. */
+  inline int getX(const int k, const int i, const int j) const {
+    return x_(k * input_.getN() + i + 1, j + 1);
+  }
+
+  /** @brief Gets the number of objects visited in the solution. */
+  std::size_t getObjectsVisited() const;
+
+  /**
+   * @brief Gets the value of the solution.
+   * @details To calculate the objective value of the solution we need to sum
+   * the priority of the objects visited in the solution.
+   *
+   * @return The value of the solution.
+   */
+  int getTotalProfit() const;
+
+  // -------------------------- Utility methods ---------------------------- //
+
+  /**
+   * @brief Checks if the constraints of the mathematical model are beeing
+   * satisfied.
+   * @details The constraints are:
+   *  - The first and last node is visited in each sliding bar.
+   *  - Each node must have the same number of arrival and departure arcs.
+   *  - The time spent at moment of visiting each node is less than the
+   *  maximum time.
+   */
+  void check() const;
+
+  /**
+   * @brief Checks if the first and last node is visited in each sliding bar and
+   * if each node has the same number of arrival and departure arcs.
+   */
+  void checkArcs() const;
+
+  /**
+   * @brief Checks if the time spent at moment of visiting each node is less than
+   * the maximum time.
+   */
+  void checkTime() const;
+
 };
 
 }  // namespace emir

@@ -78,11 +78,11 @@ class gantt_TIKZ_t {
     os << "\t \t \\begin{tabular}{ llcr }" << '\n';
     os << "\\\\" << '\n';
     os << "\t \t  $|V^*|$ & \\hspace{3.3cm} &  &" << std::setw(8)
-       << O.n_customers() << " \\\\" << '\n';
+       << O.getObjectsVisited() << " \\\\" << '\n';
     os << "\t \t  max length                &  &  &" << std::setw(8)
        << O.length() << " \\\\" << '\n';
     os << "\t \t  Obj             &  &  &" << std::setw(8) << std::fixed
-       << std::setprecision(2) << O.get_obj() << " \\\\" << '\n';
+       << std::setprecision(2) << O.getTotalProfit() << " \\\\" << '\n';
     // os << "\t \t  CSU$_h$            &  &  &" << std::setw(6) << std::fixed
     // << std::setprecision(2) << CSU_st.get_CSU_h() << " \\\\" << '\n'; os <<
     // "\t \t  $h$                &  &  &" << std::setw(6) << std::fixed <<

@@ -30,28 +30,16 @@ void OpsOutput::set(
 }
 
 void OpsOutput::write_statistics(std::ostream &os) const {
-  os << std::setw(4) << n_customers() << "\t";
-
-  if (found_)
-    os << std::setw(10) << get_obj() << "\t";
-  else
-    os << std::setw(10) << 99999999 << "\t";
-
-  if (found_)
-    os << std::setw(10) << std::fixed << std::setprecision(1) << length() * 10
-       << "\t";
-  else
-    os << std::setw(10) << 0 << "\t";
-
-  if (found_)
-    os << std::setw(4) << 1 << "\t";
-  else
-    os << std::setw(4) << 0 << "\t";
-
-  if (optimal_)
-    os << std::setw(4) << 1 << "\t";
-  else
-    os << std::setw(4) << 0 << "\t";
+  os << std::setw(4) << getObjectsVisited() << '\t';
+  if (found_) {
+    os << std::setw(10) << getTotalProfit() << '\t' << std::setw(10)
+       << std::fixed << std::setprecision(1) << length() * 10 << '\t'
+       << std::setw(4) << 1 << '\t';
+  } else {
+    os << std::setw(10) << 99'999'999 << '\t' << std::setw(10) << 0 << '\t'
+       << std::setw(4) << 0 << '\t';
+  }
+  os << std::setw(4) << (optimal_ ? 1 : 0) << '\t';
 }
 
 std::ostream &OpsOutput::write(std::ostream &os) const {
@@ -78,101 +66,6 @@ std::ostream &OpsOutput::write(std::ostream &os) const {
   os << '\n';
 
   return os;
-}
-
-int OpsOutput::get_obj() const {
-  assert((s_.size() > 0) && (s_[0] != -1));
-
-  int obj = 0;
-
-  for (int j = y_.size() - 1; j >= 0; j--)
-    if (y_[j] > 0) {
-      const double b = input_.OpsInput::getB(j);
-      obj += y_[j] * b;
-    }
-
-  return obj;
-}
-
-int OpsOutput::n_customers() const {
-  int cnt = 0;
-  const int nc = y_.size() - 1;
-
-  for (int i = 1; i < nc; i++)
-    if (y_[i] > 0) cnt++;
-
-  return cnt;
-}
-
-bool OpsOutput::check() {
-  found_ = true;
-
-  const int n = input_.getN();
-  const int K = input_.getM();
-  const int L = input_.getL();
-
-  std::vector<int> i_degree(n);
-  std::vector<int> o_degree(n);
-
-  for (int i = 0; i < n; i++) {
-    i_degree[i] = 0;
-    o_degree[i] = 0;
-  }
-
-  for (int k = 0; k < K; k++)
-    for (int i = 0; i < n; i++)
-      for (int j = 0; j < n; j++) {
-        if (get_x(k, i, j) == 1) {
-          i_degree[j]++;
-          o_degree[i]++;
-        }
-      }
-
-  assert(o_degree[0] == K);
-  assert(i_degree[n - 1] == K);
-
-  for (int i = 1; i < n - 1; i++) assert((o_degree[i] - i_degree[i]) == 0);
-
-  for (int i = 1; i < n - 1; i++)
-    if (i_degree[i] > 0)
-      assert(y_[i] == 1);
-    else
-      assert(y_[i] == 0);
-
-  const double rL = (double)(L) / input_.getScalingFactor();
-
-  /*for (int j = 0; j < n; j++)
-                  std::cout << "Nodo: " << std::setw(3) << j << ": " <<
-  std::setw(8) << std::fixed << std::setprecision(1) << s_[j]
-                       << " -> " << std::setw(8) << std::fixed <<
-  std::setprecision(1) << rL << '\n'; std::cout << '\n'; */
-
-  for (int i = 0; i < n; i++) {
-    if (s_[i] > rL + OpsOutput::kMaxTimeMargin) {
-      found_ = false;
-
-      std::cout << "Nodo: " << i << ": " << s_[i] << " -> " << rL << '\n';
-
-      for (int j = 0; j < n; j++)
-        std::cout << "Nodo: " << std::setw(3) << j << ": " << std::setw(8)
-                  << std::fixed << std::setprecision(1) << s_[j] << " -> "
-                  << std::setw(8) << std::fixed << std::setprecision(1) << rL
-                  << '\n';
-      std::cout << '\n';
-
-      assert(s_[i] <= rL + OpsOutput::kMaxTimeMargin);
-      exit(1);
-    }
-  }
-
-  /*std::cout << '\n';
-
-  for (int j = 0; j < n; j ++)
-     std::cout << "Nodo: "<< std::setw(3)<< j << ": " << std::setw(8) <<
-  std::fixed << std::setprecision(1) <<  s_[j] << " -> " << std::setw(8) <<
-  std::fixed << std::setprecision(1) << rL << '\n'; std::cout << '\n';     */
-
-  return found_;
 }
 
 // ------------------------------- Operators ------------------------------- //
@@ -211,10 +104,10 @@ void OpsOutput::setY(const std::vector<double> &y) {
   y_[0] = 1;
   y_[n - 1] = 1;
   if (y.size() == 0) return;
-  for (int i = 1; i < n - 1; ++i) {
-    const int value = y[i - 1];
+  for (int idx = 1; idx < n - 1; ++idx) {
+    const int value = y[idx - 1];
     assert(value == 1 || value == 0);
-    y_[i] = value;
+    y_[idx] = value;
   }
 }
 
@@ -222,10 +115,74 @@ void OpsOutput::setS(const std::vector<double> &s) {
   const int n = input_.getN();
   s_[0] = 0;
   if (s.size() == 0) return;
-  for (int i = 1; i < n ; i++) {
-    const int val = s[i - 1];
-    assert(val >= 0);
-    s_[i] = val / input_.getScalingFactor();
+  for (int idx = 1; idx < n; ++idx) {
+    const int value = s[idx - 1];
+    assert(value >= 0);
+    s_[idx] = value / input_.getScalingFactor();
+  }
+}
+
+// ------------------------------- Getters --------------------------------- //
+
+std::size_t OpsOutput::getObjectsVisited() const {
+  std::size_t amount = 0;
+  for (std::size_t idx = 1; idx < y_.size() - 1; ++idx) {
+    if (y_[idx] > 0) ++amount;
+  }
+  return amount;
+}
+
+int OpsOutput::getTotalProfit() const {
+  assert(s_.size() > 0 && s_[0] != -1);
+  int solutionValue = 0;
+  for (std::size_t idx = 0; idx < y_.size(); ++idx) {
+    if (y_[idx] > 0) solutionValue += y_[idx] * input_.getB(idx);
+  }
+  return solutionValue;
+}
+
+// ---------------------------- Utility Methods ---------------------------- //
+
+void OpsOutput::check() const {
+  checkArcs();
+  checkTime();
+}
+
+void OpsOutput::checkArcs() const {
+  const auto n = input_.getN();
+  const auto K = input_.getM();
+  std::vector<int> amount_of_arrives(n, 0);
+  std::vector<int> amount_of_departures(n, 0);
+
+  for (int k = 0; k < K; k++) {
+    for (auto origin_node = 0; origin_node < n; ++origin_node) {
+      for (auto destiny_node = 0; destiny_node < n; ++destiny_node) {
+        if (getX(k, origin_node, destiny_node) == 1) {
+          amount_of_arrives[destiny_node]++;
+          amount_of_departures[origin_node]++;
+        }
+      }
+    }
+  }
+
+  // The first node has to be used in each sliding bar, same with the last node
+  assert(amount_of_departures[0] == K && amount_of_arrives[n - 1] == K);
+
+  for (std::size_t idx = 1; idx < n - 1; ++idx) {
+    // A node must have the same number of arrival and departure arcs
+    assert(amount_of_departures[idx] == amount_of_arrives[idx]);
+    // The node must be visited in order to have arrival / departure arcs
+    assert(y_[idx] == (amount_of_arrives[idx] > 0 ? 1 : 0));
+  }
+}
+
+void OpsOutput::checkTime() const {
+  const double rL = double(input_.getL()) / input_.getScalingFactor();
+  for (const auto &s : s_) {
+    if (s > rL + OpsOutput::kMaxTimeMargin) {
+      assert(s <= rL + OpsOutput::kMaxTimeMargin);
+      exit(1);
+    }
   }
 }
 
