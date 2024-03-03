@@ -22,6 +22,5 @@ target_include_directories(${PROJECT_NAME}
 
 # Include the subprojects gomautil and json
 target_link_libraries(${PROJECT_NAME}
-    lib::nlohmann_json
     sub::gomautil
 )

@@ -11,7 +11,6 @@ project(root
 
 # ----------------------------- Subdirectories ----------------------------- #
 
-add_subdirectory(lib)
 add_subdirectory(src)
 
 # Only add the tests directory if the BUILD_TESTS option is turned on

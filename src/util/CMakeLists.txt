@@ -1,5 +1,22 @@
+cmake_minimum_required(VERSION 3.22)
 # Set the project name
 project(util)
+
+# ---------------------------- Json Dependencies ---------------------------- #
+
+include(FetchContent)
+
+FetchContent_Declare(
+  json
+  URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
+target_link_libraries(
+  ${PROJECT_NAME}
+  PUBLIC nlohmann_json::nlohmann_json
+)
+
+# ------------------------------ Source files ------------------------------- #
 
 # Specify the files to compile
 add_library(${PROJECT_NAME} STATIC
