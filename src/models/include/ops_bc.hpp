@@ -30,6 +30,11 @@ class OpsCplexSolver : public OpsSolver {
    */
   void solve() override;
 
+  /** @brief Get the profit of the solution. */
+  inline int getProfit() const {
+    return cplex_.getObjValue();
+  }
+
   /**
    * @brief Add a log stream to output the log of the solver.
    *
