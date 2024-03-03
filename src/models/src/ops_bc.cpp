@@ -10,10 +10,9 @@ OpsCplexSolver::~OpsCplexSolver() {
   env_.end();
 }
 
-void OpsCplexSolver::solve(std::ostream &log_os) {
+void OpsCplexSolver::solve() {
   makeModel();
   setParameters();
-  cplex_.setOut(log_os);
   cplex_.extract(model_);
   try {
     cplex_.solve();

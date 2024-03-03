@@ -20,15 +20,24 @@ class OpsCplexSolver : public OpsSolver {
    * @param tolerance The tolerance to be used in the solver.
    */
   OpsCplexSolver(const OpsInput &input, double tolerance);
+
+  /** @brief Delete the environment of the solution. */
   ~OpsCplexSolver();
 
   /**
    * @brief Solve the Linear Programming problem.
    * The problem is solved using the CPLEX solver.
+   */
+  void solve() override;
+
+  /**
+   * @brief Add a log stream to output the log of the solver.
    *
    * @param log_os The output stream to write the logs to.
    */
-  void solve(std::ostream &log_os) override;
+  inline void addLog(std::ostream &log_os) {
+    cplex_.setOut(log_os);
+  }
 
  private:
   // An environment, manage the memory and identifiers for modeling objects.

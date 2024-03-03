@@ -24,10 +24,8 @@ class OpsSolver {
 
   /**
    * @brief Solve the O.P.S. problem and store the solution in the output.
-   *
-   * @param log_os The outflow where the logs will be stored.
    */
-  virtual void solve(std::ostream &log_os) = 0;
+  virtual void solve() = 0;
 
   // ------------------------------ Operators ------------------------------ //
 

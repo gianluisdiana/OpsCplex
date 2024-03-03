@@ -19,11 +19,11 @@ template<
   typename T, typename std::enable_if<
                 std::is_base_of<emir::OpsSolver, T>::value>::type * = nullptr>
 void solve(
-  const emir::OpsInput &input, double tolerance, std::ostream &log_os,
-  std::ostream &solution_os
+  const emir::OpsInput &input, double tolerance, std::ostream &solution_os, std::ostream &log_os = nullptr
 ) {
   T solver(input, tolerance);
-  solver.solve(log_os);
+  if (log_os) solver.addLog(log_os);
+  solver.solve();
   solution_os << solver;
 }
 
@@ -47,7 +47,7 @@ int processor(
   const double tolerance = 1e-4;
   const auto input = createFromFile<emir::OpsInput>(instance_file_name);
 
-  solve<emir::OpsCplexSolver>(input, tolerance, log_file, output_file);
+  solve<emir::OpsCplexSolver>(input, tolerance, output_file, log_file);
 
   output_file.close();
   log_file.close();
