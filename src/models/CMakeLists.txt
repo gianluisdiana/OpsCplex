@@ -30,8 +30,8 @@ find_library(CON_LIBRARY libconcert.a HINTS ${CON_LIB_PATH})
 # Add the headers files of the project to the library
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${PROJECT_SOURCE_DIR}/include
-    PROTECTED ${CPX_PATH}/cplex/include
-    PROTECTED ${CPX_PATH}/concert/include
+    PUBLIC ${CPX_PATH}/cplex/include
+    PUBLIC ${CPX_PATH}/concert/include
 )
 
 # Include the subprojects gomautil, input and output
