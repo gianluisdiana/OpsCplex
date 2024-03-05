@@ -3,7 +3,9 @@
 namespace emir {
 
 OpsSolver::OpsSolver(const OpsInput &input, double tolerance) :
-  input_(input), output_(input), tolerance_(tolerance) {}
+  input_(input), output_(input), tolerance_(tolerance) {
+    Arc::id_counter_ = 0;
+  }
 
 // ------------------------------- Operators ------------------------------- //
 
