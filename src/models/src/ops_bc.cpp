@@ -94,21 +94,19 @@ void OpsCplexSolver::addConstraints() {
 
 void OpsCplexSolver::addDeltaPlusConstraints(IloRangeArray &constraints) {
   for (auto k = 0; k < input_.getM(); ++k) {
-    for (auto node_idx = 0; node_idx < input_.getN() - 1; ++node_idx) {
-      const auto &node_string = std::to_string(node_idx);
-      const auto mki = input_.getAmountOfSuccessors(k, node_string);
-      if (mki == 0) continue;
-
+    const auto &graph = input_.getGraph(k);
+    for (const auto &origin_id : graph.getNodesId()) {
       IloExpr expression(env_);
-      for (auto l = 0; l < mki; ++l) {
-        expression += x_[input_.getArcId(k, node_string, l, true)];
+      const auto successors = graph.getSuccessorsId(origin_id);
+      if (successors.empty()) continue;
+      for (const auto &destination_id : successors) {
+        expression += x_[graph.getArcId(origin_id, destination_id)];
       }
-      if (node_idx > 0) expression -= y_[node_idx - 1];
-
-      const double is_root_node = node_idx == 0 ? 1.0 : 0.0;
+      if (origin_id != "0") expression -= y_[std::stoi(origin_id) - 1];
+      const double is_root_node = origin_id == "0" ? 1.0 : 0.0;
       constraints.add(IloRange(
         env_, is_root_node, expression, is_root_node,
-        ("deltaplus_" + node_string + "_" + std::to_string(k + 1)).c_str()
+        ("deltaplus_" + origin_id + "_" + std::to_string(k + 1)).c_str()
       ));
       expression.end();
     }
@@ -116,21 +114,21 @@ void OpsCplexSolver::addDeltaPlusConstraints(IloRangeArray &constraints) {
 }
 
 void OpsCplexSolver::addDeltaMinusConstraints(IloRangeArray &constraints) {
+  const auto last_node = std::to_string(input_.getN() - 1);
   for (auto k = 0; k < input_.getM(); ++k) {
-    for (auto node_idx = 1; node_idx < input_.getN(); ++node_idx) {
-      const auto &node_string = std::to_string(node_idx);
-      const auto mki = input_.getAmountOfPredecessors(k, node_string);
-      if (mki == 0) continue;
-
+    const auto &graph = input_.getGraph(k);
+    for (const auto &node_id : graph.getNodesId()) {
       IloExpr expression(env_);
-      for (auto l = 0; l < mki; ++l)
-        expression += x_[input_.getArcId(k, node_string, l, false)];
-      if (node_idx < input_.getN() - 1) expression -= y_[node_idx - 1];
-
-      const double is_last_node = node_idx == (input_.getN() - 1) ? 1.0 : 0.0;
+      const auto predecessors = graph.getPredecessorsId(node_id);
+      if (predecessors.empty()) continue;
+      for (const auto &predecessor_id : predecessors) {
+        expression += x_[graph.getArcId(predecessor_id, node_id)];
+      }
+      if (node_id != last_node) expression -= y_[std::stoi(node_id) - 1];
+      const double is_last_node = node_id == last_node ? 1.0 : 0.0;
       constraints.add(IloRange(
         env_, is_last_node, expression, is_last_node,
-        ("deltaminus_" + node_string + '_' + std::to_string(k + 1)).c_str()
+        ("deltaminus_" + node_id + '_' + std::to_string(k + 1)).c_str()
       ));
       expression.end();
     }
@@ -139,13 +137,14 @@ void OpsCplexSolver::addDeltaMinusConstraints(IloRangeArray &constraints) {
 
 void OpsCplexSolver::addMTZConstraints(IloRangeArray &constraints) {
   const int BIG_M = std::max<int>(input_.getMaxArc(), input_.getL()) + 1;
-  for (auto k = 0, x_idx = 0; k < input_.getM(); ++k) {
+  for (auto k = 0; k < input_.getM(); ++k) {
     const auto &graph = input_.getGraph(k);
     for (const auto &arc : graph.getArcs()) {
       const auto &i = arc.getOriginId();
       const auto &j = arc.getDestinationId();
       IloExpr expression(env_);
-      expression = BIG_M * x_[x_idx] + s_[std::stoi(i)] - s_[std::stoi(j)];
+      expression =
+        BIG_M * x_[arc.getId()] + s_[std::stoi(i)] - s_[std::stoi(j)];
 
       constraints.add(IloRange(
         env_, -IloInfinity, expression,
@@ -153,7 +152,6 @@ void OpsCplexSolver::addMTZConstraints(IloRangeArray &constraints) {
         ("MTZ_" + i + "_" + j + "_" + std::to_string(k + 1)).c_str()
       ));
       expression.end();
-      x_idx++;
     }
   }
 }

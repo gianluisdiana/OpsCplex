@@ -89,6 +89,22 @@ class Node {
     return successors_.at(node);
   }
 
+  inline const std::vector<std::string> getSuccessorsId() const {
+    std::vector<std::string> successors_id;
+    for (const auto &successor : successors_) {
+      successors_id.push_back(successor.first->getId());
+    }
+    return successors_id;
+  }
+
+  inline const std::vector<std::string> getPredecessorsId() const {
+    std::vector<std::string> predecessors_id;
+    for (const auto &predecessor : predecessors_) {
+      predecessors_id.push_back(predecessor.first->getId());
+    }
+    return predecessors_id;
+  }
+
   /**
    * @brief Adds a new successor to the node
    *

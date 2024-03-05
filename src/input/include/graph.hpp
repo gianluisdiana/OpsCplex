@@ -102,6 +102,16 @@ class Graph {
     return arcs_;
   }
 
+  inline const std::vector<std::string>
+  getSuccessorsId(const std::string &id) const {
+    return nodes_.at(id)->getSuccessorsId();
+  }
+
+  inline const std::vector<std::string>
+  getPredecessorsId(const std::string &id) const {
+    return nodes_.at(id)->getPredecessorsId();
+  }
+
   // ------------------------------- Adders ------------------------------- //
 
   /**
