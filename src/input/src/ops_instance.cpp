@@ -24,7 +24,7 @@ void OpsInstance::writeStatistics(std::ostream &os) const {
 // ------------------------------- Operators ------------------------------- //
 
 std::istream &operator>>(std::istream &is, OpsInstance &ops_instance) {
-  json json_instance;
+  nlohmann::json json_instance;
   is >> json_instance;
   ops_instance.setFromJson(json_instance);
   // ops_instance.truncateTMatrix();
@@ -37,21 +37,20 @@ std::ostream &operator<<(std::ostream &os, const OpsInstance &ops_instance) {
 
 // ---------------------------- Private Methods ----------------------------- //
 
-const json OpsInstance::toJson() const {
-  json json_file = {
-    {"id", json::array({name_, std::ctime(&date_stamp_)})},
+const nlohmann::json OpsInstance::toJson() const {
+  return {
+    {"id", nlohmann::json::array({name_, std::ctime(&date_stamp_)})},
     {"type", type_},
     {"Jk", Jk_},
     {"b", b_},
     {"alpha", alpha_},
-    {"L", L_}};
-  T_.get_json(json_file["T"]);
-  return json_file;
+    {"L", L_},
+    {"T", T_.toJson()}};
 }
 
-void OpsInstance::setFromJson(const json &json_instance) {
+void OpsInstance::setFromJson(const nlohmann::json &json_instance) {
   if (json_instance.find("T") != json_instance.end())
-    T_.set_json(json_instance["T"]);
+    T_.setFromJson(json_instance["T"]);
   if (json_instance.find("id") != json_instance.end() && json_instance["id"].size() >= 2) {
     name_ = json_instance["id"][0].get<std::string>();
     date_stamp_ = stringToDateStamp(json_instance["id"][1].get<std::string>());
@@ -71,11 +70,11 @@ void OpsInstance::setFromJson(const json &json_instance) {
 }
 
 void OpsInstance::truncateTMatrix() {
-  const int m = T_.get_m();
-  const int n = T_.get_n();
-  for (int i = 1; i <= m; ++i) {
-    for (int j = 1; j <= n; ++j) {
-      if (T_(i, j) >= L_) T_(i, j) = OpsInstance::kInfiniteTime + 1;
+  const auto m = T_.getRowsAmount();
+  const auto n = T_.getColsAmount();
+  for (auto i = 0; i < m; ++i) {
+    for (auto j = 0; j < n; ++j) {
+      if (T_(i, j) > L_) T_(i, j) = OpsInstance::kInfiniteTime + 1;
     }
   }
 }

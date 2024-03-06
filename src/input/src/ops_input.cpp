@@ -86,12 +86,12 @@ std::istream &operator>>(std::istream &is, OpsInput &ops_input) {
 
 void OpsInput::truncateT() {
   const auto n = getN();
-  for (auto i = 1; i <= n; ++i) {
-    setTOutOfRange(i, 1);
-    setTOutOfRange(n, i);
+  for (auto i = 0; i < n; ++i) {
+    setTOutOfRange(i, 0);
+    setTOutOfRange(n - 1, i);
     setTOutOfRange(i, i);
   }
-  setTZero(1, n);
+  setTZero(0, n - 1);
 }
 
 void OpsInput::createGraphArcs() {

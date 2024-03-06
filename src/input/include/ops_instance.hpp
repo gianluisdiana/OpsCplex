@@ -29,7 +29,6 @@
 
 #include <string>
 
-#include <json_interface.hpp>
 #include <matrix.hpp>
 
 namespace emir {
@@ -89,7 +88,7 @@ class OpsInstance : JsonInterface {
    * @param destiny_index The index of the destiny node
    */
   inline int getT(const int origin_index, const int destiny_index) const {
-    return T_(origin_index + 1, destiny_index + 1);
+    return T_(origin_index, destiny_index);
   }
 
   /** @brief Gives read-only access to the scaling factor */
@@ -175,7 +174,7 @@ class OpsInstance : JsonInterface {
   std::vector<std::vector<int>> Kj_;
   // Time matrix to represent the time spent to process the object 'i'
   // and go to the object 'j'
-  GOMA::matrix<int> T_;
+  Matrix<int> T_;
   // Profit (or priority) for each job
   std::vector<int> b_;
   // Time limit to use the telescope
@@ -195,14 +194,14 @@ class OpsInstance : JsonInterface {
    *
    * @return The json file with the ops information
    */
-  const json toJson() const override;
+  const nlohmann::json toJson() const override;
 
   /**
    * @brief Set the OPS instance from a json file
    *
    * @param json_instance The json file with the ops information
    */
-  void setFromJson(const json &json_instance) override;
+  void setFromJson(const nlohmann::json &json_instance) override;
 
   /**
    * @brief Truncate the T matrix, checking if the current value of a cell

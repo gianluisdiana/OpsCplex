@@ -60,7 +60,7 @@ class OpsOutput {
   const OpsInput &input_;
 
   // The matrix that represents the arcs of the graph.
-  GOMA::matrix<int> x_;
+  Matrix<int> x_;
   // Represents which nodes are visited in the solution.
   std::vector<int> y_;
   // Represents the time spent in each node.
@@ -81,7 +81,7 @@ class OpsOutput {
    * @param j The destination of the arc.
    */
   inline void setXAsTrue(const int k, const int i, const int j) {
-    x_(k * input_.getN() + i + 1, j + 1) = 1;
+    x_(k * input_.getN() + i, j) = 1;
   }
 
   /**
@@ -110,7 +110,7 @@ class OpsOutput {
 
   /** @brief Gives readonly access to the x_ value in the given position. */
   inline int getX(const int k, const int i, const int j) const {
-    return x_(k * input_.getN() + i + 1, j + 1);
+    return x_(k * input_.getN() + i, j);
   }
 
   /** @brief Gets the number of objects visited in the solution. */
@@ -145,11 +145,10 @@ class OpsOutput {
   void checkArcs() const;
 
   /**
-   * @brief Checks if the time spent at moment of visiting each node is less than
-   * the maximum time.
+   * @brief Checks if the time spent at moment of visiting each node is less
+   * than the maximum time.
    */
   void checkTime() const;
-
 };
 
 }  // namespace emir
