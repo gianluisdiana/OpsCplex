@@ -46,7 +46,7 @@ AlwaysBreakAfterReturnType: None
 # If true, always break before multiline string literals.
 AlwaysBreakBeforeMultilineStrings: false
 # The template declaration breaking style to use.
-AlwaysBreakTemplateDeclarations: MultiLine
+AlwaysBreakTemplateDeclarations: Yes
 # A vector of strings that should be interpreted as attributes/qualifiers instead of identifiers. This can be useful for language extensions or static analyzer annotations.
 AttributeMacros:
   - __capability
@@ -234,7 +234,7 @@ SpaceAfterCStyleCast: false
 # If true, a space is inserted after the logical not operator (!).
 SpaceAfterLogicalNot: false
 # If true, a space will be inserted after the ‘template’ keyword.
-SpaceAfterTemplateKeyword: false
+SpaceAfterTemplateKeyword: true
 # Defines in which cases to put a space before or after pointer qualifiers
 SpaceAroundPointerQualifiers: Default
 # If false, spaces will be removed before assignment operators.
