@@ -29,12 +29,13 @@
 
 #include <string>
 
+#include <json_interface.hpp>
 #include <matrix.hpp>
 
 namespace emir {
 
 /** @brief Represents a basic instance for the O.P.S. */
-class OpsInstance {
+class OpsInstance : JsonInterface {
  public:
   // Constant to represent an infinite time to process an object and go to
   // another
@@ -194,14 +195,14 @@ class OpsInstance {
    *
    * @return The json file with the ops information
    */
-  json toJson() const;
+  const json toJson() const override;
 
   /**
    * @brief Set the OPS instance from a json file
    *
    * @param json_instance The json file with the ops information
    */
-  void setFromJson(const json &json_instance);
+  void setFromJson(const json &json_instance) override;
 
   /**
    * @brief Truncate the T matrix, checking if the current value of a cell

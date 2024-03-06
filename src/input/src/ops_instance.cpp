@@ -37,7 +37,7 @@ std::ostream &operator<<(std::ostream &os, const OpsInstance &ops_instance) {
 
 // ---------------------------- Private Methods ----------------------------- //
 
-json OpsInstance::toJson() const {
+const json OpsInstance::toJson() const {
   json json_file = {
     {"id", json::array({name_, std::ctime(&date_stamp_)})},
     {"type", type_},
