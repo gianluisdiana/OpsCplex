@@ -71,12 +71,12 @@ std::ostream &OpsOutput::write(std::ostream &os) const {
 // ------------------------------- Operators ------------------------------- //
 
 std::ostream &operator<<(std::ostream &os, const OpsOutput &output) {
-  return os << nlohmann::json({
-    {"x", output.x_.toJson()},
-    {"y", output.y_},
-    {"s", output.s_},
-    {"h", output.h_},
-    {"optimal", output.optimal_}}).dump(2);
+  return os << nlohmann::json({{"x", output.x_.toJson()},
+                               {"y", output.y_},
+                               {"s", output.s_},
+                               {"h", output.h_},
+                               {"optimal", output.optimal_}}
+         ).dump(2);
 }
 
 // ------------------------------- Setters --------------------------------- //

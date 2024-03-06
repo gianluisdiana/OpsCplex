@@ -70,7 +70,6 @@ class Arc {
   const std::string &getDestinationId() const;
 
  private:
-
   // Identifier of the arc
   const unsigned int id_;
   // Origin node of the arc
