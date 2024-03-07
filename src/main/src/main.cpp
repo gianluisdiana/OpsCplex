@@ -6,7 +6,7 @@
  */
 int main(int argc, char *argv[]) {
   const auto output_file_name = "data/test_output.json";
-  const auto instance_file_name = "data/test_instance.json";
+  const auto instance_file_name = "data/input/A/instances/A_n040_001_a50_002.txt";
   const auto log_file_name = "data/test_log.txt";
   const int id = 0;
 

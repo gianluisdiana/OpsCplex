@@ -4,8 +4,14 @@ cmake_minimum_required (VERSION 3.22)
 # Set the project name
 project(main)
 
+# List of sources specified for a target
+set(SOURCES
+    src/solvers.cpp
+    src/main.cpp
+)
+
 # Create the executable
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 # ----------------------------- Header files ----------------------------- #
 
