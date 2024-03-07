@@ -102,14 +102,29 @@ class Graph {
     return arcs_;
   }
 
-  inline const std::vector<std::string>
-  getSuccessorsId(const std::string &id) const {
-    return nodes_.at(id)->getSuccessorsId();
+  /**
+   * @brief Gets the id of each arc that connects the given node to its
+   * successors.
+   *
+   * @param id Id of the node to search
+   * @return The id of each arc that connects the given node to its successors.
+   */
+  inline const std::vector<unsigned int>
+  getSuccessorsArcsId(const std::string &id) const {
+    return nodes_.at(id)->getSuccessorsArcsId();
   }
 
-  inline const std::vector<std::string>
-  getPredecessorsId(const std::string &id) const {
-    return nodes_.at(id)->getPredecessorsId();
+  /**
+   * @brief Gets the id of each arc that connects the given node to its
+   * predecessors.
+   *
+   * @param id Id of the node to search
+   * @return The id of each arc that connects the given node to its
+   * predecessors.
+   */
+  inline const std::vector<unsigned int>
+  getPredecessorsArcsId(const std::string &id) const {
+    return nodes_.at(id)->getPredecessorsArcsId();
   }
 
   // ------------------------------- Adders ------------------------------- //

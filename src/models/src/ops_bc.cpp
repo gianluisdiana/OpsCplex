@@ -97,11 +97,9 @@ void OpsCplexSolver::addDeltaPlusConstraints(IloRangeArray &constraints) {
     const auto &graph = input_.getGraph(k);
     for (const auto &origin_id : graph.getNodesId()) {
       IloExpr expression(env_);
-      const auto successors = graph.getSuccessorsId(origin_id);
-      if (successors.empty()) continue;
-      for (const auto &destination_id : successors) {
-        expression += x_[graph.getArcId(origin_id, destination_id)];
-      }
+      const auto arcs_id = graph.getSuccessorsArcsId(origin_id);
+      if (arcs_id.empty()) continue;
+      for (const auto &id : arcs_id) expression += x_[id];
       if (origin_id != "0") expression -= y_[std::stoi(origin_id) - 1];
       const double is_root_node = origin_id == "0" ? 1.0 : 0.0;
       constraints.add(IloRange(
@@ -119,11 +117,9 @@ void OpsCplexSolver::addDeltaMinusConstraints(IloRangeArray &constraints) {
     const auto &graph = input_.getGraph(k);
     for (const auto &node_id : graph.getNodesId()) {
       IloExpr expression(env_);
-      const auto predecessors = graph.getPredecessorsId(node_id);
-      if (predecessors.empty()) continue;
-      for (const auto &predecessor_id : predecessors) {
-        expression += x_[graph.getArcId(predecessor_id, node_id)];
-      }
+      const auto arcs_id = graph.getPredecessorsArcsId(node_id);
+      if (arcs_id.empty()) continue;
+      for (const auto &id : arcs_id) expression += x_[id];
       if (node_id != last_node) expression -= y_[std::stoi(node_id) - 1];
       const double is_last_node = node_id == last_node ? 1.0 : 0.0;
       constraints.add(IloRange(
