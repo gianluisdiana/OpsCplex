@@ -15,6 +15,7 @@
 #define _MATRIX_HPP_
 
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 #include <json_interface.hpp>
@@ -27,6 +28,65 @@
 template <typename T>
 class Matrix : public JsonInterface {
  public:
+  struct Iterator {
+    using iterator_category = std::forward_iterator_tag;
+    using difference_type = typename std::vector<T>::difference_type;
+    using value_type = typename std::vector<T>::value_type;
+    using pointer = typename std::vector<T>::pointer;
+    using reference = typename std::vector<T>::reference;
+
+    using iterator = typename std::vector<T>::iterator;
+    using vector_iterator = typename std::vector<std::vector<T>>::iterator;
+
+   private:
+    iterator ptr_, current_sentinel_;
+    vector_iterator start_, sentinel_;
+    static_assert(std::sentinel_for<
+                  decltype(current_sentinel_), decltype(ptr_)>);
+    static_assert(std::sentinel_for<decltype(sentinel_), decltype(start_)>);
+
+   public:
+    Iterator() = default;
+
+    Iterator(vector_iterator ptr, vector_iterator stop) :
+      ptr_(ptr->begin()), start_(ptr), sentinel_(stop),
+      current_sentinel_(ptr->end()) {}
+
+    reference operator*() const {
+      return *ptr_;
+    }
+
+    pointer operator->() const {
+      return ptr_;
+    }
+
+    auto &operator++() {
+      ++ptr_;
+      if (ptr_ == current_sentinel_ && start_ != sentinel_) {
+        ++start_;
+        ptr_ = start_->begin();
+        current_sentinel_ = start_->end();
+      }
+      return *this;
+    }
+
+    auto operator++(int) {
+      auto tmp = *this;
+      ++*this;
+      return tmp;
+    }
+
+    auto operator<=>(const Iterator &other) const = default;
+
+    auto begin() {
+      return start_->begin();
+    }
+
+    auto end() {
+      return sentinel_->end();
+    }
+  };
+
   // ----------------------------- Constructors ----------------------------- //
   /**
    * @brief Empty constructor, only reserve the size of the matrix
@@ -91,6 +151,26 @@ class Matrix : public JsonInterface {
     for (auto &row : data_) {
       for (auto &value : row) value = data;
     }
+  }
+
+  // ----------------------------- Iterators ------------------------------ //
+
+  /**
+   * @brief Get the begin iterator of the matrix.
+   *
+   * @returns The begin iterator of the matrix.
+   */
+  inline Iterator begin() {
+    return Iterator(data_.begin(), data_.end());
+  }
+
+  /**
+   * @brief Get the end iterator of the matrix.
+   *
+   * @returns The end iterator of the matrix.
+   */
+  inline Iterator end() {
+    return Iterator(data_.end(), data_.end());
   }
 
   // ------------------------------ Operators ------------------------------ //
