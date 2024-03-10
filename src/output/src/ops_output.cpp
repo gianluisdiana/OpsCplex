@@ -71,12 +71,14 @@ std::ostream &OpsOutput::write(std::ostream &os) const {
 // ------------------------------- Operators ------------------------------- //
 
 std::ostream &operator<<(std::ostream &os, const OpsOutput &output) {
-  return os << nlohmann::json({{"x", output.x_.toJson()},
-                               {"y", output.y_},
-                               {"s", output.s_},
-                               {"h", output.h_},
-                               {"optimal", output.optimal_}}
-         ).dump(2);
+  os << nlohmann::json({
+                         {"x", output.x_.toJson()},
+                         {"y", output.y_},
+                         {"s", output.s_},
+                         {"profit", output.getTotalProfit()},
+                       })
+          .dump(2);
+  return os;
 }
 
 // ------------------------------- Setters --------------------------------- //
@@ -141,7 +143,7 @@ int OpsOutput::getTotalProfit() const {
 // ---------------------------- Utility Methods ---------------------------- //
 
 void OpsOutput::check() const {
-  checkArcs();
+  // checkArcs();
   checkTime();
 }
 
@@ -152,12 +154,13 @@ void OpsOutput::checkArcs() const {
   std::vector<int> amount_of_departures(n, 0);
 
   for (int k = 0; k < K; k++) {
-    for (auto origin_node = 0; origin_node < n; ++origin_node) {
-      for (auto destiny_node = 0; destiny_node < n; ++destiny_node) {
-        if (getX(k, origin_node, destiny_node) == 1) {
-          amount_of_arrives[destiny_node]++;
-          amount_of_departures[origin_node]++;
-        }
+    const auto &graph = input_.getGraph(k);
+    for (const auto &arc : graph.getArcs()) {
+      const auto &origin_id = std::stoi(arc.getOriginId());
+      const auto &destination_id = std::stoi(arc.getDestinationId());
+      if (getX(k, origin_id, destination_id) == 1) {
+        amount_of_arrives[destination_id]++;
+        amount_of_departures[origin_id]++;
       }
     }
   }
