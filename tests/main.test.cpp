@@ -7,18 +7,43 @@
 
 namespace fs = std::filesystem;
 
-// Demonstrate some basic assertions.
-TEST(OpsTest, TotalProfitAssertions) {
-  const auto path = "data/input/";
+void testFolder(const std::string &path) {
+  const auto &input_folder = "data/input/" + path + "/instances";
+  const auto &solution_folder = "data/output/" + path + "/";
+  nlohmann::json solution;
   std::ofstream log_os("data/test_log.txt");
-  for (const auto &entry : fs::directory_iterator(path)) {
+  for (const auto &entry : fs::directory_iterator(input_folder)) {
     const auto instance = createFromFile<emir::OpsInput>(entry.path());
     emir::OpsCplexSolver solver(instance, 1e-4);
     solver.addLog(log_os);
     solver.solve();
-    EXPECT_NE(solver.getProfit(), 0);
+    std::ifstream solution_file(
+      solution_folder + entry.path().filename().string()
+    );
+    solution_file >> solution;
+    EXPECT_EQ(solver.getProfit(), solution["profit"].get<int>());
   }
 }
+
+TEST(OpsTest, TotalProfitAssertionsOneBandNeeded) {
+  testFolder("A");
+}
+
+TEST(OpsTest, TotalProfitAssertionsTwoBandsNeeded) {
+  testFolder("B");
+}
+
+// TEST(OpsTest, TotalProfitAssertionsThreeBandsNeeded) {
+//   testFolder("C");
+// }
+
+// TEST(OpsTest, TotalProfitAssertionsOneBandNeeded) {
+//   testFolder("LA");
+// }
+
+// TEST(OpsTest, TotalProfitAssertionsTwoBandsNeeded) {
+//   testFolder("LB");
+// }
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
