@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.14)
 project(tests)
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# -------------------------------- Set GTest -------------------------------- #
 
 include(FetchContent)
 FetchContent_Declare(
@@ -15,10 +16,14 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
+# ------------------------------- Executable -------------------------------- #
+
 add_executable(
   ${PROJECT_NAME}
   main.test.cpp
 )
+
+# ------------------------------ Dependencies ------------------------------- #
 
 target_link_libraries(
   ${PROJECT_NAME}
