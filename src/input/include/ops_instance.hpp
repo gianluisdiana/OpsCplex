@@ -204,13 +204,6 @@ class OpsInstance : JsonInterface {
   void setFromJson(const nlohmann::json &json_instance) override;
 
   /**
-   * @brief Truncate the T matrix, checking if the current value of a cell
-   * exceeds the maximum value allowed (the time limit to use the
-   * telescope)
-   */
-  void truncateTMatrix();
-
-  /**
    * @brief Resets the Kj matrix and fills it with the correct values
    */
   void resetKjMatrix();

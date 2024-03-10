@@ -27,7 +27,6 @@ std::istream &operator>>(std::istream &is, OpsInstance &ops_instance) {
   nlohmann::json json_instance;
   is >> json_instance;
   ops_instance.setFromJson(json_instance);
-  // ops_instance.truncateTMatrix();
   return is;
 }
 
@@ -67,16 +66,6 @@ void OpsInstance::setFromJson(const nlohmann::json &json_instance) {
     alpha_ = json_instance["alpha"].get<double>();
   if (json_instance.find("L") != json_instance.end())
     L_ = json_instance["L"].get<int>();
-}
-
-void OpsInstance::truncateTMatrix() {
-  const auto m = T_.getRowsAmount();
-  const auto n = T_.getColsAmount();
-  for (auto i = 0; i < m; ++i) {
-    for (auto j = 0; j < n; ++j) {
-      if (T_(i, j) > L_) T_(i, j) = OpsInstance::kInfiniteTime + 1;
-    }
-  }
 }
 
 void OpsInstance::resetKjMatrix() {
