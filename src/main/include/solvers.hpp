@@ -24,19 +24,10 @@ T solve(const emir::OpsInput &input, double tolerance, std::ostream &log_os) {
 }
 
 /**
- * @brief Process the given instance file and output the solution and the log
- * in the files with the given names.
+ * @brief Process the model type and generates the output and log files.
  *
- * @param instance_file_name The name of the file with the instance data.
- * @param output_file_name The name of the file where the solution will be
- * stored.
- * @param log_file_name The name of the file where the logs will be stored.
- * @param id The id of the instance to be processed.
- * @return 0 if the instance was processed successfully.
+ * @param model_type The model type to be processed.
  */
-int processor(
-  const std::string &instance_file_name, const std::string &output_file_name,
-  const std::string &log_file_name, const int id
-);
+void processModelType(const std::string &model_type);
 
 #endif  // _SOLVERS_HPP_

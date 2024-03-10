@@ -2,19 +2,16 @@
 #include <ops_bc.hpp>
 #include <solvers.hpp>
 
-int processor(
-  const std::string &instance_file_name, const std::string &output_file_name,
-  const std::string &log_file_name, const int id
-) {
-  std::ofstream log_file(log_file_name);
-  std::ofstream output_file(output_file_name);
-  const double tolerance = 1e-4;
-  const auto input = createFromFile<emir::OpsInput>(instance_file_name);
+namespace fs = std::filesystem;
 
-  output_file << solve<emir::OpsCplexSolver>(input, tolerance, log_file);
-
-  output_file.close();
-  log_file.close();
-
-  return 0;
+void processModelType(const std::string &model_type) {
+  const auto &input_folder = "data/input/" + model_type + "/instances";
+  const auto &output_folder = "data/output/" + model_type + "/";
+  std::ofstream log_os("data/test_log.txt");
+  for (const auto &file : fs::directory_iterator(input_folder)) {
+    std::cout << file.path() << std::endl;
+    const auto &instance = createFromFile<emir::OpsInput>(file.path());
+    std::ofstream output_os(output_folder + file.path().filename().string());
+    output_os << solve<emir::OpsCplexSolver>(instance, 1e-4, log_os);
+  }
 }
