@@ -39,73 +39,6 @@ class OpsInput : public OpsInstance {
   // ------------------------------ Getters -------------------------------- //
 
   /**
-   * @brief Get how many successors has the node with the given id in the k-th
-   * sliding bar.
-   *
-   * @param sliding_bar_index index of the sliding bar
-   * @param node_id The id of the object
-   */
-  std::size_t getAmountOfSuccessors(
-    const int sliding_bar_index, const std::string &node_id
-  ) const;
-
-  /**
-   * @brief Gets how many succesors has the graph that correspond to the k-th
-   * sliding bar.
-   *
-   * @param sliding_bar_index index of the sliding bar
-   */
-  inline std::size_t getAmountOfSuccessors(const int sliding_bar_index) const {
-    return graphs_[sliding_bar_index].getAmountOfSuccessors();
-  }
-
-  /**
-   * @brief Get how many predecessors has the node with the given id in the k-th
-   * sliding bar.
-   *
-   * @param sliding_bar_index The index of the sliding bar
-   * @param node_id The id of the node in the graph
-   */
-  std::size_t getAmountOfPredecessors(
-    const int sliding_bar_index, const std::string &node_id
-  ) const;
-
-  /**
-   * @brief Gets the arc's id of the arc that connects the node with the given
-   * id in the graph (either successor or predecessor) in the k-th sliding bar.
-   *
-   * @param sliding_bar_index The index of the sliding bar
-   * @param node_id The id of the node
-   * @param arc_index The index of the arc
-   * @param is_successor Whether the arc is completed by a successor or not
-   * @return The id of the arc
-   */
-  inline unsigned int getArcId(
-    const int sliding_bar_index, const std::string &node_id,
-    const int arc_index, const bool is_successor
-  ) const {
-    return graphs_[sliding_bar_index].getArcId(
-      node_id, arc_index, is_successor
-    );
-  }
-
-  /**
-   * @brief Gets the arc's id of the arc that connects the nodes with the given
-   * ids in the graph of the k-th sliding bar.
-   *
-   * @param sliding_bar_index The index of the sliding bar
-   * @param origin_id The id of the origin node
-   * @param destination_id The id of the destination node
-   * @return The id of the arc
-   */
-  inline unsigned int getArcId(
-    const int sliding_bar_index, const std::string &origin_id,
-    const std::string &destination_id
-  ) const {
-    return graphs_[sliding_bar_index].getArcId(origin_id, destination_id);
-  }
-
-  /**
    * @brief Gets the graph that belongs to the k-th sliding bar.
    *
    * @param sliding_bar_index The index of the sliding bar
@@ -120,27 +53,13 @@ class OpsInput : public OpsInstance {
 
   // ---------------------------- Stats Getters ---------------------------- //
 
+  // TODO: ERASE
   const std::string getStatistics() const;
 
   inline const std::string getStatisticsHdr() const {
     return /*OpsInput::getStatisticsHdr()*/
       "$n$\t$m$\t$\\max|J_k|$\t$\\bar{|J_k|}$\tnsync\t"
       "$\\max\\partial\\mbox{sync}$\t$\\bar{\\partial\\mbox{sync}$\t$L$\t";
-  }
-
-  // --------------------------- Utility methods --------------------------- //
-
-  /**
-   * @brief Calculates the index of the x variable in the vector
-   * representation of the matrix.
-   *
-   * @param k The k-th sliding bar
-   * @param i The i-th node
-   * @param j The j-th node
-   */
-  inline unsigned int
-  calculateXIndex(const int k, const int i, const int j) const {
-    return k * getM() + i * getN() + j;
   }
 
   // ------------------------------ Operators ------------------------------ //
@@ -156,8 +75,16 @@ class OpsInput : public OpsInstance {
   friend std::istream &operator>>(std::istream &is, OpsInput &ops_input);
 
  private:
+  // ----------------------------------------------------------------------- //
+  // ----------------------------- Attributes ------------------------------ //
+  // ----------------------------------------------------------------------- //
+
   // Graphs with the arcs that can be reached in the k-th sliding bar
   std::vector<Graph> graphs_;
+
+  // ----------------------------------------------------------------------- //
+  // ------------------------------- Methods ------------------------------- //
+  // ----------------------------------------------------------------------- //
 
   /**
    * @brief Removes the arcs coming out of the last object (n -> i), the arcs

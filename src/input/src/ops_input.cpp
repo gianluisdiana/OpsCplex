@@ -27,29 +27,15 @@
 
 namespace emir {
 
-OpsInput::OpsInput() : OpsInstance(), graphs_(getM()) {}
+OpsInput::OpsInput() : OpsInstance(), graphs_() {}
 
 // -------------------------------- Getters -------------------------------- //
-
-std::size_t OpsInput::getAmountOfSuccessors(
-  const int sliding_bar_index, const std::string &node_id
-) const {
-  if (!graphs_[sliding_bar_index].hasNode(node_id)) return 0;
-  return graphs_[sliding_bar_index].getAmountOfSuccessors(node_id);
-}
-
-std::size_t OpsInput::getAmountOfPredecessors(
-  const int sliding_bar_index, const std::string &node_id
-) const {
-  if (!graphs_[sliding_bar_index].hasNode(node_id)) return 0;
-  return graphs_[sliding_bar_index].getAmountOfPredecessors(node_id);
-}
 
 unsigned int OpsInput::getMaxArc() const {
   unsigned int max_arc = 0;
   for (const auto &graph : graphs_) {
     for (const auto &arc : graph.getArcs()) {
-      if (arc.getCost() > max_arc) max_arc = arc.getCost();
+      max_arc = std::max<unsigned int>(max_arc, arc.getCost());
     }
   }
   return max_arc;

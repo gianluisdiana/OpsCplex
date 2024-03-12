@@ -30,12 +30,9 @@ std::istream &operator>>(std::istream &is, OpsInstance &ops_instance) {
   return is;
 }
 
-std::ostream &operator<<(std::ostream &os, const OpsInstance &ops_instance) {
-  return os << std::setw(2) << ops_instance.toJson();
-}
-
 // ---------------------------- Private Methods ----------------------------- //
 
+// TODO: ERASE
 const nlohmann::json OpsInstance::toJson() const {
   return {
     {"id", nlohmann::json::array({name_, std::ctime(&date_stamp_)})},

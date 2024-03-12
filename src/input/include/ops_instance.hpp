@@ -96,11 +96,6 @@ class OpsInstance : JsonInterface {
     return scal_factor_;
   }
 
-  /** @brief Returns the Kj matrix */
-  inline const std::vector<std::vector<int>> &getKj() const {
-    return Kj_;
-  }
-
   // ------------------------------ Setters -------------------------------- //
 
   /**
@@ -126,6 +121,7 @@ class OpsInstance : JsonInterface {
   }
 
   // ---------------------------- Statistcs Data --------------------------- //
+  // TODO: ERASE
 
   void writeStatistics(std::ostream &os) const;
   void writeStatisticsHdr(std::ostream &os) const;
@@ -140,17 +136,6 @@ class OpsInstance : JsonInterface {
    * @return The inflow with the instance read
    */
   friend std::istream &operator>>(std::istream &is, OpsInstance &ops_instance);
-
-  /**
-   * @brief Overload of the << operator to display a json format of the
-   * instance.
-   *
-   * @param os Represents the outflow
-   * @param ops_instance The OPS instance to display
-   * @return The outflow with the string that represents the state.
-   */
-  friend std::ostream &
-  operator<<(std::ostream &os, const OpsInstance &ops_instance);
 
  private:
   // ----------------------------------------------------------------------- //
@@ -189,6 +174,7 @@ class OpsInstance : JsonInterface {
   // ------------------------------- Methods ------------------------------- //
   // ----------------------------------------------------------------------- //
 
+  // TODO: ERASE
   /**
    * @brief Formats the instance to a json file
    *

@@ -3,21 +3,10 @@
 
 namespace emir {
 
-std::shared_ptr<Arc> Node::getSuccessorArc(const int &i) const {
-  auto it = successors_.begin();
-  std::advance(it, i);
-  return it->second;
-}
+Node::Node(const std::string &id) : id_(id), successors_(), predecessors_() {}
 
-std::shared_ptr<Arc> Node::getPredecessorArc(const int &i) const {
-  auto it = predecessors_.begin();
-  std::advance(it, i);
-  return it->second;
-}
-
-const std::vector<unsigned int> Node::getArcsId(
-  const std::map<std::shared_ptr<Node>, std::shared_ptr<Arc>> &nodesWithArcs
-) const {
+const std::vector<unsigned int>
+Node::getArcsId(const NodeArcPairs &nodesWithArcs) const {
   std::vector<unsigned int> arcs_id;
   for (const auto &[_, arc] : nodesWithArcs) {
     arcs_id.push_back(arc->getId());

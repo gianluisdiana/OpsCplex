@@ -4,19 +4,6 @@ namespace emir {
 
 Graph::Graph() : arcs_(), nodes_() {}
 
-std::size_t Graph::getAmountOfSuccessors() const {
-  std::size_t amount = 0;
-  for (const auto &[_, node] : nodes_) amount += node->getAmountOfSuccessors();
-  return amount;
-}
-
-unsigned int Graph::getArcId(
-  const std::string &id, const int arc_index, const bool &is_successor
-) const {
-  if (is_successor) return nodes_.at(id)->getSuccessorArc(arc_index)->getId();
-  return nodes_.at(id)->getPredecessorArc(arc_index)->getId();
-}
-
 const std::vector<std::string> Graph::getNodesId() const {
   std::vector<std::string> nodes_id;
   for (const auto &[id, _] : nodes_) nodes_id.push_back(id);
@@ -35,7 +22,7 @@ void Graph::addArc(
 
 // ---------------------------- Private Methods ---------------------------- //
 
-std::shared_ptr<Node> Graph::searchNode(const std::string &id) {
+const std::shared_ptr<Node> Graph::searchNode(const std::string &id) {
   auto it = nodes_.find(id);
   if (it != nodes_.end()) return it->second;
   auto node = std::make_shared<Node>(id);

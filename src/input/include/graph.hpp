@@ -39,56 +39,6 @@ class Graph {
 
   // ------------------------------ Getters -------------------------------- //
 
-  /**
-   * @brief Gets the amount of successors of a node
-   *
-   * @param id Id of the node
-   * @return The amount of successors of the node
-   */
-  inline std::size_t getAmountOfSuccessors(const std::string &id) const {
-    return nodes_.at(id)->getAmountOfSuccessors();
-  }
-
-  /** @brief Gets the amount of successors of the graph */
-  std::size_t getAmountOfSuccessors() const;
-
-  /**
-   * @brief Gets the amount of predecessors of a node
-   *
-   * @param id Id of the node
-   * @return The amount of predecessors of the node
-   */
-  inline std::size_t getAmountOfPredecessors(const std::string &id) const {
-    return nodes_.at(id)->getAmountOfPredecessors();
-  }
-
-  /**
-   * @brief Gets the arc's id of the arc that connects the given node
-   * (either successor or predecessor).
-   *
-   * @param id Id of the node
-   * @param arc_index The index of the arc
-   * @param is_successor Whether the arc is completed by a successor or not
-   * @return The id of the arc
-   */
-  unsigned int getArcId(
-    const std::string &id, const int arc_index, const bool &is_successor
-  ) const;
-
-  /**
-   * @brief Gets the arc's id of the arc that connects the given node
-   * (either successor or predecessor).
-   *
-   * @param origin_id Id of the origin node
-   * @param destination_id Id of the destination node
-   * @return The id of the arc
-   */
-  inline unsigned int getArcId(
-    const std::string &origin_id, const std::string &destination_id
-  ) const {
-    return nodes_.at(origin_id)->getArcTo(nodes_.at(destination_id))->getId();
-  }
-
   /** @brief Gets the ids of the nodes of the graph */
   const std::vector<std::string> getNodesId() const;
 
@@ -133,7 +83,7 @@ class Graph {
    * @brief Adds a new arc to the graph
    *
    * @param from_id Id of the origin node
-   * @param to_id Id of the destination nodeç
+   * @param to_id Id of the destination node
    * @param cost Cost of the arc
    */
   inline void addArc(const int from_id, const int to_id, const int cost) {
@@ -150,13 +100,6 @@ class Graph {
   void
   addArc(const std::string &from_id, const std::string &to_id, const int cost);
 
-  /**
-   * @brief Checks if the graph has a node with the given id
-   */
-  inline bool hasNode(const std::string &id) const {
-    return nodes_.find(id) != nodes_.end();
-  }
-
  private:
   // The arcs of the graph
   std::vector<Arc> arcs_;
@@ -170,7 +113,7 @@ class Graph {
    * @param id Id of the node to search
    * @return The node with the given id.
    */
-  std::shared_ptr<Node> searchNode(const std::string &id);
+  const std::shared_ptr<Node> searchNode(const std::string &id);
 };
 
 }  // namespace emir

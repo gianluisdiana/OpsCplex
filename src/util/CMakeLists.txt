@@ -7,7 +7,6 @@ project(util)
 # Specify the files to compile
 add_library(${PROJECT_NAME} STATIC
   src/functions.cpp
-  src/timer_t.cpp
 )
 
 # Add an alias to the project
@@ -26,7 +25,6 @@ target_link_libraries(
   ${PROJECT_NAME}
   PUBLIC nlohmann_json::nlohmann_json
 )
-
 
 # ------------------------------ Header files ------------------------------- #
 
