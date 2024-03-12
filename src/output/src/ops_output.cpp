@@ -143,7 +143,7 @@ int OpsOutput::getTotalProfit() const {
 // ---------------------------- Utility Methods ---------------------------- //
 
 void OpsOutput::check() const {
-  // checkArcs();
+  checkArcs();
   checkTime();
 }
 
