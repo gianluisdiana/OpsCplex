@@ -4,12 +4,15 @@ cmake_minimum_required(VERSION 3.22)
 # Name of the project
 project(source)
 
-# -------------------------------- Variables -------------------------------- #
+# ------------------------------- Clang tidy ------------------------------- #
 
-# set(CMAKE_CXX_CLANG_TIDY
-#   clang-tidy;
-#   -config-file=${CMAKE_SOURCE_DIR}/.clang-tidy;
-# )
+find_program(CLANG_TIDY_COMMAND NAMES "clang-tidy")
+if(CLANG_TIDY_COMMAND)
+  set(CMAKE_CXX_CLANG_TIDY
+    ${CLANG_TIDY_COMMAND};
+    -config-file=${CMAKE_SOURCE_DIR}/.clang-tidy;
+  )
+endif()
 
 # ----------------------------- Subdirectories ----------------------------- #
 

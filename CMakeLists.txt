@@ -9,7 +9,16 @@ project(root
   LANGUAGES CXX
 )
 
-# ----------------------------- Subdirectories ----------------------------- #
+# --------------------------------- Options --------------------------------- #
 
-add_subdirectory(lib)
+set(CMAKE_CXX_STANDARD 20)
+
+# ----------------------------- Subdirectories ------------------------------ #
+
 add_subdirectory(src)
+
+# Only add the tests directory if the BUILD_TESTS option is turned on
+# cmake -DBUILD_TESTS=ON ..
+if(BUILD_TESTS)
+  add_subdirectory(tests)
+endif()

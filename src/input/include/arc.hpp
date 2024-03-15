@@ -36,6 +36,9 @@ namespace emir {
 /** @brief Represents an arc in the graph */
 class Arc {
  public:
+  // Keeps track of the amount of arcs created
+  static unsigned int id_counter_;
+
   /**
    * @brief Creates a new arc (from_node -> to_node) with an unique id
    *
@@ -67,9 +70,6 @@ class Arc {
   const std::string &getDestinationId() const;
 
  private:
-  // Keeps track of the amount of arcs created
-  static unsigned int id_counter_;
-
   // Identifier of the arc
   const unsigned int id_;
   // Origin node of the arc

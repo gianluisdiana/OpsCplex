@@ -3,7 +3,7 @@ project(output)
 
 # Add a library with the above sources
 add_library(${PROJECT_NAME}
-    src/OPS_output_t.cpp
+    src/ops_output.cpp
 )
 
 # Add an alias to the project

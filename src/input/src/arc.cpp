@@ -9,9 +9,9 @@ Arc::Arc(
   const std::shared_ptr<Node> &from, const std::shared_ptr<Node> &to,
   const int cost
 ) :
-  id_(id_counter_++),
+  id_(Arc::id_counter_++),
   from_(from), to_(to), cost_(cost) {
-  auto arc = std::make_shared<Arc>(*this);
+  const auto &arc = std::make_shared<Arc>(*this);
   from_->addSuccessor(to_, arc);
   to_->addPredecessor(from_, arc);
 }

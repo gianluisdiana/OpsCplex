@@ -44,7 +44,7 @@ class Node {
    *
    * @param id Id of the node
    */
-  Node(const std::string &id = "") : id_(id) {}
+  Node(const std::string &id = "");
 
   // ------------------------------ Getters -------------------------------- //
 
@@ -53,41 +53,21 @@ class Node {
     return id_;
   }
 
-  /** @brief Gets the amount of successors of the node */
-  inline std::size_t getAmountOfSuccessors() const {
-    return successors_.size();
-  }
-
-  /** @brief Gets the amount of predecessors of the node */
-  inline std::size_t getAmountOfPredecessors() const {
-    return predecessors_.size();
+  /**
+   * @brief Gets the id of the arcs that connect the node with its successors
+   */
+  inline const std::vector<unsigned int> getSuccessorsArcsId() const {
+    return getArcsId(successors_);
   }
 
   /**
-   * @brief Gets the arc that conects to the i-th successor of the node
-   *
-   * @param i Index of the successor
-   * @return The arc that conects to the i-th successor of the node
+   * @brief Gets the id of the arcs that connect the node with its predecessors
    */
-  std::shared_ptr<Arc> getSuccessorArc(const int &i) const;
-
-  /**
-   * @brief Gets the arc that conects to the i-th predecessor of the node
-   *
-   * @param i Index of the predecessor
-   * @return The arc that conects to the i-th predecessor of the node
-   */
-  std::shared_ptr<Arc> getPredecessorArc(const int &i) const;
-
-  /**
-   * @brief Gets the arc that connects the node with the given node
-   *
-   * @param node Node that the arc connects to
-   * @return The arc that connects the node with the given node
-   */
-  inline std::shared_ptr<Arc> getArcTo(std::shared_ptr<Node> node) const {
-    return successors_.at(node);
+  inline const std::vector<unsigned int> getPredecessorsArcsId() const {
+    return getArcsId(predecessors_);
   }
+
+  // ------------------------------- Adders -------------------------------- //
 
   /**
    * @brief Adds a new successor to the node
@@ -95,9 +75,10 @@ class Node {
    * @param successor Successor to add
    * @param arc The arc that connects them
    */
-  inline void
-  addSuccessor(std::shared_ptr<Node> successor, std::shared_ptr<Arc> arc) {
-    successors_[successor] = arc;
+  inline void addSuccessor(
+    const std::shared_ptr<Node> &successor, const std::shared_ptr<Arc> &arc
+  ) {
+    successors_.emplace_back(successor, arc);
   }
 
   /**
@@ -106,18 +87,36 @@ class Node {
    * @param predecessor Predecessor to add
    * @param arc The arc that connects them
    */
-  inline void
-  addPredecessor(std::shared_ptr<Node> predecessor, std::shared_ptr<Arc> arc) {
-    predecessors_[predecessor] = arc;
+  inline void addPredecessor(
+    const std::shared_ptr<Node> &predecessor, const std::shared_ptr<Arc> &arc
+  ) {
+    predecessors_.emplace_back(predecessor, arc);
   }
 
  private:
+  // -------------------------- Type Definitions --------------------------- //
+
+  // Pairs of node and arc
+  using NodeArcPairs =
+    std::vector<std::pair<std::shared_ptr<Node>, std::shared_ptr<Arc>>>;
+
   // Identifier of the node
   const std::string id_;
   // Successors of the node
-  std::map<std::shared_ptr<Node>, std::shared_ptr<Arc>> successors_;
+  NodeArcPairs successors_;
   // Predecessors of the node
-  std::map<std::shared_ptr<Node>, std::shared_ptr<Arc>> predecessors_;
+  NodeArcPairs predecessors_;
+
+  /**
+   * @brief Gets the id of the arcs that connect the node with its successors
+   * or predecessors.
+   *
+   * @param nodesWithArcs Map of nodes with their respective arcs
+   * @return The id of the arcs that connect the node with its successors or
+   * predecessors
+   */
+  const std::vector<unsigned int>
+  getArcsId(const NodeArcPairs &nodesWithArcs) const;
 };
 
 }  // namespace emir

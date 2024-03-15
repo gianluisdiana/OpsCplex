@@ -4,6 +4,8 @@
 #include <ctime>
 #include <fstream>
 
+#include <local_type_traits.hpp>
+
 /**
  * @brief Converts a string to a date stamp.
  *
@@ -19,7 +21,8 @@ const time_t stringToDateStamp(const std::string &date_stamp);
  * @param file_name Name of the file to be imported.
  * @return The data from the file converted to the given type.
  */
-template<typename T> T createFromFile(const std::string &file_name) {
+template <typename T, typename = std::enable_if_t<is_readable<T &>::value>>
+T createFromFile(const std::string &file_name) {
   std::ifstream file(file_name);
   T data;
   file >> data;

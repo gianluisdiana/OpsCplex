@@ -27,29 +27,19 @@
 
 namespace emir {
 
-OpsInput::OpsInput() : OpsInstance(), graphs_(getM()) {}
+OpsInput::OpsInput() : OpsInstance(), graphs_() {}
+
+OpsInput::~OpsInput() {
+  Arc::id_counter_ = 0;
+}
 
 // -------------------------------- Getters -------------------------------- //
-
-std::size_t OpsInput::getAmountOfSuccessors(
-  const int sliding_bar_index, const std::string &node_id
-) const {
-  if (!graphs_[sliding_bar_index].hasNode(node_id)) return 0;
-  return graphs_[sliding_bar_index].getAmountOfSuccessors(node_id);
-}
-
-std::size_t OpsInput::getAmountOfPredecessors(
-  const int sliding_bar_index, const std::string &node_id
-) const {
-  if (!graphs_[sliding_bar_index].hasNode(node_id)) return 0;
-  return graphs_[sliding_bar_index].getAmountOfPredecessors(node_id);
-}
 
 unsigned int OpsInput::getMaxArc() const {
   unsigned int max_arc = 0;
   for (const auto &graph : graphs_) {
     for (const auto &arc : graph.getArcs()) {
-      if (arc.getCost() > max_arc) max_arc = arc.getCost();
+      max_arc = std::max<unsigned int>(max_arc, arc.getCost());
     }
   }
   return max_arc;
@@ -77,39 +67,24 @@ const std::string OpsInput::getStatistics() const {
 
 std::istream &operator>>(std::istream &is, OpsInput &ops_input) {
   is >> static_cast<OpsInstance &>(ops_input);
-  ops_input.truncateT();
   ops_input.createGraphArcs();
   return is;
 }
 
 // --------------------------- Private Methods --------------------------- //
 
-void OpsInput::truncateT() {
-  const auto n = getN();
-  for (auto i = 1; i <= n; ++i) {
-    setTOutOfRange(i, 1);
-    setTOutOfRange(n, i);
-    setTOutOfRange(i, i);
-  }
-  setTZero(1, n);
-}
-
 void OpsInput::createGraphArcs() {
   const auto n = getN();
   const auto m = getM();
   for (auto k = 0; k < m; ++k) {
     auto graph = Graph();
-    graph.addArc(0, n - 1, getT(0, n - 1));
+    graph.addArc(0, n - 1, 0);
     const auto &Jk = getJk(k);
     for (const auto &Ji : Jk) {
+      graph.addArc(0, Ji, getT(0, Ji));
       graph.addArc(Ji, n - 1, getT(Ji, n - 1));
-      if (getT(0, Ji) < OpsInstance::kInfiniteTime) {
-        graph.addArc(0, Ji, getT(0, Ji));
-      }
       for (const auto &Jj : Jk) {
-        if (getT(Ji, Jj) < OpsInstance::kInfiniteTime) {
-          graph.addArc(Ji, Jj, getT(Ji, Jj));
-        }
+        if (Ji != Jj) graph.addArc(Ji, Jj, getT(Jj, Ji));
       }
     }
     graphs_.push_back(graph);
