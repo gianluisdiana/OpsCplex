@@ -113,7 +113,7 @@ class Graph {
    * @param id Id of the node to search
    * @return The node with the given id.
    */
-  const std::shared_ptr<Node> searchNode(const std::string &id);
+  const std::shared_ptr<Node> &searchNode(const std::string &id);
 };
 
 }  // namespace emir
