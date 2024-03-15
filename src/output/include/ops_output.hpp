@@ -15,23 +15,51 @@ class OpsOutput {
    */
   OpsOutput(const OpsInput &input);
 
-  /** @brief Empty destructor. */
-  ~OpsOutput();
+  // ------------------------------ Setters -------------------------------- //
 
   /**
-   * @brief Set the output of the O.P.S. problem.
-   * @details Assigns the values of the solution to the attributes of the class,
-   * checking if they have with the expected format.
+   * @brief Get each arc of every graph and check if the value in the given
+   * vector is 1 or 0. If it is 1, set the value of the arc as true.
    *
-   * @param x The values of the arcs of the graph.
-   * @param y The values of the nodes of the graph.
-   * @param s The values of the time spent in each node.
-   * @param isOptimal Whether the solution is optimal or not.
+   * @param x The vector with the values of the arcs of the graph.
    */
-  void set(
-    const std::vector<double> &x, const std::vector<double> &y,
-    const std::vector<double> &s, bool isOptimal = true
-  );
+  void setX(const std::vector<double> &x);
+
+  /**
+   * @brief Sets which nodes are visited in the solution.
+   *
+   * @param y The vector with the values of the nodes of the graph.
+   */
+  void setY(const std::vector<double> &y);
+
+  /**
+   * @brief Set the time spent in each node.
+   *
+   * @param s The vector with the values of the time spent in each node.
+   */
+  void setS(const std::vector<double> &s);
+
+  /**
+   * @brief Set the time spent to solve the problem.
+   *
+   * @param time_spent The time spent to solve the problem.
+   */
+  inline void setTimeSpent(const long time_spent) {
+    time_elapsed_ = time_spent;
+  }
+
+  // -------------------------- Utility methods ---------------------------- //
+
+  /**
+   * @brief Checks if the constraints of the mathematical model are beeing
+   * satisfied.
+   * @details The constraints are:
+   *  - The first and last node is visited in each sliding bar.
+   *  - Each node must have the same number of arrival and departure arcs.
+   *  - The time spent at moment of visiting each node is less than the
+   *  maximum time.
+   */
+  void check() const;
 
   inline double length() const {
     return s_[y_.size() - 1];
@@ -60,13 +88,15 @@ class OpsOutput {
   const OpsInput &input_;
 
   // The matrix that represents the arcs of the graph.
-  Matrix<int> x_;
+  Matrix<bool> x_;
   // Represents which nodes are visited in the solution.
-  std::vector<int> y_;
+  std::vector<bool> y_;
   // Represents the time spent in each node.
   std::vector<double> s_;
 
   std::vector<double> h_;
+  // The time elapsed to solve the problem.
+  long time_elapsed_;
 
   bool optimal_;
   bool found_;
@@ -81,35 +111,13 @@ class OpsOutput {
    * @param j The destination of the arc.
    */
   inline void setXAsTrue(const int k, const int i, const int j) {
-    x_(k * input_.getN() + i, j) = 1;
+    x_(k * input_.getN() + i, j) = true;
   }
-
-  /**
-   * @brief Get each arc of every graph and check if the value in the given
-   * vector is 1 or 0. If it is 1, set the value of the arc as true.
-   *
-   * @param x The vector with the values of the arcs of the graph.
-   */
-  void setX(const std::vector<double> &x);
-
-  /**
-   * @brief Sets which nodes are visited in the solution.
-   *
-   * @param y The vector with the values of the nodes of the graph.
-   */
-  void setY(const std::vector<double> &y);
-
-  /**
-   * @brief Set the time spent in each node.
-   *
-   * @param s The vector with the values of the time spent in each node.
-   */
-  void setS(const std::vector<double> &s);
 
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gives readonly access to the x_ value in the given position. */
-  inline int getX(const int k, const int i, const int j) const {
+  inline bool getX(const int k, const int i, const int j) const {
     return x_(k * input_.getN() + i, j);
   }
 
@@ -126,17 +134,6 @@ class OpsOutput {
   int getTotalProfit() const;
 
   // -------------------------- Utility methods ---------------------------- //
-
-  /**
-   * @brief Checks if the constraints of the mathematical model are beeing
-   * satisfied.
-   * @details The constraints are:
-   *  - The first and last node is visited in each sliding bar.
-   *  - Each node must have the same number of arrival and departure arcs.
-   *  - The time spent at moment of visiting each node is less than the
-   *  maximum time.
-   */
-  void check() const;
 
   /**
    * @brief Checks if the first and last node is visited in each sliding bar and

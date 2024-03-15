@@ -165,8 +165,12 @@ class OpsCplexSolver : public OpsSolver {
    */
   void setParameters();
 
-  /** @brief Set the output with the models solution. */
-  void setOutput();
+  /**
+   * @brief Set the output with the models solution
+   *
+   * @param time_elapsed The time spent to solve the problem.
+   */
+  void setOutput(long time_elapsed);
 
   /**
    * @brief Gets the values from the cplex solver and converts them.

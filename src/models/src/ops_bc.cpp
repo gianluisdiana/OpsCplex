@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include <ops_bc.hpp>
 
 namespace emir {
@@ -14,8 +16,11 @@ void OpsCplexSolver::solve() {
   makeModel();
   setParameters();
   cplex_.extract(model_);
+  auto start_time = std::chrono::high_resolution_clock::now();
+  decltype(start_time) current_time;
   try {
     cplex_.solve();
+    current_time = std::chrono::high_resolution_clock::now();
   } catch (const IloException &ex) {
     std::cerr << "Error: " << ex << '\n';
     return;
@@ -23,7 +28,12 @@ void OpsCplexSolver::solve() {
     std::cerr << "Error" << '\n';
     return;
   }
-  setOutput();
+  const auto &time_elapsed =
+    std::chrono::duration_cast<std::chrono::microseconds>(
+      current_time - start_time
+    )
+      .count();
+  setOutput(time_elapsed);
 }
 
 // ------------------------------------------------------------------------- //
@@ -172,12 +182,15 @@ void OpsCplexSolver::setParameters() {
   cplex_.setParam(IloCplex::Param::Emphasis::MIP, CPX_MIPEMPHASIS_OPTIMALITY);
 }
 
-void OpsCplexSolver::setOutput() {
+void OpsCplexSolver::setOutput(long time_elapsed) {
   const auto x = IloNumVarArrayToVector(x_);
   const auto y = IloNumVarArrayToVector(y_);
   auto s = IloNumVarArrayToVector(s_);
   for (int i = 1; i < s.size() - 1; ++i) s[i] = s[i] * y[i - 1];
-  output_.set(x, y, s);
+  output_.setX(x);
+  output_.setY(y);
+  output_.setS(s);
+  output_.setTimeSpent(time_elapsed);
 }
 
 const std::vector<double>

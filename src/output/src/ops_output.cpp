@@ -13,21 +13,7 @@ OpsOutput::OpsOutput(const OpsInput &input) :
   input_(input), x_(input.getN() * input.getM(), input.getN()),
   y_(input.getN(), 0), s_(input.getN(), 0),
   h_(input.getN(), double(input.getL()) / input.getScalingFactor()),
-  optimal_(false), found_(false) {}
-
-OpsOutput::~OpsOutput() {}
-
-void OpsOutput::set(
-  const std::vector<double> &x, const std::vector<double> &y,
-  const std::vector<double> &s, bool isOptimal
-) {
-  found_ = true;
-  optimal_ = isOptimal;
-  setX(x);
-  setY(y);
-  setS(s);
-  check();
-}
+  time_elapsed_(-1), optimal_(false), found_(false) {}
 
 void OpsOutput::write_statistics(std::ostream &os) const {
   os << std::setw(4) << getObjectsVisited() << '\t';
@@ -71,24 +57,23 @@ std::ostream &OpsOutput::write(std::ostream &os) const {
 // ------------------------------- Operators ------------------------------- //
 
 std::ostream &operator<<(std::ostream &os, const OpsOutput &output) {
-  os << nlohmann::json({
-                         {"x", output.x_.toJson()},
-                         {"y", output.y_},
-                         {"s", output.s_},
-                         {"profit", output.getTotalProfit()},
-                       })
-          .dump(2);
+  os << nlohmann::json({{"x", output.x_.toJson()},
+                        {"y", output.y_},
+                        {"s", output.s_},
+                        {"profit", output.getTotalProfit()},
+                        {"time_elapsed", output.time_elapsed_}}
+  ).dump(2);
   return os;
 }
 
 // ------------------------------- Setters --------------------------------- //
 
 void OpsOutput::setX(const std::vector<double> &x) {
-  x_.init(0);
+  x_.init(false);
   for (int k = 0; k < input_.getM(); ++k) {
     const auto &graph = input_.getGraph(k);
     for (const auto &arc : graph.getArcs()) {
-      const int value = x[arc.getId()];
+      const int value = std::round(x[arc.getId()]);
       assert(value == 1 || value == 0);
       if (value == 0) continue;
       const int i = std::stoi(arc.getOriginId());
@@ -158,7 +143,7 @@ void OpsOutput::checkArcs() const {
     for (const auto &arc : graph.getArcs()) {
       const auto &origin_id = std::stoi(arc.getOriginId());
       const auto &destination_id = std::stoi(arc.getDestinationId());
-      if (getX(k, origin_id, destination_id) == 1) {
+      if (getX(k, origin_id, destination_id)) {
         amount_of_arrives[destination_id]++;
         amount_of_departures[origin_id]++;
       }
