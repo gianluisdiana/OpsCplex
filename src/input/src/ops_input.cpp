@@ -29,6 +29,10 @@ namespace emir {
 
 OpsInput::OpsInput() : OpsInstance(), graphs_() {}
 
+OpsInput::~OpsInput() {
+  Arc::id_counter_ = 0;
+}
+
 // -------------------------------- Getters -------------------------------- //
 
 unsigned int OpsInput::getMaxArc() const {

@@ -36,6 +36,9 @@ class OpsInput : public OpsInstance {
   /** @brief Construct an empty input instance. */
   OpsInput();
 
+  /** @brief Resets the arc id counter. */
+  ~OpsInput();
+
   // ------------------------------ Getters -------------------------------- //
 
   /**
