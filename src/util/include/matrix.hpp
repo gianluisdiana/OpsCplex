@@ -119,6 +119,7 @@ class Matrix : public JsonInterface {
   };
 
   // ----------------------------- Constructors ---------------------------- //
+
   /**
    * @brief Empty constructor, only reserve the size of the matrix
    *
@@ -175,9 +176,7 @@ class Matrix : public JsonInterface {
    * @param data The data to initialize the matrix with.
    */
   void init(const T data) {
-    for (auto &row : data_) {
-      for (auto &value : row) value = data;
-    }
+    for (auto &row : data_) row.assign(cols_amount_, data);
   }
 
   // ----------------------------- Iterators ------------------------------ //
