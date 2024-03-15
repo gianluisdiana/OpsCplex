@@ -7,11 +7,12 @@ namespace fs = std::filesystem;
 void processModelType(const std::string &model_type) {
   const auto &input_folder = "data/input/" + model_type + "/instances";
   const auto &output_folder = "data/output/" + model_type + "/";
-  std::ofstream log_os("data/test_log.txt");
+  std::stringstream ss;
   for (const auto &file : fs::directory_iterator(input_folder)) {
     std::cout << file.path() << std::endl;
     const auto &instance = createFromFile<emir::OpsInput>(file.path());
     std::ofstream output_os(output_folder + file.path().filename().string());
-    output_os << solve<emir::OpsCplexSolver>(instance, 1e-4, log_os);
+    output_os << solve<emir::OpsCplexSolver>(instance, 1e-4, ss);
+    ss.str(std::string());
   }
 }
