@@ -36,21 +36,19 @@ namespace emir {
 /** @brief Represents a basic instance for the O.P.S. */
 class OpsInstance : JsonInterface {
  public:
-  // Constant to represent an infinite time to process an object and go to
-  // another
-  static const unsigned int kInfiniteTime;
-
   OpsInstance();
-  virtual ~OpsInstance();
 
   // ------------------------------ Getters -------------------------------- //
 
-  /** @brief Get the amount of objects to visualize */
+  /**
+   * @brief Get the amount of objects to visualize plus the origin and ending
+   * objects (used as starting and ending points)
+   */
   inline int getN() const {
     return b_.size();
   }
 
-  /** @brief Get the amount of sliding bars */
+  /** @brief Get the amount of sliding bars, normally 55 */
   inline int getM() const {
     return Jk_.size();
   }
@@ -94,30 +92,6 @@ class OpsInstance : JsonInterface {
   /** @brief Gives read-only access to the scaling factor */
   inline double getScalingFactor() const {
     return scal_factor_;
-  }
-
-  // ------------------------------ Setters -------------------------------- //
-
-  /**
-   * @brief Sets the element in the i-th row and j-th column of the time matrix
-   * to an infinite value (represents a transition that cannot be done).
-   *
-   * @param i The index of the row
-   * @param j The index of the column
-   */
-  inline void setTOutOfRange(const int i, const int j) {
-    T_(i, j) = OpsInstance::kInfiniteTime;
-  }
-
-  /**
-   * @brief Sets the element in the i-th row and j-th column of the time matrix
-   * to 0 (represents a transition with no time spent).
-   *
-   * @param i The index of the row
-   * @param j The index of the column
-   */
-  inline void setTZero(const int i, const int j) {
-    T_(i, j) = 0;
   }
 
   // ---------------------------- Statistcs Data --------------------------- //

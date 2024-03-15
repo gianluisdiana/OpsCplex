@@ -67,39 +67,24 @@ const std::string OpsInput::getStatistics() const {
 
 std::istream &operator>>(std::istream &is, OpsInput &ops_input) {
   is >> static_cast<OpsInstance &>(ops_input);
-  ops_input.truncateT();
   ops_input.createGraphArcs();
   return is;
 }
 
 // --------------------------- Private Methods --------------------------- //
 
-void OpsInput::truncateT() {
-  const auto n = getN();
-  for (auto i = 0; i < n; ++i) {
-    setTOutOfRange(i, 0);
-    setTOutOfRange(n - 1, i);
-    setTOutOfRange(i, i);
-  }
-  setTZero(0, n - 1);
-}
-
 void OpsInput::createGraphArcs() {
   const auto n = getN();
   const auto m = getM();
   for (auto k = 0; k < m; ++k) {
     auto graph = Graph();
-    graph.addArc(0, n - 1, getT(0, n - 1));
+    graph.addArc(0, n - 1, 0);
     const auto &Jk = getJk(k);
     for (const auto &Ji : Jk) {
+      graph.addArc(0, Ji, getT(0, Ji));
       graph.addArc(Ji, n - 1, getT(Ji, n - 1));
-      if (getT(0, Ji) < OpsInstance::kInfiniteTime) {
-        graph.addArc(0, Ji, getT(0, Ji));
-      }
       for (const auto &Jj : Jk) {
-        if (getT(Ji, Jj) < OpsInstance::kInfiniteTime) {
-          graph.addArc(Ji, Jj, getT(Ji, Jj));
-        }
+        if (Ji != Jj) graph.addArc(Ji, Jj, getT(Jj, Ji));
       }
     }
     graphs_.push_back(graph);

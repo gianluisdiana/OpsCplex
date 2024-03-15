@@ -3,13 +3,9 @@
 
 namespace emir {
 
-const unsigned int OpsInstance::kInfiniteTime = 999'999;
-
 OpsInstance::OpsInstance() :
   name_(), date_stamp_(), type_(), Jk_(), Kj_(), T_(), b_(), alpha_(-1), L_(0),
   scal_factor_(10) {}
-
-OpsInstance::~OpsInstance() {}
 
 // ----------------------------- Statistcs Data ---------------------------- //
 

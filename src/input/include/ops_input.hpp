@@ -90,13 +90,6 @@ class OpsInput : public OpsInstance {
   // ----------------------------------------------------------------------- //
 
   /**
-   * @brief Removes the arcs coming out of the last object (n -> i), the arcs
-   * that enter the first object (i -> 1) and the arc that enters and exits at
-   * the same node (i -> i).
-   */
-  void truncateT();
-
-  /**
    * @brief Creates the arcs for each sliding bar, adding to each graph only the
    * nodes that can be reached. An arc is created if:
    * - The time doesn't exceed the time limit
