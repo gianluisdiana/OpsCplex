@@ -16,3 +16,13 @@ void processModelType(const std::string &model_type) {
     ss.str(std::string());
   }
 }
+
+void processInputFile(const std::string &inputPath) {
+  const auto &instance = createFromFile<emir::OpsInput>(inputPath);
+  std::string outputPath = inputPath;
+  outputPath.replace(outputPath.find("instances/"), 9, "");
+  outputPath.replace(outputPath.find("input"), 5, "output");
+  std::ofstream output_os(outputPath);
+  std::stringstream ss;
+  output_os << solve<emir::OpsCplexSolver>(instance, 1e-4, ss);
+}

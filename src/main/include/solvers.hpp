@@ -30,4 +30,11 @@ T solve(const emir::OpsInput &input, double tolerance, std::ostream &log_os) {
  */
 void processModelType(const std::string &model_type);
 
+/**
+ * @brief Process the input file and generates the output and log files.
+ *
+ * @param inputPath The path to the input file to be processed.
+ */
+void processInputFile(const std::string &inputPath);
+
 #endif  // _SOLVERS_HPP_
