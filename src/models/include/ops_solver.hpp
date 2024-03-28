@@ -32,11 +32,12 @@ class OpsSolver {
   /**
    * @brief Overload of the << operator to print the output of the solver.
    *
-   * @param os Represents the outflow.
+   * @param output_stream Represents the outflow.
    * @param solver The solver to print the output.
    * @return The outflow with the output in a JSON format.
    */
-  friend std::ostream &operator<<(std::ostream &os, const OpsSolver &solver);
+  friend std::ostream &
+  operator<<(std::ostream &output_stream, const OpsSolver &solver);
 
  protected:
   // The input of the solver with the instance data.

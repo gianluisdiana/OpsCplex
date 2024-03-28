@@ -7,8 +7,8 @@ OpsSolver::OpsSolver(const OpsInput &input, double tolerance) :
 
 // ------------------------------- Operators ------------------------------- //
 
-std::ostream &operator<<(std::ostream &os, const OpsSolver &solver) {
-  return os << solver.output_;
+std::ostream &operator<<(std::ostream &output_stream, const OpsSolver &solver) {
+  return output_stream << solver.output_;
 }
 
 }  // namespace emir

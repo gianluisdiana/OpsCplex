@@ -5,7 +5,7 @@
 namespace emir {
 
 OpsCplexSolver::OpsCplexSolver(const OpsInput &input, double tolerance) :
-  OpsSolver(input, tolerance), env_(), cplex_(env_), model_(env_), x_(env_),
+  OpsSolver(input, tolerance), cplex_(env_), model_(env_), x_(env_),
   y_(env_), s_(env_) {}
 
 OpsCplexSolver::~OpsCplexSolver() {
@@ -22,7 +22,7 @@ void OpsCplexSolver::solve() {
     cplex_.solve();
     current_time = std::chrono::high_resolution_clock::now();
   } catch (const IloException &ex) {
-    std::cerr << "Error: " << ex << '\n';
+    std::cerr << "IloException: " << ex << '\n';
     return;
   } catch (...) {
     std::cerr << "Error" << '\n';
@@ -108,9 +108,9 @@ void OpsCplexSolver::addDeltaPlusConstraints(IloRangeArray &constraints) {
     for (const auto &origin_id : graph.getNodesId()) {
       IloExpr expression(env_);
       const auto arcs_id = graph.getSuccessorsArcsId(origin_id);
-      if (arcs_id.empty()) continue;
-      for (const auto &id : arcs_id) expression += x_[id];
-      if (origin_id != "0") expression -= y_[std::stoi(origin_id) - 1];
+      if (arcs_id.empty()) { continue; }
+      for (const auto &arc_id : arcs_id) { expression += x_[arc_id]; }
+      if (origin_id != "0") { expression -= y_[std::stoi(origin_id) - 1]; }
       const double is_root_node = origin_id == "0" ? 1.0 : 0.0;
       constraints.add(IloRange(
         env_, is_root_node, expression, is_root_node,
@@ -128,9 +128,9 @@ void OpsCplexSolver::addDeltaMinusConstraints(IloRangeArray &constraints) {
     for (const auto &node_id : graph.getNodesId()) {
       IloExpr expression(env_);
       const auto arcs_id = graph.getPredecessorsArcsId(node_id);
-      if (arcs_id.empty()) continue;
-      for (const auto &id : arcs_id) expression += x_[id];
-      if (node_id != last_node) expression -= y_[std::stoi(node_id) - 1];
+      if (arcs_id.empty()) { continue; }
+      for (const auto &arc_id : arcs_id) { expression += x_[arc_id]; }
+      if (node_id != last_node) { expression -= y_[std::stoi(node_id) - 1]; }
       const double is_last_node = node_id == last_node ? 1.0 : 0.0;
       constraints.add(IloRange(
         env_, is_last_node, expression, is_last_node,
@@ -142,20 +142,21 @@ void OpsCplexSolver::addDeltaMinusConstraints(IloRangeArray &constraints) {
 }
 
 void OpsCplexSolver::addMTZConstraints(IloRangeArray &constraints) {
-  const int BIG_M = std::max<int>(input_.getMaxArc(), input_.getL()) + 1;
+  const int BIG_M = std::max((int)input_.getMaxArc(), input_.getL()) + 1;
   for (auto k = 0; k < input_.getM(); ++k) {
     const auto &graph = input_.getGraph(k);
     for (const auto &arc : graph.getArcs()) {
-      const auto &i = arc.getOriginId();
-      const auto &j = arc.getDestinationId();
+      const auto &origin_id = arc.getOriginId();
+      const auto &destination_id = arc.getDestinationId();
       IloExpr expression(env_);
-      expression =
-        BIG_M * x_[arc.getId()] + s_[std::stoi(i)] - s_[std::stoi(j)];
-
+      expression = BIG_M * x_[arc.getId()] + s_[std::stoi(origin_id)] -
+                   s_[std::stoi(destination_id)];
       constraints.add(IloRange(
         env_, -IloInfinity, expression,
-        BIG_M - input_.getT(std::stoi(i), std::stoi(j)),
-        ("MTZ_" + i + "_" + j + "_" + std::to_string(k + 1)).c_str()
+        BIG_M - input_.getT(std::stoi(origin_id), std::stoi(destination_id)),
+        ("MTZ_" + origin_id + "_" + destination_id + "_" + std::to_string(k + 1)
+        )
+          .c_str()
       ));
       expression.end();
     }
@@ -169,7 +170,7 @@ void OpsCplexSolver::addLimitConstraints(IloRangeArray &constraints) {
   start_time_expression.end();
 
   IloExpr last_time_expression(env_);
-  last_time_expression = s_[input_.getN() - 1];
+  last_time_expression = s_[(long)input_.getN() - 1];
   constraints.add(
     IloRange(env_, -IloInfinity, last_time_expression, input_.getL(), "Limit")
   );
@@ -183,22 +184,24 @@ void OpsCplexSolver::setParameters() {
 }
 
 void OpsCplexSolver::setOutput(long time_elapsed) {
-  const auto x = IloNumVarArrayToVector(x_);
-  const auto y = IloNumVarArrayToVector(y_);
-  auto s = IloNumVarArrayToVector(s_);
-  for (int i = 1; i < s.size() - 1; ++i) s[i] = s[i] * y[i - 1];
-  output_.setX(x);
-  output_.setY(y);
-  output_.setS(s);
+  const auto usedArcs = IloNumVarArrayToVector(x_);
+  const auto visitedObjects = IloNumVarArrayToVector(y_);
+  auto timeAtObjects = IloNumVarArrayToVector(s_);
+  for (int i = 1; i < timeAtObjects.size() - 1; ++i) {
+    timeAtObjects[i] = timeAtObjects[i] * visitedObjects[i - 1];
+  }
+  output_.setX(usedArcs);
+  output_.setY(visitedObjects);
+  output_.setS(timeAtObjects);
   output_.setTimeSpent(time_elapsed);
 }
 
-const std::vector<double>
+std::vector<double>
 OpsCplexSolver::IloNumVarArrayToVector(const IloNumVarArray &variable) const {
   IloNumArray values(env_);
   cplex_.getValues(variable, values);
-  std::vector<double> result;
-  for (auto i = 0; i < values.getSize(); ++i) { result.push_back(values[i]); }
+  std::vector<double> result(values.getSize());
+  for (auto i = 0; i < values.getSize(); ++i) { result[i] = values[i]; }
   return result;
 }
 

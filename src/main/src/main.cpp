@@ -1,7 +1,9 @@
+#include <algorithm>
+
 #include <input_parser/parser.hpp>
 #include <solvers.hpp>
 
-const input_parser::Parser createParser() {
+input_parser::Parser createParser() {
   return input_parser::Parser()
     .addHelpOption()
     .addOption<input_parser::SingleOption>([] {
@@ -22,8 +24,9 @@ const input_parser::Parser createParser() {
         .addConstraint<const std::vector<std::string> &>(
           [](const auto &values) -> bool {
             for (const auto &value : values) {
-              if (value != "A" && value != "B" && value != "C" && value != "LA" && value != "LB" && value != "LC")
+              if (value != "A" && value != "B" && value != "C" && value != "LA" && value != "LB" && value != "LC") {
                 return false;
+              }
             }
             return true;
           },
@@ -37,14 +40,13 @@ const input_parser::Parser createParser() {
  * @brief Main function to process folders filled with instances and output
  * the results.
  */
-int main(int argc, char *argv[]) {
+int secureMain(int argc, char *argv[]) {
   auto parser = createParser();
 
   try {
     parser.parse(argc, argv);
   } catch (const input_parser::ParsingError &e) {
-    std::cerr << e.what() << std::endl;
-    parser.displayUsage();
+    std::cerr << e.what() << '\n' << parser.usage() << '\n';
     return 1;
   }
 
@@ -53,7 +55,16 @@ int main(int argc, char *argv[]) {
   if (!inputPath.empty()) {
     processInputFile(inputPath);
   } else if (!models.empty()) {
-    for (const auto &model : models) processModelType(model);
+    for (const auto &model : models) { processModelType(model); }
   }
   return 0;
+}
+
+int main(int argc, char *argv[]) {
+  try {
+    return secureMain(argc, argv);
+  } catch (const std::exception &e) {
+    std::cerr << "Error: " << e.what() << '\n';
+    return 1;
+  }
 }

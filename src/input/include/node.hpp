@@ -42,9 +42,9 @@ class Node {
   /**
    * @brief Creates a new node with the given id
    *
-   * @param id Id of the node
+   * @param node_id Id of the node
    */
-  Node(const std::string &id = "");
+  Node(std::string node_id = "");
 
   // ------------------------------ Getters -------------------------------- //
 
@@ -57,14 +57,14 @@ class Node {
    * @brief Gets the id of the arcs that connect the node with its successors
    */
   inline const std::vector<unsigned int> getSuccessorsArcsId() const {
-    return getArcsId(successors_);
+    return Node::getArcsId(successors_);
   }
 
   /**
    * @brief Gets the id of the arcs that connect the node with its predecessors
    */
   inline const std::vector<unsigned int> getPredecessorsArcsId() const {
-    return getArcsId(predecessors_);
+    return Node::getArcsId(predecessors_);
   }
 
   // ------------------------------- Adders -------------------------------- //
@@ -115,8 +115,8 @@ class Node {
    * @return The id of the arcs that connect the node with its successors or
    * predecessors
    */
-  const std::vector<unsigned int>
-  getArcsId(const NodeArcPairs &nodesWithArcs) const;
+  static std::vector<unsigned int>
+  getArcsId(const NodeArcPairs &nodesWithArcs);
 };
 
 }  // namespace emir

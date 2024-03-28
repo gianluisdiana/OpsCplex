@@ -12,7 +12,7 @@
  * @param date_stamp String to be converted.
  * @return The date stamp of the string.
  */
-const time_t stringToDateStamp(const std::string &date_stamp);
+time_t stringToDateStamp(const std::string &date_stamp);
 
 /**
  * @brief Import the data from a file and convert it to a given type.

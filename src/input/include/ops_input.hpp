@@ -25,7 +25,6 @@
 
 #include <graph.hpp>
 #include <ops_instance.hpp>
-#include <stats.hpp>
 
 namespace emir {
 
@@ -54,28 +53,18 @@ class OpsInput : public OpsInstance {
   /** @brief Gets the maximum cost of any arc in the graph */
   unsigned int getMaxArc() const;
 
-  // ---------------------------- Stats Getters ---------------------------- //
-
-  // TODO: ERASE
-  const std::string getStatistics() const;
-
-  inline const std::string getStatisticsHdr() const {
-    return /*OpsInput::getStatisticsHdr()*/
-      "$n$\t$m$\t$\\max|J_k|$\t$\\bar{|J_k|}$\tnsync\t"
-      "$\\max\\partial\\mbox{sync}$\t$\\bar{\\partial\\mbox{sync}$\t$L$\t";
-  }
-
   // ------------------------------ Operators ------------------------------ //
 
   /**
    * @brief Overload of the >> operator to read an input from a json file.
    * Calls OpsInstance::operator>> and then builds the input.
    *
-   * @param is Represents the inflow
+   * @param input_stream Represents the inflow
    * @param ops_input The OPS input to read from the inflow
    * @return The inflow with the input read
    */
-  friend std::istream &operator>>(std::istream &is, OpsInput &ops_input);
+  friend std::istream &
+  operator>>(std::istream &input_stream, OpsInput &ops_input);
 
  private:
   // ----------------------------------------------------------------------- //
@@ -98,29 +87,6 @@ class OpsInput : public OpsInstance {
    * - No node can go to itself.
    */
   void createGraphArcs();
-
-  // ---------------------- Private Statistics Getters ---------------------- //
-
-  /**
-   * @brief Gets statistics about the graph. Specifically:
-   * - The amount of objects that can be reached in by any sliding bar
-   * - The maximum amount of bars needed to reach an object
-   * - The minimum amount of bars needed to reach an object
-   * - The average amount of bars needed to reach an object
-   *
-   * @return The statistics described above.
-   */
-  const Stats getBarsStats() const;
-
-  /**
-   * @brief Gets statistics about the graph. Specifically:
-   * - The maximum amount of nodes reached by a sliding bar
-   * - The minimum amount of nodes reached by a sliding bar
-   * - The average amount of nodes reached by the sliding bars
-   *
-   * @return The statistics described above.
-   */
-  const Stats getNodesStats() const;
 };
 
 }  // namespace emir

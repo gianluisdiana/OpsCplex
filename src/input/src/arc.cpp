@@ -5,23 +5,28 @@ namespace emir {
 
 unsigned int Arc::id_counter_ = 0;
 
+void Arc::resetIdCounter() {
+  Arc::id_counter_ = 0;
+}
+
 Arc::Arc(
-  const std::shared_ptr<Node> &from, const std::shared_ptr<Node> &to,
-  const int cost
+  std::shared_ptr<Node> origin, const int cost,
+  std::shared_ptr<Node> destination
 ) :
-  id_(Arc::id_counter_++),
-  from_(from), to_(to), cost_(cost) {
+  id_ {Arc::id_counter_++},
+  origin_ {std::move(origin)}, cost_ {cost}, destination_ {
+                                               std::move(destination)} {
   const auto &arc = std::make_shared<Arc>(*this);
-  from_->addSuccessor(to_, arc);
-  to_->addPredecessor(from_, arc);
+  origin_->addSuccessor(destination_, arc);
+  destination_->addPredecessor(origin_, arc);
 }
 
 const std::string &Arc::getOriginId() const {
-  return from_->getId();
+  return origin_->getId();
 }
 
 const std::string &Arc::getDestinationId() const {
-  return to_->getId();
+  return destination_->getId();
 }
 
 }  // namespace emir

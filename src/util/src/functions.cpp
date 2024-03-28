@@ -3,9 +3,10 @@
 
 #include <functions.hpp>
 
-const time_t stringToDateStamp(const std::string &date_stamp) {
-  std::istringstream ss(date_stamp);
-  struct std::tm tm;
-  ss >> std::get_time(&tm, "%c");
-  return mktime(&tm);
+time_t stringToDateStamp(const std::string &date_stamp) {
+  struct std::tm time {};
+
+  std::istringstream string_stream(date_stamp);
+  string_stream >> std::get_time(&time, "%c");
+  return mktime(&time);
 }

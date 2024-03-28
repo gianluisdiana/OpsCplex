@@ -17,15 +17,13 @@
 #include <iostream>
 #include <vector>
 
-#include <json_interface.hpp>
-
 /**
  * @brief Represents a bidimensional array
  *
  * @tparam T The data type contained in the matrix.
  */
 template <typename T>
-class Matrix : public JsonInterface {
+class Matrix {
  public:
   /** @brief Represents an iterator for the matrix. */
   struct Iterator {
@@ -138,6 +136,10 @@ class Matrix : public JsonInterface {
   template <std::size_t rows_amount, std::size_t cols_amount>
   Matrix(T (&matrix)[rows_amount][cols_amount]);
 
+  inline std::vector<std::vector<T>> data() const {
+    return data_;
+  }
+
   // ------------------------------- Capacity ------------------------------ //
 
   /** @brief Checks if the matrix is empty. */
@@ -249,6 +251,13 @@ class Matrix : public JsonInterface {
     return data_[row_index][col_index];
   }
 
+  Matrix &operator=(const std::vector<std::vector<T>> &matrix) {
+    data_ = matrix;
+    rows_amount_ = matrix.size();
+    cols_amount_ = matrix[0].size();
+    return *this;
+  }
+
   /**
    * @brief Overload of the << operator to print the matrix.
    *
@@ -259,22 +268,6 @@ class Matrix : public JsonInterface {
    */
   template <typename C>
   friend std::ostream &operator<<(std::ostream &os, const Matrix<C> &matrix);
-
-  // ----------------------------- Json methods ---------------------------- //
-
-  /**
-   * @brief Get the json representation of the matrix.
-   */
-  inline const nlohmann::json toJson() const override {
-    return nlohmann::json(data_);
-  }
-
-  /**
-   * @brief Set the matrix from a json representation.
-   *
-   * @param json_object The json representation of the matrix.
-   */
-  void setFromJson(const nlohmann::json &json_object) override;
 
  private:
   // The amount of rows the matrix has
@@ -312,13 +305,6 @@ template <typename T>
 void Matrix<T>::resize() {
   data_.resize(rows_amount_);
   for (auto &row : data_) row.resize(cols_amount_);
-}
-
-template <typename T>
-void Matrix<T>::setFromJson(const nlohmann::json &json_object) {
-  data_ = json_object.get<std::vector<std::vector<T>>>();
-  rows_amount_ = data_.size();
-  cols_amount_ = data_[0].size();
 }
 
 template <typename C>

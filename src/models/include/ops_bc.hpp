@@ -178,7 +178,7 @@ class OpsCplexSolver : public OpsSolver {
    * @param variable The variable to get the values from.
    * @return The values from the variable in a vector.
    */
-  const std::vector<double>
+  std::vector<double>
   IloNumVarArrayToVector(const IloNumVarArray &variable) const;
 };
 

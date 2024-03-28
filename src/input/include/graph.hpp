@@ -40,7 +40,7 @@ class Graph {
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the ids of the nodes of the graph */
-  const std::vector<std::string> getNodesId() const;
+  std::vector<std::string> getNodesId() const;
 
   /** @brief Gets the amount of nodes of the graph */
   inline const std::size_t getAmountOfNodes() const {
@@ -110,10 +110,10 @@ class Graph {
    * @brief Gets the node from the map, if it doesn't exist it creates it and
    * returns it.
    *
-   * @param id Id of the node to search
+   * @param node_id Id of the node to search
    * @return The node with the given id.
    */
-  const std::shared_ptr<Node> &searchNode(const std::string &id);
+  const std::shared_ptr<Node> &searchNode(const std::string &node_id);
 };
 
 }  // namespace emir

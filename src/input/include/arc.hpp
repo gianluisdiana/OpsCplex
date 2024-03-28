@@ -36,19 +36,19 @@ namespace emir {
 /** @brief Represents an arc in the graph */
 class Arc {
  public:
-  // Keeps track of the amount of arcs created
-  static unsigned int id_counter_;
+  /** @brief Resets the arc id counter */
+  static void resetIdCounter();
 
   /**
    * @brief Creates a new arc (from_node -> to_node) with an unique id
    *
    * @param from Origin node of the arc
-   * @param to Destination node of the arc
    * @param cost The cost of the arc
+   * @param to Destination node of the arc
    */
   Arc(
-    const std::shared_ptr<Node> &from, const std::shared_ptr<Node> &to,
-    const int cost
+    std::shared_ptr<Node> origin, const int cost,
+    std::shared_ptr<Node> destination
   );
 
   // ------------------------------ Getters -------------------------------- //
@@ -70,14 +70,17 @@ class Arc {
   const std::string &getDestinationId() const;
 
  private:
+  // Keeps track of the amount of arcs created
+  static unsigned int id_counter_;
+
   // Identifier of the arc
-  const unsigned int id_;
+  unsigned int id_;
   // Origin node of the arc
-  std::shared_ptr<Node> from_;
-  // Destination node of the arc
-  std::shared_ptr<Node> to_;
+  std::shared_ptr<Node> origin_;
   // The cost of the arc
   int cost_;
+  // Destination node of the arc
+  std::shared_ptr<Node> destination_;
 };
 
 }  // namespace emir

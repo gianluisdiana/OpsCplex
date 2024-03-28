@@ -30,13 +30,14 @@
 #include <string>
 
 #include <matrix.hpp>
+#include <nlohmann/json.hpp>
 
 namespace emir {
 
 /** @brief Represents a basic instance for the O.P.S. */
-class OpsInstance : JsonInterface {
+class OpsInstance {
  public:
-  OpsInstance();
+  OpsInstance(double scaling_factor = 10);
 
   // ------------------------------ Getters -------------------------------- //
 
@@ -44,12 +45,12 @@ class OpsInstance : JsonInterface {
    * @brief Get the amount of objects to visualize plus the origin and ending
    * objects (used as starting and ending points)
    */
-  inline int getN() const {
+  inline std::size_t getN() const {
     return b_.size();
   }
 
   /** @brief Get the amount of sliding bars, normally 55 */
-  inline int getM() const {
+  inline std::size_t getM() const {
     return Jk_.size();
   }
 
@@ -59,7 +60,7 @@ class OpsInstance : JsonInterface {
    * @param k The index of the sliding bar
    * @return The objects that can be observed by the sliding bar selected
    */
-  inline const std::vector<int> &getJk(int k) const {
+  inline const std::vector<int> &getJk(const std::size_t k) const {
     return Jk_[k];
   }
 
@@ -69,7 +70,7 @@ class OpsInstance : JsonInterface {
    * @param j The index of the object
    * @return The profit (or priority) for the object selected
    */
-  inline int getB(int j) const {
+  inline int getB(const std::size_t j) const {
     return b_[j];
   }
 
@@ -85,31 +86,27 @@ class OpsInstance : JsonInterface {
    * @param origin_index The index of the origin node
    * @param destiny_index The index of the destiny node
    */
-  inline int getT(const int origin_index, const int destiny_index) const {
+  inline int
+  getT(const std::size_t origin_index, const std::size_t destiny_index) const {
     return T_(origin_index, destiny_index);
   }
 
   /** @brief Gives read-only access to the scaling factor */
   inline double getScalingFactor() const {
-    return scal_factor_;
+    return scaling_factor_;
   }
-
-  // ---------------------------- Statistcs Data --------------------------- //
-  // TODO: ERASE
-
-  void writeStatistics(std::ostream &os) const;
-  void writeStatisticsHdr(std::ostream &os) const;
 
   // ------------------------------ Operators ------------------------------ //
 
   /**
    * @brief Overload of the >> operator to read an instance from a json file.
    *
-   * @param is Represents the inflow
+   * @param input_stream Represents the inflow
    * @param ops_instance The OPS instance to read from the inflow
    * @return The inflow with the instance read
    */
-  friend std::istream &operator>>(std::istream &is, OpsInstance &ops_instance);
+  friend std::istream &
+  operator>>(std::istream &input_stream, OpsInstance &ops_instance);
 
  private:
   // ----------------------------------------------------------------------- //
@@ -142,26 +139,18 @@ class OpsInstance : JsonInterface {
   // --------------------------- Extra attributes -------------------------- //
 
   double alpha_; /**< Percentage of the total tour */
-  double scal_factor_;
+  double scaling_factor_;
 
   // ----------------------------------------------------------------------- //
   // ------------------------------- Methods ------------------------------- //
   // ----------------------------------------------------------------------- //
-
-  // TODO: ERASE
-  /**
-   * @brief Formats the instance to a json file
-   *
-   * @return The json file with the ops information
-   */
-  const nlohmann::json toJson() const override;
 
   /**
    * @brief Set the OPS instance from a json file
    *
    * @param json_instance The json file with the ops information
    */
-  void setFromJson(const nlohmann::json &json_instance) override;
+  void setFromJson(const nlohmann::json &json_instance);
 
   /**
    * @brief Resets the Kj matrix and fills it with the correct values
