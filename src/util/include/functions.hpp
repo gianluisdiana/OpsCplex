@@ -17,16 +17,16 @@ time_t stringToDateStamp(const std::string &date_stamp);
 /**
  * @brief Import the data from a file and convert it to a given type.
  *
- * @tparam T Type to be converted to.
+ * @tparam Readable Type to be converted to.
  * @param file_name Name of the file to be imported.
  * @return The data from the file converted to the given type.
  */
-template <typename T, typename = std::enable_if_t<is_readable<T &>::value>>
-T createFromFile(const std::string &file_name) {
+template <typename Readable>
+Readable createFromFile(const std::string &file_name
+) requires is_readable_v<Readable &> && std::default_initializable<Readable> {
   std::ifstream file(file_name);
-  T data;
+  Readable data;
   file >> data;
-  file.close();
   return data;
 }
 

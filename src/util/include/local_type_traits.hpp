@@ -42,4 +42,14 @@ class is_readable {
   static constexpr bool value = decltype(test<T>(0))::value;
 };
 
+/**
+ * @brief Shortcut variable to get the value of the `is_readable` type trait.
+ * @details The `is_readable_v` variable template provides a simple way to check
+ * if a given type `T` is readable from an input stream.
+ *
+ * @tparam T The type to check for readability.
+ */
+template <typename T>
+constexpr bool is_readable_v = is_readable<T>::value;
+
 #endif  // _LOCAL_TYPE_TRAITS_HPP_
