@@ -14,7 +14,8 @@ Checks:
   performance-*,
   -performance-inefficient-string-concatenation,
   portability-*,
-  readability-*
+  readability-*,
+  -readability-use-anyofallof
 FormatStyle: file
 UseColor: true
 User: gianluisdiana
