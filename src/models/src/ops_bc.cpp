@@ -29,7 +29,7 @@ void OpsCplexSolver::solve() {
     return;
   }
   const auto &time_elapsed =
-    std::chrono::duration_cast<std::chrono::microseconds>(
+    std::chrono::duration_cast<std::chrono::seconds>(
       current_time - start_time
     )
       .count();

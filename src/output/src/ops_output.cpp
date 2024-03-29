@@ -29,12 +29,12 @@ std::ostream &operator<<(std::ostream &output_stream, const OpsOutput &output) {
 
 // ------------------------------- Setters --------------------------------- //
 
-void OpsOutput::setX(const std::vector<double> &usedArcs) {
+void OpsOutput::setX(const std::vector<double> &used_arcs) {
   x_.init(false);
   for (int k = 0; k < input_.getM(); ++k) {
     const auto &graph = input_.getGraph(k);
     for (const auto &arc : graph.getArcs()) {
-      const double value = std::round(usedArcs[arc.getId()]);
+      const double value = std::round(used_arcs[arc.getId()]);
       assert(value == 1 || value == 0);
       if (value == 0.0) { continue; }
       const int origin_id = std::stoi(arc.getOriginId());
@@ -44,24 +44,24 @@ void OpsOutput::setX(const std::vector<double> &usedArcs) {
   }
 }
 
-void OpsOutput::setY(const std::vector<double> &visitedObjects) {
+void OpsOutput::setY(const std::vector<double> &visited_objects) {
   const auto amountOfObjects = input_.getN();
   y_[0] = true;
   y_[amountOfObjects - 1] = true;
-  if (visitedObjects.empty()) { return; }
+  if (visited_objects.empty()) { return; }
   for (int idx = 1; idx < amountOfObjects - 1; ++idx) {
-    const double value = visitedObjects[idx - 1];
+    const double value = visited_objects[idx - 1];
     assert(value == 1.0 || value == 0.0);
     y_[idx] = (value == 1.0);
   }
 }
 
-void OpsOutput::setS(const std::vector<double> &timeAtObjects) {
+void OpsOutput::setS(const std::vector<double> &time_at_objects) {
   const auto amountOfObjects = input_.getN();
   s_[0] = 0;
-  if (timeAtObjects.empty()) { return; }
+  if (time_at_objects.empty()) { return; }
   for (auto idx = 1; idx < amountOfObjects; ++idx) {
-    const double value = timeAtObjects[idx - 1];
+    const double value = time_at_objects[idx - 1];
     assert(value >= 0);
     s_[idx] = value / input_.getScalingFactor();
   }

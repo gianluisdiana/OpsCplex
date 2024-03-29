@@ -56,25 +56,27 @@ std::istream &operator>>(std::istream &input_stream, OpsInput &ops_input) {
 // --------------------------- Private Methods --------------------------- //
 
 void OpsInput::createGraphArcs() {
-  const auto amountOfObjects = (int)getN();
-  const auto amountOfSlidingBars = getM();
-  graphs_.resize(amountOfSlidingBars);
-  for (auto k = 0; k < amountOfSlidingBars; ++k) {
-    auto graph = Graph();
-    graph.addArc(0, amountOfObjects - 1, 0);
-    const auto &objectsObservedByK = getJk(k);
-    for (const auto &objectI : objectsObservedByK) {
-      graph.addArc(0, objectI, getT(0, objectI));
+  const auto amount_of_objects = (int)getN();
+  const auto amount_of_sliding_bars = getM();
+  graphs_.resize(amount_of_sliding_bars);
+  for (auto sliding_bar_idx = 0; sliding_bar_idx < amount_of_sliding_bars;
+       ++sliding_bar_idx) {
+    auto &graph = graphs_[sliding_bar_idx];
+    graph.addArc(0, amount_of_objects - 1, 0);
+    const auto &objects_in_sliding_bar = getJk(sliding_bar_idx);
+    for (const auto &origin_id : objects_in_sliding_bar) {
+      graph.addArc(0, origin_id, getT(0, origin_id));
       graph.addArc(
-        objectI, amountOfObjects - 1, getT(objectI, amountOfObjects - 1)
+        origin_id, amount_of_objects - 1, getT(origin_id, amount_of_objects - 1)
       );
-      for (const auto &objectJ : objectsObservedByK) {
-        if (objectI != objectJ) {
-          graph.addArc(objectI, objectJ, getT(objectJ, objectI));
+      for (const auto &destination_id : objects_in_sliding_bar) {
+        if (origin_id != destination_id) {
+          graph.addArc(
+            origin_id, destination_id, getT(origin_id, destination_id)
+          );
         }
       }
     }
-    graphs_[k] = graph;
   }
 }
 

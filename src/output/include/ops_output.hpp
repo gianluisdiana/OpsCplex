@@ -21,24 +21,24 @@ class OpsOutput {
    * @brief Get each arc of every graph and check if the value in the given
    * vector is 1 or 0. If it is 1, set the value of the arc as true.
    *
-   * @param usedArcs The vector with the values of the arcs of the graph.
+   * @param used_arcs The vector with the values of the arcs of the graph.
    */
-  void setX(const std::vector<double> &usedArcs);
+  void setX(const std::vector<double> &used_arcs);
 
   /**
    * @brief Sets which nodes are visited in the solution.
    *
-   * @param visitedObjects The vector with the values of the nodes of the graph.
+   * @param visited_objects The vector with the values of the nodes of the graph.
    */
-  void setY(const std::vector<double> &visitedObjects);
+  void setY(const std::vector<double> &visited_objects);
 
   /**
    * @brief Set the time spent in each node.
    *
-   * @param timeAtObjects The vector with the values of the time spent in each
+   * @param time_at_objects The vector with the values of the time spent in each
    * node.
    */
-  void setS(const std::vector<double> &timeAtObjects);
+  void setS(const std::vector<double> &time_at_objects);
 
   /**
    * @brief Set the time spent to solve the problem.

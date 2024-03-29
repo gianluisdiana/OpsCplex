@@ -4,7 +4,8 @@
 namespace emir {
 
 OpsInstance::OpsInstance(double scaling_factor) :
-   date_stamp_{}, type_{}, alpha_ {-1}, L_ {0}, scaling_factor_ {scaling_factor} {}
+  date_stamp_ {}, type_ {}, alpha_ {-1}, L_ {0}, scaling_factor_ {
+                                                   scaling_factor} {}
 
 // ------------------------------- Operators ------------------------------- //
 
@@ -33,8 +34,10 @@ void OpsInstance::setFromJson(const nlohmann::json &json_instance) {
 void OpsInstance::resetKjMatrix() {
   Kj_.clear();
   Kj_.resize(getN());
-  for (auto k = 0; k < getM(); ++k) {
-    for (const auto objectI : getJk(k)) { Kj_[objectI].push_back(k); }
+  for (auto sliding_bar_idx = 0; sliding_bar_idx < getM(); ++sliding_bar_idx) {
+    for (const auto node_id : getJk(sliding_bar_idx)) {
+      Kj_[node_id].push_back(sliding_bar_idx);
+    }
   }
 }
 
