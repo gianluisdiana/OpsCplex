@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include <input_parser/parser.hpp>
 #include <solvers.hpp>
 
@@ -50,10 +48,10 @@ int secureMain(int argc, char *argv[]) {
     return 1;
   }
 
-  const auto &inputPath = parser.getValue<std::string>("--input");
+  const auto &input_path = parser.getValue<std::string>("--input");
   const auto &models = parser.getValue<std::vector<std::string>>("--models");
-  if (!inputPath.empty()) {
-    processInputFile(inputPath);
+  if (!input_path.empty()) {
+    processFile(input_path);
   } else if (!models.empty()) {
     for (const auto &model : models) { processModelType(model); }
   }
