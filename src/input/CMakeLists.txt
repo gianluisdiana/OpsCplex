@@ -13,14 +13,24 @@ add_library(${PROJECT_NAME} STATIC
 # Add an alias to the project
 add_library(sub::input ALIAS ${PROJECT_NAME})
 
+# ---------------------------- Json Dependencies ---------------------------- #
+
+include(FetchContent)
+
+FetchContent_Declare(
+  json
+  URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
 # ----------------------------- Header files ----------------------------- #
 
 # Add the headers files of the project to the library
 target_include_directories(${PROJECT_NAME}
-    PUBLIC include
+  PUBLIC include
 )
 
 # Include the subprojects gomautil and json
 target_link_libraries(${PROJECT_NAME}
-    sub::gomautil
+  PUBLIC nlohmann_json::nlohmann_json
+  sub::util
 )
