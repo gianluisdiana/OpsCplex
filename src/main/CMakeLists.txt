@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(input_parser)
 
 # List of sources specified for a target
 set(SOURCES
-    src/solvers.cpp
+    src/main_functions.cpp
     src/main.cpp
 )
 
