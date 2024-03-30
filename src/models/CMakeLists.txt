@@ -3,7 +3,7 @@ project(models)
 
 # Specify the files to compile
 add_library(${PROJECT_NAME} STATIC
-    src/ops_bc.cpp
+    src/ops_cplex_solver.cpp
     src/ops_solver.cpp
 )
 

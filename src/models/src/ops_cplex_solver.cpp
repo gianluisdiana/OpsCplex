@@ -1,12 +1,12 @@
 #include <chrono>
 
-#include <ops_bc.hpp>
+#include <ops_cplex_solver.hpp>
 
 namespace emir {
 
 OpsCplexSolver::OpsCplexSolver(const OpsInput &input, double tolerance) :
-  OpsSolver(input, tolerance), cplex_(env_), model_(env_), x_(env_),
-  y_(env_), s_(env_) {}
+  OpsSolver(input, tolerance), cplex_(env_), model_(env_), x_(env_), y_(env_),
+  s_(env_) {}
 
 OpsCplexSolver::~OpsCplexSolver() {
   env_.end();
@@ -29,9 +29,7 @@ void OpsCplexSolver::solve() {
     return;
   }
   const auto &time_elapsed =
-    std::chrono::duration_cast<std::chrono::seconds>(
-      current_time - start_time
-    )
+    std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time)
       .count();
   setOutput(time_elapsed);
 }
