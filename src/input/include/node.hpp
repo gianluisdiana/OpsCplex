@@ -44,26 +44,26 @@ class Node {
    *
    * @param node_id Id of the node
    */
-  Node(std::string node_id = "");
+  Node(unsigned int node_id = 0);
 
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the name of the node */
-  inline const std::string &getId() const {
+  inline unsigned int getId() const {
     return id_;
   }
 
   /**
    * @brief Gets the id of the arcs that connect the node with its successors
    */
-  inline const std::vector<unsigned int> getSuccessorsArcsId() const {
+  inline std::vector<unsigned int> getSuccessorsArcsId() const {
     return Node::getArcsId(successors_);
   }
 
   /**
    * @brief Gets the id of the arcs that connect the node with its predecessors
    */
-  inline const std::vector<unsigned int> getPredecessorsArcsId() const {
+  inline std::vector<unsigned int> getPredecessorsArcsId() const {
     return Node::getArcsId(predecessors_);
   }
 
@@ -101,7 +101,7 @@ class Node {
     std::vector<std::pair<std::shared_ptr<Node>, std::shared_ptr<Arc>>>;
 
   // Identifier of the node
-  const std::string id_;
+  const unsigned int id_;
   // Successors of the node
   NodeArcPairs successors_;
   // Predecessors of the node
@@ -111,12 +111,12 @@ class Node {
    * @brief Gets the id of the arcs that connect the node with its successors
    * or predecessors.
    *
-   * @param nodesWithArcs Map of nodes with their respective arcs
+   * @param nodes_with_arcs Map of nodes with their respective arcs
    * @return The id of the arcs that connect the node with its successors or
    * predecessors
    */
   static std::vector<unsigned int>
-  getArcsId(const NodeArcPairs &nodesWithArcs);
+  getArcsId(const NodeArcPairs &nodes_with_arcs);
 };
 
 }  // namespace emir

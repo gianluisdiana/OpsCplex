@@ -37,19 +37,19 @@ void OpsOutput::setX(const std::vector<double> &used_arcs) {
       const double value = std::round(used_arcs[arc.getId()]);
       assert(value == 1 || value == 0);
       if (value == 0.0) { continue; }
-      const int origin_id = std::stoi(arc.getOriginId());
-      const int destination_id = std::stoi(arc.getDestinationId());
+      const int origin_id = arc.getOriginId();
+      const int destination_id = arc.getDestinationId();
       setXAsTrue(k, origin_id, destination_id);
     }
   }
 }
 
 void OpsOutput::setY(const std::vector<double> &visited_objects) {
-  const auto amountOfObjects = input_.getN();
+  const auto amount_of_objects = input_.getN();
   y_[0] = true;
-  y_[amountOfObjects - 1] = true;
+  y_[amount_of_objects - 1] = true;
   if (visited_objects.empty()) { return; }
-  for (int idx = 1; idx < amountOfObjects - 1; ++idx) {
+  for (int idx = 1; idx < amount_of_objects - 1; ++idx) {
     const double value = visited_objects[idx - 1];
     assert(value == 1.0 || value == 0.0);
     y_[idx] = (value == 1.0);
@@ -57,10 +57,10 @@ void OpsOutput::setY(const std::vector<double> &visited_objects) {
 }
 
 void OpsOutput::setS(const std::vector<double> &time_at_objects) {
-  const auto amountOfObjects = input_.getN();
+  const auto amount_of_objects = input_.getN();
   s_[0] = 0;
   if (time_at_objects.empty()) { return; }
-  for (auto idx = 1; idx < amountOfObjects; ++idx) {
+  for (auto idx = 1; idx < amount_of_objects; ++idx) {
     const double value = time_at_objects[idx - 1];
     assert(value >= 0);
     s_[idx] = value / input_.getScalingFactor();
@@ -79,11 +79,11 @@ std::size_t OpsOutput::getObjectsVisited() const {
 
 int OpsOutput::getTotalProfit() const {
   assert(!s_.empty() && s_[0] != -1);
-  int solutionValue = 0;
+  int total_profit = 0;
   for (std::size_t idx = 0; idx < y_.size(); ++idx) {
-    if (y_[idx]) { solutionValue += input_.getB(idx); }
+    if (y_[idx]) { total_profit += input_.getB(idx); }
   }
-  return solutionValue;
+  return total_profit;
 }
 
 // ---------------------------- Utility Methods ---------------------------- //
@@ -94,16 +94,16 @@ void OpsOutput::check() const {
 }
 
 void OpsOutput::checkArcs() const {
-  const auto amountOfObjects = input_.getN();
-  const auto amountOfSlidingBars = input_.getM();
-  std::vector<int> amount_of_arrives(amountOfObjects, 0);
-  std::vector<int> amount_of_departures(amountOfObjects, 0);
+  const auto amount_of_objects = input_.getN();
+  const auto amount_of_sliding_bars = input_.getM();
+  std::vector<int> amount_of_arrives(amount_of_objects, 0);
+  std::vector<int> amount_of_departures(amount_of_objects, 0);
 
-  for (int k = 0; k < amountOfSlidingBars; k++) {
+  for (int k = 0; k < amount_of_sliding_bars; k++) {
     const auto &graph = input_.getGraph(k);
     for (const auto &arc : graph.getArcs()) {
-      const auto &origin_id = std::stoi(arc.getOriginId());
-      const auto &destination_id = std::stoi(arc.getDestinationId());
+      const auto &origin_id = arc.getOriginId();
+      const auto &destination_id = arc.getDestinationId();
       if (getX(k, origin_id, destination_id)) {
         amount_of_arrives[destination_id]++;
         amount_of_departures[origin_id]++;
@@ -113,11 +113,11 @@ void OpsOutput::checkArcs() const {
 
   // The first node has to be used in each sliding bar, same with the last node
   assert(
-    amount_of_departures[0] == amountOfSlidingBars &&
-    amount_of_arrives[amountOfObjects - 1] == amountOfSlidingBars
+    amount_of_departures[0] == amount_of_sliding_bars &&
+    amount_of_arrives[amount_of_objects - 1] == amount_of_sliding_bars
   );
 
-  for (std::size_t idx = 1; idx < amountOfObjects - 1; ++idx) {
+  for (std::size_t idx = 1; idx < amount_of_objects - 1; ++idx) {
     // A node must have the same number of arrival and departure arcs
     assert(amount_of_departures[idx] == amount_of_arrives[idx]);
     // The node must be visited in order to have arrival / departure arcs
@@ -126,11 +126,11 @@ void OpsOutput::checkArcs() const {
 }
 
 void OpsOutput::checkTime() const {
-  const double realMaximumTime =
+  const double real_maximum_time =
     double(input_.getL()) / input_.getScalingFactor();
-  for (const auto &timeAtObject : s_) {
-    if (timeAtObject > realMaximumTime + OpsOutput::kMaxTimeMargin) {
-      assert(timeAtObject <= realMaximumTime + OpsOutput::kMaxTimeMargin);
+  for (const auto &time_at_object : s_) {
+    if (time_at_object > real_maximum_time + OpsOutput::kMaxTimeMargin) {
+      assert(time_at_object <= real_maximum_time + OpsOutput::kMaxTimeMargin);
       exit(1);
     }
   }

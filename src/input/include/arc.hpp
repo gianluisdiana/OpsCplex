@@ -64,10 +64,10 @@ class Arc {
   }
 
   /** @brief Gets the id from the origin node of the arc */
-  const std::string &getOriginId() const;
+  unsigned int getOriginId() const;
 
   /** @brief Gets the id from the destination node of the arc */
-  const std::string &getDestinationId() const;
+  unsigned int getDestinationId() const;
 
  private:
   // Keeps track of the amount of arcs created

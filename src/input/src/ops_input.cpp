@@ -56,7 +56,7 @@ std::istream &operator>>(std::istream &input_stream, OpsInput &ops_input) {
 // --------------------------- Private Methods --------------------------- //
 
 void OpsInput::createGraphArcs() {
-  const auto amount_of_objects = (int)getN();
+  const auto amount_of_objects = getN();
   const auto amount_of_sliding_bars = getM();
   graphs_.resize(amount_of_sliding_bars);
   for (auto sliding_bar_idx = 0; sliding_bar_idx < amount_of_sliding_bars;

@@ -40,12 +40,7 @@ class Graph {
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the ids of the nodes of the graph */
-  std::vector<std::string> getNodesId() const;
-
-  /** @brief Gets the amount of nodes of the graph */
-  inline const std::size_t getAmountOfNodes() const {
-    return nodes_.size();
-  }
+  std::vector<unsigned int> getNodesId() const;
 
   /** @brief Gets the arcs of the graph */
   inline const std::vector<Arc> &getArcs() const {
@@ -59,8 +54,8 @@ class Graph {
    * @param id Id of the node to search
    * @return The id of each arc that connects the given node to its successors.
    */
-  inline const std::vector<unsigned int>
-  getSuccessorsArcsId(const std::string &id) const {
+  inline std::vector<unsigned int>
+  getSuccessorsArcsId(const unsigned int id) const {
     return nodes_.at(id)->getSuccessorsArcsId();
   }
 
@@ -72,8 +67,8 @@ class Graph {
    * @return The id of each arc that connects the given node to its
    * predecessors.
    */
-  inline const std::vector<unsigned int>
-  getPredecessorsArcsId(const std::string &id) const {
+  inline std::vector<unsigned int>
+  getPredecessorsArcsId(const unsigned int id) const {
     return nodes_.at(id)->getPredecessorsArcsId();
   }
 
@@ -86,25 +81,14 @@ class Graph {
    * @param to_id Id of the destination node
    * @param cost Cost of the arc
    */
-  inline void addArc(const int from_id, const int to_id, const int cost) {
-    addArc(std::to_string(from_id), std::to_string(to_id), cost);
-  }
-
-  /**
-   * @brief Adds a new arc to the graph
-   *
-   * @param from_id Id of the origin node
-   * @param to_id Id of the destination node
-   * @param cost Cost of the arc
-   */
   void
-  addArc(const std::string &from_id, const std::string &to_id, const int cost);
+  addArc(const unsigned int from_id, const unsigned int to_id, const int cost);
 
  private:
   // The arcs of the graph
   std::vector<Arc> arcs_;
   // Nodes of the graph
-  std::map<std::string, std::shared_ptr<Node>> nodes_;
+  std::map<unsigned int, std::shared_ptr<Node>> nodes_;
 
   /**
    * @brief Gets the node from the map, if it doesn't exist it creates it and
@@ -113,7 +97,7 @@ class Graph {
    * @param node_id Id of the node to search
    * @return The node with the given id.
    */
-  const std::shared_ptr<Node> &searchNode(const std::string &node_id);
+  const std::shared_ptr<Node> &searchNode(const unsigned int node_id);
 };
 
 }  // namespace emir

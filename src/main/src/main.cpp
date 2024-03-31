@@ -7,7 +7,7 @@
  * the results.
  */
 int secureMain(int argc, char *argv[]) {
-  auto parser = createParser();
+  input_parser::Parser parser = createParser();
 
   try {
     parser.parse(argc, argv);
@@ -16,8 +16,10 @@ int secureMain(int argc, char *argv[]) {
     return 1;
   }
 
-  const auto &input_path = parser.getValue<std::string>("--input");
-  const auto &models = parser.getValue<std::vector<std::string>>("--models");
+  const std::string &input_path =
+    parser.getValue<decltype(input_path)>("--input");
+  const std::vector<std::string> &models =
+    parser.getValue<decltype(models)>("--models");
   if (!input_path.empty()) {
     processFile(input_path);
   } else if (!models.empty()) {
