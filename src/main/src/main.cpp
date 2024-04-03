@@ -12,7 +12,7 @@ int secureMain(int argc, char *argv[]) {
   try {
     parser.parse(argc, argv);
   } catch (const input_parser::ParsingError &e) {
-    std::cerr << e.what() << '\n' << parser.usage() << '\n';
+    std::cerr << e.what() << '\n';
     return 1;
   }
 

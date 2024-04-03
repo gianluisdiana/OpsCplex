@@ -5,6 +5,15 @@
 
 #include <input_parser/parser.hpp>
 
+/**
+ * @brief Creates a parser for the input arguments.
+ * The parser is created with the following options:
+ * `--input`: The path to the input file to be processed.
+ * `--models`: The model types to be processed.
+ * `--help`: Shows the usage of the program.
+ *
+ * @return The parser created.
+ */
 input_parser::Parser createParser();
 
 /**

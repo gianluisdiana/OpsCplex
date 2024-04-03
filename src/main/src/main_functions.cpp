@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 input_parser::Parser createParser() {
   return input_parser::Parser()
     .addHelpOption()
-    .addOption<input_parser::SingleOption>([] {
+    .addOption([] {
       return input_parser::SingleOption("-i", "--input")
         .addDescription("Path to the input file to be processed")
         .addDefaultValue(std::string())
@@ -22,7 +22,7 @@ input_parser::Parser createParser() {
           "The file must exist!"
         );
     })
-    .addOption<input_parser::CompoundOption>([] {
+    .addOption([] {
       return input_parser::CompoundOption("-m", "--models")
         .addDescription("List of models type to be processed")
         .addConstraint<const std::vector<std::string> &>(

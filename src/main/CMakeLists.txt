@@ -10,7 +10,7 @@ include(FetchContent)
 
 FetchContent_Declare(
   input_parser
-  URL https://github.com/gianluisdiana/InputParser/releases/download/0.4.1/InputParser.zip)
+  URL https://github.com/gianluisdiana/InputParser/releases/download/0.4.2/InputParser.zip)
 FetchContent_MakeAvailable(input_parser)
 
 # ----------------------------- Source files ----------------------------- #
