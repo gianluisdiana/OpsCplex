@@ -69,11 +69,11 @@ void OpsCplexSolver::addXVariable() {
   for (int k = 0; k < input_.getM(); ++k) {
     const auto graph = input_.getGraph(k);
     for (const auto &arc : graph.getArcs()) {
-      const auto &origin_node = arc.getOriginId();
-      const auto &destination_node = arc.getDestinationId();
+      const auto &origin_id = arc.getOriginId();
+      const auto &destination_id = arc.getDestinationId();
       x_.add(IloNumVar(
         env_, 0, 1, IloNumVar::Bool,
-        std::format("x_{}_{}_{}", k + 1, origin_node, destination_node).c_str()
+        std::format("x_{}_{}_{}", k + 1, origin_id, destination_id).c_str()
       ));
     }
   }
@@ -119,7 +119,7 @@ void OpsCplexSolver::addDeltaPlusConstraints(IloRangeArray &constraints) {
 }
 
 void OpsCplexSolver::addDeltaMinusConstraints(IloRangeArray &constraints) {
-  const auto last_node = input_.getN() - 1;
+  const auto last_node_id = input_.getN() - 1;
   for (auto k = 0; k < input_.getM(); ++k) {
     const auto &graph = input_.getGraph(k);
     for (const auto &node_id : graph.getNodesId()) {
@@ -127,8 +127,8 @@ void OpsCplexSolver::addDeltaMinusConstraints(IloRangeArray &constraints) {
       const auto arcs_id = graph.getPredecessorsArcsId(node_id);
       if (arcs_id.empty()) { continue; }
       for (const auto &arc_id : arcs_id) { expression += x_[arc_id]; }
-      if (node_id != last_node) { expression -= y_[node_id - 1]; }
-      const double is_last_node = node_id == last_node ? 1.0 : 0.0;
+      if (node_id != last_node_id) { expression -= y_[node_id - 1]; }
+      const double is_last_node = node_id == last_node_id ? 1.0 : 0.0;
       constraints.add(IloRange(
         env_, is_last_node, expression, is_last_node,
         std::format("deltaminus_{}_{}", k + 1, node_id).c_str()
@@ -163,12 +163,12 @@ void OpsCplexSolver::addLimitConstraints(IloRangeArray &constraints) {
   constraints.add(IloRange(env_, 0, start_time_expression, 0, "Limit0"));
   start_time_expression.end();
 
-  IloExpr last_time_expression(env_);
-  last_time_expression = s_[(long)input_.getN() - 1];
+  IloExpr end_time_expression(env_);
+  end_time_expression = s_[(long)input_.getN() - 1];
   constraints.add(
-    IloRange(env_, -IloInfinity, last_time_expression, input_.getL(), "Limit")
+    IloRange(env_, -IloInfinity, end_time_expression, input_.getL(), "Limit")
   );
-  last_time_expression.end();
+  end_time_expression.end();
 }
 
 void OpsCplexSolver::setParameters() {
