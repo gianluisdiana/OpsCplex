@@ -3,8 +3,11 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <utility>
 #include <vector>
 
+#include <functions.hpp>
+#include <ops_error.hpp>
 #include <ops_input.hpp>
 #include <ops_output.hpp>
 
@@ -37,8 +40,12 @@ void OpsOutput::setX(const std::vector<double> &used_arcs) {
     const auto &graph = input_.getGraph(k);
     for (const auto &arc : graph.getArcs()) {
       const double value = std::round(used_arcs[arc.getId()]);
-      assert(value == 1 || value == 0);
-      if (value == 0.0) { continue; }
+      if (!isEqual(value, 0.0) && !isEqual(value, 1.0)) {
+        throw OpsError(
+          "Invalid value for used arc: {}. It must be 1 or 0.", value
+        );
+      }
+      if (isEqual(value, 0.0)) { continue; }
       const auto origin_id = arc.getOriginId();
       const auto destination_id = arc.getDestinationId();
       setXAsTrue(k, origin_id, destination_id);
@@ -53,8 +60,12 @@ void OpsOutput::setY(const std::vector<double> &visited_objects) {
   if (visited_objects.empty()) { return; }
   for (int idx = 1; idx < amount_of_objects - 1; ++idx) {
     const double value = visited_objects[idx - 1];
-    // assert(value == 1.0 || value == 0.0);
-    y_[idx] = (value == 1.0);
+    if (!isEqual(value, 0.0) && !isEqual(value, 1.0)) {
+      throw OpsError(
+        "Invalid value for visited object: {}. It must be 1 or 0.", value
+      );
+    }
+    y_[idx] = isEqual(value, 1.0);
   }
 }
 
@@ -64,7 +75,12 @@ void OpsOutput::setS(const std::vector<double> &time_at_objects) {
   if (time_at_objects.empty()) { return; }
   for (auto idx = 1; idx < amount_of_objects; ++idx) {
     const double value = time_at_objects[idx - 1];
-    assert(value >= 0);
+    if (value < 0) {
+      throw OpsError(
+        "Invalid value for object {} with time {}. It must be non-negative.",
+        value, idx
+      );
+    }
     s_[idx] = value / input_.getScalingFactor();
   }
 }
@@ -74,7 +90,7 @@ void OpsOutput::setS(const std::vector<double> &time_at_objects) {
 long OpsOutput::getTotalProfit() const {
   assert(!s_.empty() && s_[0] != -1);
   long total_profit = 0;
-  for (std::size_t idx = 0; idx < y_.size(); ++idx) {
+  for (auto idx = 0; idx < y_.size(); ++idx) {
     if (y_[idx]) { total_profit += input_.getB(idx); }
   }
   return total_profit;
@@ -82,14 +98,10 @@ long OpsOutput::getTotalProfit() const {
 
 // ---------------------------- Utility Methods ---------------------------- //
 
-void OpsOutput::check() const {
-  checkArcs();
-  checkTime();
-}
-
-void OpsOutput::checkArcs() const {
-  const auto amount_of_objects = input_.getN();
-  const auto amount_of_sliding_bars = input_.getM();
+std::pair<std::vector<int>, std::vector<int>>
+OpsOutput::countArrivesAndDepartures(
+  std::size_t amount_of_objects, std::size_t amount_of_sliding_bars
+) const {
   std::vector<int> amount_of_arrives(amount_of_objects, 0);
   std::vector<int> amount_of_departures(amount_of_objects, 0);
 
@@ -104,18 +116,49 @@ void OpsOutput::checkArcs() const {
       }
     }
   }
+  return {amount_of_arrives, amount_of_departures};
+}
 
-  // The first node has to be used in each sliding bar, same with the last node
-  assert(
-    amount_of_departures[0] == amount_of_sliding_bars &&
-    amount_of_arrives[amount_of_objects - 1] == amount_of_sliding_bars
-  );
+// -------------------------------- Checks -------------------------------- //
+
+void OpsOutput::check() const {
+  checkArcs();
+  checkTime();
+}
+
+void OpsOutput::checkArcs() const {
+  const auto amount_of_objects = input_.getN();
+  const auto amount_of_sliding_bars = input_.getM();
+  auto [amount_of_arrives, amount_of_departures] =
+    countArrivesAndDepartures(amount_of_objects, amount_of_sliding_bars);
+
+  if (amount_of_departures[0] != amount_of_sliding_bars) {
+    throw OpsError(
+      "The first node must be visited in each sliding bar. It has {} visits.",
+      amount_of_departures[0]
+    );
+  }
+  if (amount_of_arrives[amount_of_objects - 1] != amount_of_sliding_bars) {
+    throw OpsError(
+      "The last node must be visited in each sliding bar. It has {} visits.",
+      amount_of_arrives[amount_of_objects - 1]
+    );
+  }
 
   for (std::size_t idx = 1; idx < amount_of_objects - 1; ++idx) {
-    // A node must have the same number of arrival and departure arcs
-    assert(amount_of_departures[idx] == amount_of_arrives[idx]);
-    // The node must be visited in order to have arrival / departure arcs
-    assert(y_[idx] == (amount_of_arrives[idx] > 0));
+    if (amount_of_departures[idx] != amount_of_arrives[idx]) {
+      throw OpsError(
+        "Node {} must have the same number of arrival and departure arcs. "
+        "It has {} arrivals and {} departures.",
+        idx, amount_of_arrives[idx], amount_of_departures[idx]
+      );
+    }
+    if (y_[idx] != (amount_of_arrives[idx] > 0)) {
+      throw OpsError(
+        "Node {} must be visited in order to have arrival / departure arcs.",
+        idx
+      );
+    }
   }
 }
 
@@ -124,8 +167,11 @@ void OpsOutput::checkTime() const {
     double(input_.getL()) / input_.getScalingFactor();
   for (const auto &time_at_object : s_) {
     if (time_at_object > real_maximum_time + OpsOutput::kMaxTimeMargin) {
-      assert(time_at_object <= real_maximum_time + OpsOutput::kMaxTimeMargin);
-      std::exit(1);
+      throw OpsError(
+        "The time spent at moment of visiting each node must be less than the "
+        "maximum time. The maximum time is {} and the time spent is {}.",
+        real_maximum_time, time_at_object
+      );
     }
   }
 }

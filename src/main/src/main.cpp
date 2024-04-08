@@ -1,4 +1,3 @@
-#include <exception>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,6 +6,7 @@
 #include <input_parser/parsing_error.hpp>
 
 #include <main_functions.hpp>
+#include <ops_error.hpp>
 
 /**
  * @brief Main function to process folders filled with instances and output
@@ -36,8 +36,11 @@ int secureMain(int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
   try {
     return secureMain(argc, argv);
-  } catch (const std::exception &e) {
-    std::cerr << "Error: " << e.what() << '\n';
+  } catch (const emir::OpsError &e) {
+    std::cerr << "OspError: " << e.what() << '\n';
+    return 1;
+  } catch (...) {
+    std::cerr << "Unknown error occurred.\n";
     return 1;
   }
 }

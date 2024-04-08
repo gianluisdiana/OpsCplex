@@ -19,4 +19,6 @@ target_include_directories( ${PROJECT_NAME}
 # Include the subprojects gomautil and input
 target_link_libraries(${PROJECT_NAME}
     sub::input
+    sub::error
+    sub::util
 )

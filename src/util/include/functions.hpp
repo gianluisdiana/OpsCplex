@@ -56,4 +56,18 @@ requires std::is_base_of_v<emir::OpsSolver, Solver>
   return solver;
 }
 
+/**
+ *@brief Compare two floating point numbers.
+ *
+ * @param value1 The first value to be compared.
+ * @param second_value The second value to be compared.
+ * @param tolerance The maximum tolerance to be used in the comparison.
+ */
+bool isEqual(
+  std::floating_point auto value1, std::floating_point auto second_value,
+  double tolerance = 1e-9
+) {
+  return std::abs(value1 - second_value) < tolerance;
+}
+
 #endif  // _FUNCTIONS_HPP_

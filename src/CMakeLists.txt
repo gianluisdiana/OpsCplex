@@ -6,6 +6,7 @@ project(source)
 
 # ----------------------------- Subdirectories ----------------------------- #
 
+add_subdirectory(error)
 add_subdirectory(main)
 add_subdirectory(util)
 add_subdirectory(input)

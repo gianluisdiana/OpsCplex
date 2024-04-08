@@ -34,5 +34,6 @@ target_include_directories(${PROJECT_NAME}
 # Link the static libraries form the subprojects and cplex
 target_link_libraries(${PROJECT_NAME}
     sub::models
+    sub::error
     input_parser
 )

@@ -50,19 +50,6 @@ class OpsOutput {
     time_elapsed_ = time_spent;
   }
 
-  // -------------------------- Utility methods ---------------------------- //
-
-  /**
-   * @brief Checks if the constraints of the mathematical model are beeing
-   * satisfied.
-   * @details The constraints are:
-   *  - The first and last node is visited in each sliding bar.
-   *  - Each node must have the same number of arrival and departure arcs.
-   *  - The time spent at moment of visiting each node is less than the
-   *  maximum time.
-   */
-  void check() const;
-
   // ------------------------------ Operators ------------------------------ //
 
   /**
@@ -131,7 +118,32 @@ class OpsOutput {
    */
   long getTotalProfit() const;
 
-  // -------------------------- Utility methods ---------------------------- //
+  // --------------------------- Utility methods --------------------------- //
+
+  /**
+   * @brief Count the number of arrival and departure arcs of each node.
+   *
+   * @param amount_of_objects The amount of objects in the problem.
+   * @param amount_of_sliding_bars The amount of sliding bars in the problem.
+   * @return A pair with the amount of arrival and departure arcs of each node,
+   * in that order.
+   */
+  std::pair<std::vector<int>, std::vector<int>> countArrivesAndDepartures(
+    std::size_t amount_of_objects, std::size_t amount_of_sliding_bars
+  ) const;
+
+  // ------------------------------- Checks ------------------------------- //
+
+  /**
+   * @brief Checks if the constraints of the mathematical model are beeing
+   * satisfied.
+   * @details The constraints are:
+   *  - The first and last node is visited in each sliding bar.
+   *  - Each node must have the same number of arrival and departure arcs.
+   *  - The time spent at moment of visiting each node is less than the
+   *  maximum time.
+   */
+  void check() const;
 
   /**
    * @brief Checks if the first and last node is visited in each sliding bar and
