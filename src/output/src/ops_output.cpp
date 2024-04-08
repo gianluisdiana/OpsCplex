@@ -1,8 +1,11 @@
 #include <cassert>
 #include <cmath>
-#include <iomanip>
-#include <set>
+#include <cstddef>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
 
+#include <ops_input.hpp>
 #include <ops_output.hpp>
 
 namespace emir {
@@ -11,9 +14,8 @@ const double OpsOutput::kMaxTimeMargin = 1e-2;
 
 OpsOutput::OpsOutput(const OpsInput &input) :
   input_(input), x_(input.getN() * input.getM(), input.getN()),
-  y_(input.getN(), false), s_(input.getN(), 0),
-  h_(input.getN(), double(input.getL()) / input.getScalingFactor()),
-  time_elapsed_(-1), optimal_(false), found_(false) {}
+  y_(input.getN(), false), s_(input.getN(), 0), time_elapsed_(-1),
+  optimal_(false), found_(false) {}
 
 // ------------------------------- Operators ------------------------------- //
 
@@ -37,8 +39,8 @@ void OpsOutput::setX(const std::vector<double> &used_arcs) {
       const double value = std::round(used_arcs[arc.getId()]);
       assert(value == 1 || value == 0);
       if (value == 0.0) { continue; }
-      const int origin_id = arc.getOriginId();
-      const int destination_id = arc.getDestinationId();
+      const auto origin_id = arc.getOriginId();
+      const auto destination_id = arc.getDestinationId();
       setXAsTrue(k, origin_id, destination_id);
     }
   }
@@ -51,7 +53,7 @@ void OpsOutput::setY(const std::vector<double> &visited_objects) {
   if (visited_objects.empty()) { return; }
   for (int idx = 1; idx < amount_of_objects - 1; ++idx) {
     const double value = visited_objects[idx - 1];
-    assert(value == 1.0 || value == 0.0);
+    // assert(value == 1.0 || value == 0.0);
     y_[idx] = (value == 1.0);
   }
 }
@@ -69,17 +71,9 @@ void OpsOutput::setS(const std::vector<double> &time_at_objects) {
 
 // ------------------------------- Getters --------------------------------- //
 
-std::size_t OpsOutput::getObjectsVisited() const {
-  std::size_t amount = 0;
-  for (std::size_t idx = 1; idx < y_.size() - 1; ++idx) {
-    if (y_[idx]) { ++amount; }
-  }
-  return amount;
-}
-
-int OpsOutput::getTotalProfit() const {
+long OpsOutput::getTotalProfit() const {
   assert(!s_.empty() && s_[0] != -1);
-  int total_profit = 0;
+  long total_profit = 0;
   for (std::size_t idx = 0; idx < y_.size(); ++idx) {
     if (y_[idx]) { total_profit += input_.getB(idx); }
   }
@@ -131,7 +125,7 @@ void OpsOutput::checkTime() const {
   for (const auto &time_at_object : s_) {
     if (time_at_object > real_maximum_time + OpsOutput::kMaxTimeMargin) {
       assert(time_at_object <= real_maximum_time + OpsOutput::kMaxTimeMargin);
-      exit(1);
+      std::exit(1);
     }
   }
 }

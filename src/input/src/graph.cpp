@@ -1,12 +1,18 @@
+#include <memory>
+#include <ranges>
+#include <vector>
+
 #include <graph.hpp>
+#include <node.hpp>
 
 namespace emir {
 
-Graph::Graph() = default;
-
+// Change to use std::view::keys
 std::vector<unsigned int> Graph::getNodesId() const {
-  std::vector<unsigned int> nodes_id;
-  for (const auto &[id, _] : nodes_) { nodes_id.push_back(id); }
+  std::vector<unsigned int> nodes_id(nodes_.size());
+  for (const auto &[idx, entry] : std::views::enumerate(nodes_)) {
+    nodes_id[idx] = entry.first;
+  }
   return nodes_id;
 }
 

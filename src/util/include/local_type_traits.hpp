@@ -19,8 +19,8 @@ class is_readable {
    * @returns std::true_type if the type is readable.
    */
   template <typename TT>
-  static auto test(int)
-    -> decltype(std::declval<std::istream &>() >> std::declval<TT>(), std::true_type());
+  static auto test(int
+  ) -> decltype(std::declval<std::istream &>() >> std::declval<TT>(), std::true_type());
 
   /**
    * @brief Fallback function for types that are not readable.

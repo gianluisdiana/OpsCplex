@@ -23,7 +23,12 @@
  */
 // clang-format on
 
+#include <algorithm>
+#include <iostream>
+
+#include <arc.hpp>
 #include <ops_input.hpp>
+#include <ops_instance.hpp>
 
 namespace emir {
 

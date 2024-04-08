@@ -4,7 +4,6 @@ Checks:
   clang-analyzer-*,
   cppcoreguidelines-*,
   -cppcoreguidelines-avoid-c-arrays,
-  -cppcoreguidelines-avoid-non-const-global-variables,
   hicpp-*,
   -hicpp-avoid-c-arrays,
   misc-*,
@@ -12,10 +11,8 @@ Checks:
   -modernize-avoid-c-arrays,
   -modernize-use-trailing-return-type,
   performance-*,
-  -performance-inefficient-string-concatenation,
   portability-*,
   readability-*,
-  -readability-use-anyofallof
 FormatStyle: file
 UseColor: true
 User: gianluisdiana

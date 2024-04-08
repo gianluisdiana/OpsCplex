@@ -23,6 +23,9 @@
  */
 // clang-format on
 
+#ifndef _EMIR_OPS_INPUT_HPP_
+#define _EMIR_OPS_INPUT_HPP_
+
 #include <graph.hpp>
 #include <ops_instance.hpp>
 
@@ -90,3 +93,5 @@ class OpsInput : public OpsInstance {
 };
 
 }  // namespace emir
+
+#endif  // _EMIR_OPS_INPUT_HPP_

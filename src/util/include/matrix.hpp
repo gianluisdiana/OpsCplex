@@ -136,7 +136,8 @@ class Matrix {
   template <std::size_t rows_amount, std::size_t cols_amount>
   Matrix(T (&matrix)[rows_amount][cols_amount]);
 
-  inline std::vector<std::vector<T>> data() const {
+  /** @brief Returns the data stored in the matrix. */
+  inline const std::vector<std::vector<T>> &data() const {
     return data_;
   }
 
@@ -286,9 +287,7 @@ class Matrix {
 template <typename T>
 Matrix<T>::Matrix(
   const std::size_t rows_amount, const std::size_t cols_amount
-) :
-  rows_amount_(rows_amount),
-  cols_amount_(cols_amount), data_(rows_amount) {
+) : rows_amount_(rows_amount), cols_amount_(cols_amount) {
   resize();
 }
 

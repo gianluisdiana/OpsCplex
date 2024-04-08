@@ -1,3 +1,6 @@
+#include <iostream>
+
+#include <ops_input.hpp>
 #include <ops_solver.hpp>
 
 namespace emir {

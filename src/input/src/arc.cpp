@@ -1,3 +1,6 @@
+#include <memory>
+#include <utility>
+
 #include <arc.hpp>
 #include <node.hpp>
 
@@ -13,9 +16,8 @@ Arc::Arc(
   std::shared_ptr<Node> origin, const int cost,
   std::shared_ptr<Node> destination
 ) :
-  id_ {Arc::id_counter_++},
-  origin_ {std::move(origin)}, cost_ {cost}, destination_ {
-                                               std::move(destination)} {
+  id_ {Arc::id_counter_++}, origin_ {std::move(origin)}, cost_ {cost},
+  destination_ {std::move(destination)} {
   const auto &arc = std::make_shared<Arc>(*this);
   origin_->addSuccessor(destination_, arc);
   destination_->addPredecessor(origin_, arc);

@@ -29,8 +29,9 @@
 
 #include <string>
 
-#include <matrix.hpp>
 #include <nlohmann/json.hpp>
+
+#include <matrix.hpp>
 
 namespace emir {
 

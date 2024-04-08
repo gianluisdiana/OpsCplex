@@ -1,8 +1,14 @@
+#include <algorithm>
 #include <chrono>
 #include <format>
+#include <iostream>
+#include <vector>
 
 #include <ops_cplex_solver.hpp>
+#include <ops_input.hpp>
+#include <ops_solver.hpp>
 
+// NOLINTBEGIN(misc-include-cleaner)
 namespace emir {
 
 OpsCplexSolver::OpsCplexSolver(const OpsInput &input, double tolerance) :
@@ -173,7 +179,7 @@ void OpsCplexSolver::addLimitConstraints(IloRangeArray &constraints) {
 
 void OpsCplexSolver::setParameters() {
   cplex_.setParam(IloCplex::Param::TimeLimit, 3600);
-  cplex_.setParam(IloCplex::Param::MIP::Tolerances::AbsMIPGap, 1e-3);
+  cplex_.setParam(IloCplex::Param::MIP::Tolerances::AbsMIPGap, tolerance_);
   cplex_.setParam(IloCplex::Param::Emphasis::MIP, CPX_MIPEMPHASIS_OPTIMALITY);
 }
 
@@ -200,3 +206,5 @@ OpsCplexSolver::IloNumVarArrayToVector(const IloNumVarArray &variable) const {
 }
 
 }  // namespace emir
+
+// NOLINTEND(misc-include-cleaner)

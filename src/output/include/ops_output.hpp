@@ -28,7 +28,8 @@ class OpsOutput {
   /**
    * @brief Sets which nodes are visited in the solution.
    *
-   * @param visited_objects The vector with the values of the nodes of the graph.
+   * @param visited_objects The vector with the values of the nodes of the
+   * graph.
    */
   void setY(const std::vector<double> &visited_objects);
 
@@ -87,8 +88,6 @@ class OpsOutput {
   std::vector<bool> y_;
   // Represents the time spent in each node.
   std::vector<double> s_;
-
-  std::vector<double> h_;
   // The time elapsed to solve the problem.
   long time_elapsed_;
 
@@ -104,19 +103,24 @@ class OpsOutput {
    * @param i The origin of the arc.
    * @param j The destination of the arc.
    */
-  inline void setXAsTrue(const int k, const int i, const int j) {
+  inline void
+  setXAsTrue(const unsigned int k, const unsigned int i, const unsigned int j) {
     x_(k * input_.getN() + i, j) = true;
   }
 
   // ------------------------------ Getters -------------------------------- //
 
-  /** @brief Gives readonly access to the x_ value in the given position. */
-  inline bool getX(const int k, const int i, const int j) const {
+  /**
+   * @brief Gives readonly access to the x value in the given position.
+   *
+   * @param k The index of the graph.
+   * @param i The origin of the arc.
+   * @param j The destination of the arc.
+   */
+  inline bool
+  getX(const unsigned int k, const unsigned int i, const unsigned int j) const {
     return x_(k * input_.getN() + i, j);
   }
-
-  /** @brief Gets the number of objects visited in the solution. */
-  std::size_t getObjectsVisited() const;
 
   /**
    * @brief Gets the value of the solution.
@@ -125,7 +129,7 @@ class OpsOutput {
    *
    * @return The value of the solution.
    */
-  int getTotalProfit() const;
+  long getTotalProfit() const;
 
   // -------------------------- Utility methods ---------------------------- //
 

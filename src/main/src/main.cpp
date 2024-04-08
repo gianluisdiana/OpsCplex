@@ -1,4 +1,10 @@
+#include <exception>
 #include <iostream>
+#include <string>
+#include <vector>
+
+#include <input_parser/parser.hpp>
+#include <input_parser/parsing_error.hpp>
 
 #include <main_functions.hpp>
 
@@ -7,7 +13,7 @@
  * the results.
  */
 int secureMain(int argc, char *argv[]) {
-  input_parser::Parser parser = createParser();
+  auto parser = createParser();
 
   try {
     parser.parse(argc, argv);
@@ -16,14 +22,13 @@ int secureMain(int argc, char *argv[]) {
     return 1;
   }
 
-  const std::string &input_path =
-    parser.getValue<decltype(input_path)>("--input");
-  const std::vector<std::string> &models =
-    parser.getValue<decltype(models)>("--models");
+  const auto &input_path = parser.getValue<std::string>("--input");
+  const auto &models = parser.getValue<std::vector<std::string>>("--models");
+  const auto tolerance = parser.getValue<double>("--tolerance");
   if (!input_path.empty()) {
-    processFile(input_path);
+    processFile(input_path, tolerance);
   } else if (!models.empty()) {
-    for (const auto &model : models) { processModelType(model); }
+    for (const auto &model : models) { processModelType(model, tolerance); }
   }
   return 0;
 }

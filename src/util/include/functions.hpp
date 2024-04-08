@@ -13,7 +13,7 @@
  * @param date_stamp String to be converted.
  * @return The date stamp of the string.
  */
-time_t stringToDateStamp(const std::string &date_stamp);
+std::time_t stringToDateStamp(const std::string &date_stamp);
 
 /**
  * @brief Import the data from a file and convert it to a given type.
@@ -23,8 +23,9 @@ time_t stringToDateStamp(const std::string &date_stamp);
  * @return The data from the file converted to the given type.
  */
 template <typename Readable>
-Readable createFromFile(const std::string &file_name
-) requires is_readable_v<Readable &> && std::default_initializable<Readable> {
+Readable createFromFile(const std::string &file_name)
+requires is_readable_v<Readable &> && std::default_initializable<Readable>
+{
   std::ifstream file(file_name);
   Readable data;
   file >> data;
@@ -45,7 +46,9 @@ Readable createFromFile(const std::string &file_name
 template <typename Solver>
 Solver solve(
   const std::string &input_path, const double tolerance, std::ostream &log_os
-) requires std::is_base_of_v<emir::OpsSolver, Solver> {
+)
+requires std::is_base_of_v<emir::OpsSolver, Solver>
+{
   const auto &instance = createFromFile<emir::OpsInput>(input_path);
   Solver solver(instance, tolerance);
   solver.addLog(log_os);

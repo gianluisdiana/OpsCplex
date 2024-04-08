@@ -1,11 +1,16 @@
+#include <iostream>
+#include <vector>
+
+#include <nlohmann/json.hpp>
+
 #include <functions.hpp>
 #include <ops_instance.hpp>
 
 namespace emir {
 
 OpsInstance::OpsInstance(double scaling_factor) :
-  date_stamp_ {}, type_ {}, alpha_ {-1}, L_ {0}, scaling_factor_ {
-                                                   scaling_factor} {}
+  date_stamp_ {}, type_ {}, alpha_ {-1}, L_ {0},
+  scaling_factor_ {scaling_factor} {}
 
 // ------------------------------- Operators ------------------------------- //
 

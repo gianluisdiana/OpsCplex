@@ -35,7 +35,7 @@ namespace emir {
 class Graph {
  public:
   /** @brief Creates a new empty graph */
-  Graph();
+  Graph() = default;
 
   // ------------------------------ Getters -------------------------------- //
 
