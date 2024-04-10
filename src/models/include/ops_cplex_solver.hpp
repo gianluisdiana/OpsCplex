@@ -79,7 +79,7 @@ class OpsCplexSolver : public OpsSolver {
 
  private:
   // An environment, manage the memory and identifiers for modeling objects.
-  IloEnv env_;
+  IloEnv environment_;
   // Algorithm used to solve the Linear Programming problem.
   IloCplex cplex_;
   // Model that represents the Linear Programming problem.
@@ -89,13 +89,13 @@ class OpsCplexSolver : public OpsSolver {
 
   // Binary vector (1 and 0) that indicates whether an arc is beeing used or
   // not.
-  IloNumVarArray x_;
+  IloNumVarArray used_arcs_;
   // Binary vector (1 and 0) that indicates whether an object is beeing observed
   // or not.
-  IloNumVarArray y_;
+  IloNumVarArray observed_objects_;
   // Float vector that stores how much time has passed since the beginning of
   // the observation to the moment the object is observed.
-  IloNumVarArray s_;
+  IloNumVarArray time_at_objects_;
 
   /** @brief Creates the model for the problem, using the input data. */
   void makeModel();

@@ -36,6 +36,12 @@ namespace emir {
 /** @brief Represents a basic instance for the O.P.S. */
 class OpsInstance {
  public:
+  /**
+   * @brief Construct a new Ops Instance object with a scaling factor
+   * of 10.
+   *
+   * @param scaling_factor The scaling factor to use
+   */
   OpsInstance(double scaling_factor = 10);
 
   // ------------------------------ Getters -------------------------------- //
@@ -44,50 +50,52 @@ class OpsInstance {
    * @brief Get the amount of objects to visualize plus the origin and ending
    * objects (used as starting and ending points)
    */
-  inline std::size_t getN() const {
-    return b_.size();
+  inline std::size_t getAmountOfObjects() const {
+    return priorities_.size();
   }
 
   /** @brief Get the amount of sliding bars, normally 55 */
-  inline std::size_t getM() const {
-    return Jk_.size();
+  inline std::size_t getAmountOfSlidingBars() const {
+    return objects_per_sliding_bar_.size();
   }
 
   /**
    * @brief Get the objects that can be observed by the 'k' sliding bar
    *
-   * @param k The index of the sliding bar
+   * @param sliding_bar_idx The index of the sliding bar
    * @return The objects that can be observed by the sliding bar selected
    */
-  inline const std::vector<int> &getJk(const std::size_t k) const {
-    return Jk_[k];
+  inline const std::vector<int> &
+  getObjectsPerSlidingBar(const std::size_t sliding_bar_idx) const {
+    return objects_per_sliding_bar_[sliding_bar_idx];
   }
 
   /**
    * @brief Get the profit (or priority) for the object 'j'
    *
-   * @param j The index of the object
+   * @param priority_idx The index of the object
    * @return The profit (or priority) for the object selected
    */
-  inline int getB(const std::size_t j) const {
-    return b_[j];
+  inline int getPriority(const std::size_t priority_idx) const {
+    return priorities_[priority_idx];
   }
 
   /** @brief Returns the time limit to use the telescope */
-  inline int getL() const {
-    return L_;
+  inline int getTimeLimit() const {
+    return time_limit_;
   }
 
   /**
    * @brief Get the time spent to process the object 'origin' and go to the
    * object 'destiny'
    *
-   * @param origin_index The index of the origin node
-   * @param destiny_index The index of the destiny node
+   * @param origin_idx The index of the origin node
+   * @param destiny_idx The index of the destiny node
    */
-  inline int
-  getT(const std::size_t origin_index, const std::size_t destiny_index) const {
-    return T_(origin_index, destiny_index);
+  inline int getTimeToProcess(
+    const std::size_t origin_idx, const std::size_t destiny_idx
+  ) const {
+    return time_to_process_(origin_idx, destiny_idx);
   }
 
   /** @brief Gives read-only access to the scaling factor */
@@ -124,16 +132,17 @@ class OpsInstance {
   // -------------------- Mathematical model attributes -------------------- //
 
   // Objects that can be observed by the 'k' sliding bar
-  std::vector<std::vector<int>> Jk_;
-  // Necessary sliding bars to observe the object 'j' (inverse of Jk_)
-  std::vector<std::vector<int>> Kj_;
+  std::vector<std::vector<int>> objects_per_sliding_bar_;
+  // Necessary sliding bars to observe the object 'j' (inverse of
+  // objects_per_sliding_bar_)
+  std::vector<std::vector<int>> sliding_bars_per_object_;
   // Time matrix to represent the time spent to process the object 'i'
   // and go to the object 'j'
-  Matrix<int> T_;
+  Matrix<int> time_to_process_;
   // Profit (or priority) for each job
-  std::vector<int> b_;
+  std::vector<int> priorities_;
   // Time limit to use the telescope
-  int L_;
+  int time_limit_;
 
   // --------------------------- Extra attributes -------------------------- //
 
@@ -154,7 +163,7 @@ class OpsInstance {
   /**
    * @brief Resets the Kj matrix and fills it with the correct values
    */
-  void resetKjMatrix();
+  void resetSlidingBarsPerObject();
 };
 
 }  // namespace emir

@@ -48,15 +48,15 @@ class OpsOutput {
    *
    * @param used_arcs The vector with the values of the arcs of the graph.
    */
-  void setX(const std::vector<double> &used_arcs);
+  void setUsedArcs(const std::vector<double> &used_arcs);
 
   /**
    * @brief Sets which nodes are visited in the solution.
    *
-   * @param visited_objects The vector with the values of the nodes of the
+   * @param observed_objects The vector with the values of the nodes of the
    * graph.
    */
-  void setY(const std::vector<double> &visited_objects);
+  void setObservedObjects(const std::vector<double> &observed_objects);
 
   /**
    * @brief Set the time spent in each node.
@@ -64,7 +64,7 @@ class OpsOutput {
    * @param time_at_objects The vector with the values of the time spent in each
    * node.
    */
-  void setS(const std::vector<double> &time_at_objects);
+  void setTimeAtObjects(const std::vector<double> &time_at_objects);
 
   /**
    * @brief Set the time spent to solve the problem.
@@ -95,11 +95,11 @@ class OpsOutput {
   // The input of the O.P.S. problem.
   const OpsInput &input_;
   // The matrix that represents the arcs of the graph.
-  Matrix<bool> x_;
+  Matrix<bool> used_arcs_;
   // Represents which nodes are visited in the solution.
-  std::vector<bool> y_;
+  std::vector<bool> observed_objects_;
   // Represents the time spent in each node.
-  std::vector<double> s_;
+  std::vector<double> time_at_objects_;
   // The time elapsed to solve the problem.
   long time_elapsed_;
 
@@ -114,7 +114,7 @@ class OpsOutput {
    */
   inline void
   setXAsTrue(const unsigned int k, const unsigned int i, const unsigned int j) {
-    x_(k * input_.getN() + i, j) = true;
+    used_arcs_(k * input_.getAmountOfObjects() + i, j) = true;
   }
 
   // ------------------------------ Getters -------------------------------- //
@@ -129,7 +129,7 @@ class OpsOutput {
    */
   inline bool
   getX(const unsigned int k, const unsigned int i, const unsigned int j) const {
-    return x_(k * input_.getN() + i, j);
+    return used_arcs_(k * input_.getAmountOfObjects() + i, j);
   }
 
   /**
