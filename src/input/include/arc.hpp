@@ -27,7 +27,6 @@
 #define _EMIR_ARC_HPP_
 
 #include <memory>
-#include <string>
 
 #include <node.fwd.hpp>
 

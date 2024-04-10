@@ -1,15 +1,26 @@
+// clang-format off
 /**
- * @author Gian Luis Bolivar Diana (gianluisbolivar1@gmail.com)
- * @date November 7, 2022
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
  *
  * @file matrix.hpp
- * @version 0.2
- * @brief
- *
- *
+ * @author Gian Luis Bolivar Diana
+ * @version 1.0.0
+ * @date April 10, 2024
  * @copyright Copyright (c) 2024
  *
+ * @brief File containing the description of a bidimensional array class.
+ * It implements the basic operations of a matrix like resize, access to the
+ * elements, and iterators.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
+ * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
  */
+// clang-format on
 
 #ifndef _MATRIX_HPP_
 #define _MATRIX_HPP_
@@ -165,11 +176,7 @@ class Matrix {
    * @param rows_amount The amount of rows the matrix will have.
    * @param cols_amount The amount of columns the matrix will have.
    */
-  void resize(const std::size_t rows_amount, const std::size_t cols_amount) {
-    rows_amount_ = rows_amount;
-    cols_amount_ = cols_amount;
-    resize();
-  }
+  void resize(const std::size_t rows_amount, const std::size_t cols_amount);
 
   // --------------------------- Data management --------------------------- //
 
@@ -178,8 +185,8 @@ class Matrix {
    *
    * @param data The data to initialize the matrix with.
    */
-  void init(const T data) {
-    for (auto &row : data_) row.assign(cols_amount_, data);
+  inline void init(const T data) {
+    for (auto &row : data_) { row.assign(cols_amount_, data); }
   }
 
   // ----------------------------- Iterators ------------------------------ //
@@ -252,23 +259,26 @@ class Matrix {
     return data_[row_index][col_index];
   }
 
-  Matrix &operator=(const std::vector<std::vector<T>> &matrix) {
-    data_ = matrix;
-    rows_amount_ = matrix.size();
-    cols_amount_ = matrix[0].size();
-    return *this;
-  }
+  /**
+   * @brief Overload of the = operator to assign the data of the given matrix to
+   * the current matrix.
+   *
+   * @param matrix The matrix to assign the data from.
+   * @returns The matrix with the data assigned.
+   */
+  Matrix &operator=(const std::vector<std::vector<T>> &matrix);
 
   /**
    * @brief Overload of the << operator to print the matrix.
    *
-   * @param os Represents the outflow.
+   * @param out_stream Represents the outflow.
    * @param matrix The matrix to print.
    * @tparam C The data type stored in the matrix.
    * @return The outflow with the matrix formatted.
    */
   template <typename C>
-  friend std::ostream &operator<<(std::ostream &os, const Matrix<C> &matrix);
+  friend std::ostream &
+  operator<<(std::ostream &out_stream, const Matrix<C> &matrix);
 
  private:
   // The amount of rows the matrix has
@@ -287,7 +297,7 @@ class Matrix {
 template <typename T>
 Matrix<T>::Matrix(
   const std::size_t rows_amount, const std::size_t cols_amount
-) : rows_amount_(rows_amount), cols_amount_(cols_amount) {
+) : rows_amount_ {rows_amount}, cols_amount_ {cols_amount} {
   resize();
 }
 
@@ -301,22 +311,39 @@ Matrix<T>::Matrix(T (&matrix)[rows_amount][cols_amount]) :
 }
 
 template <typename T>
-void Matrix<T>::resize() {
-  data_.resize(rows_amount_);
-  for (auto &row : data_) row.resize(cols_amount_);
+void Matrix<T>::resize(
+  const std::size_t rows_amount, const std::size_t cols_amount
+) {
+  rows_amount_ = rows_amount;
+  cols_amount_ = cols_amount;
+  resize();
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator=(const std::vector<std::vector<T>> &matrix) {
+  data_ = matrix;
+  rows_amount_ = matrix.size();
+  cols_amount_ = matrix[0].size();
+  return *this;
 }
 
 template <typename C>
-std::ostream &operator<<(std::ostream &os, const Matrix<C> &matrix) {
-  os << "[\n";
+std::ostream &operator<<(std::ostream &out_stream, const Matrix<C> &matrix) {
+  out_stream << "[\n";
   for (const auto &row : matrix.data_) {
-    os << "\t[";
-    for (std::size_t idx = 0; idx < row.size() - 1; ++idx)
-      os << row[idx] << ", ";
-    os << row[row.size() - 1] << "]\n";
+    out_stream << "\t[";
+    for (std::size_t idx = 0; idx < row.size() - 1; ++idx) {
+      out_stream << row[idx] << ", ";
+    }
+    out_stream << row[row.size() - 1] << "]\n";
   }
-  os << "]";
-  return os;
+  return out_stream << "]";
+}
+
+template <typename T>
+void Matrix<T>::resize() {
+  data_.resize(rows_amount_);
+  for (auto &row : data_) row.resize(cols_amount_);
 }
 
 #endif  // _MATRIX_HPP_

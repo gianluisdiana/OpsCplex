@@ -1,3 +1,28 @@
+// clang-format off
+/**
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
+ *
+ * @file ops_output.hpp
+ * @author Gian Luis Bolivar Diana
+ * @version 1.0.0
+ * @date April 10, 2024
+ * @copyright Copyright (c) 2024
+ *
+ * @brief File containing the description of the output generated after solving
+ * the O.P.S. problem.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
+ * @see Selective routing problem with synchronization: @link https://www.sciencedirect.com/science/article/pii/S0305054821002161?ref=cra_js_challenge&fr=RR-1 @endlink
+ * @see EMIR Telescope: @link https://www.gtc.iac.es/instruments/emir/ @endlink
+ * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
+ */
+// clang-format on
+
 #ifndef _EMIR_OPS_OUTPUT_HPP_
 #define _EMIR_OPS_OUTPUT_HPP_
 
@@ -67,8 +92,8 @@ class OpsOutput {
   // Maximum time margin for checking the feasibility of the solution
   static const double kMaxTimeMargin;
 
+  // The input of the O.P.S. problem.
   const OpsInput &input_;
-
   // The matrix that represents the arcs of the graph.
   Matrix<bool> x_;
   // Represents which nodes are visited in the solution.
@@ -77,9 +102,6 @@ class OpsOutput {
   std::vector<double> s_;
   // The time elapsed to solve the problem.
   long time_elapsed_;
-
-  bool optimal_;
-  bool found_;
 
   // ------------------------------ Setters -------------------------------- //
 
@@ -103,6 +125,7 @@ class OpsOutput {
    * @param k The index of the graph.
    * @param i The origin of the arc.
    * @param j The destination of the arc.
+   * @return The value of the arc (i, j) of the graph k.
    */
   inline bool
   getX(const unsigned int k, const unsigned int i, const unsigned int j) const {

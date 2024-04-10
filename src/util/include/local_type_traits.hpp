@@ -1,3 +1,27 @@
+// clang-format off
+/**
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
+ *
+ * @file local_type_traits.hpp
+ * @author Gian Luis Bolivar Diana
+ * @version 1.0.0
+ * @date April 10, 2024
+ * @copyright Copyright (c) 2024
+ *
+ * @brief This file contains the definition of the `is_readable` type trait.
+ * @details `is_readable` is used to check if a given type `T` is readable
+ * from an input stream.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
+ * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
+ */
+// clang-format on
+
 #ifndef _LOCAL_TYPE_TRAITS_HPP_
 #define _LOCAL_TYPE_TRAITS_HPP_
 
@@ -9,7 +33,7 @@
  * @tparam T The type to check for readability.
  */
 template <class T>
-class is_readable {
+struct is_readable {
  private:
   /**
    * @brief Match if a type is readable from an input stream.
@@ -50,6 +74,6 @@ class is_readable {
  * @tparam T The type to check for readability.
  */
 template <typename T>
-constexpr bool is_readable_v = is_readable<T>::value;
+constexpr const bool is_readable_v = is_readable<T>::value;
 
 #endif  // _LOCAL_TYPE_TRAITS_HPP_

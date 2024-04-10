@@ -1,3 +1,26 @@
+// clang-format off
+/**
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
+ *
+ * @file functions.hpp
+ * @author Gian Luis Bolivar Diana
+ * @version 1.0.0
+ * @date April 10, 2024
+ * @copyright Copyright (c) 2024
+ *
+ * @brief File containing the description of some useful functions used
+ * throughout the project.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
+ * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
+ */
+// clang-format on
+
 #ifndef _FUNCTIONS_HPP_
 #define _FUNCTIONS_HPP_
 
@@ -63,8 +86,8 @@ requires std::is_base_of_v<emir::OpsSolver, Solver>
  * @param tolerance The maximum tolerance to be used in the comparison.
  */
 bool isEqual(
-  std::floating_point auto first_number, std::floating_point auto second_number,
-  double tolerance = 1e-9
+  const std::floating_point auto first_number,
+  const std::floating_point auto second_number, const double tolerance = 1e-9
 ) {
   return std::abs(first_number - second_number) < tolerance;
 }

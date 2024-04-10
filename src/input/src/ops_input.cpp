@@ -7,14 +7,14 @@
  * Course: Fifth
  * Institutional email: gian.diana.28@ull.edu.es
  *
- * @file OPS_input_t.hpp
+ * @file ops_input.cpp
  * @author Gian Luis Bolivar Diana
- * @version 0.2.0
- * @date January 21, 2024
+ * @version 1.0.0
+ * @date April 10, 2024
  * @copyright Copyright (c) 2024
  *
  * @brief File containing the implementation of the input instance for the
- *  O.P.S. problem, representing the math model with a graph for each sliding bar.
+ *  O.P.S. problem, with a graph for each sliding bar.
  *
  * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
  * @see Selective routing problem with synchronization: @link https://www.sciencedirect.com/science/article/pii/S0305054821002161?ref=cra_js_challenge&fr=RR-1 @endlink

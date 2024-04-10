@@ -1,3 +1,28 @@
+// clang-format off
+/**
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
+ *
+ * @file ops_output.cpp
+ * @author Gian Luis Bolivar Diana
+ * @version 1.0.0
+ * @date April 10, 2024
+ * @copyright Copyright (c) 2024
+ *
+ * @brief File containing the implementation of the output generated after solving
+ * the O.P.S. problem.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
+ * @see Selective routing problem with synchronization: @link https://www.sciencedirect.com/science/article/pii/S0305054821002161?ref=cra_js_challenge&fr=RR-1 @endlink
+ * @see EMIR Telescope: @link https://www.gtc.iac.es/instruments/emir/ @endlink
+ * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
+ */
+// clang-format on
+
 #include <cassert>
 #include <cmath>
 #include <cstddef>
@@ -17,8 +42,7 @@ const double OpsOutput::kMaxTimeMargin = 1e-2;
 
 OpsOutput::OpsOutput(const OpsInput &input) :
   input_(input), x_(input.getN() * input.getM(), input.getN()),
-  y_(input.getN(), false), s_(input.getN(), 0), time_elapsed_(-1),
-  optimal_(false), found_(false) {}
+  y_(input.getN(), false), s_(input.getN(), 0), time_elapsed_(-1) {}
 
 // ------------------------------- Operators ------------------------------- //
 
@@ -88,7 +112,6 @@ void OpsOutput::setS(const std::vector<double> &time_at_objects) {
 // ------------------------------- Getters --------------------------------- //
 
 long OpsOutput::getTotalProfit() const {
-  assert(!s_.empty() && s_[0] != -1);
   long total_profit = 0;
   for (auto idx = 0; idx < y_.size(); ++idx) {
     if (y_[idx]) { total_profit += input_.getB(idx); }
@@ -163,6 +186,9 @@ void OpsOutput::checkArcs() const {
 }
 
 void OpsOutput::checkTime() const {
+  if (s_.empty() || s_[0] == -1) {
+    throw OpsError("The time spent at each node must be set.");
+  }
   const double real_maximum_time =
     double(input_.getL()) / input_.getScalingFactor();
   for (const auto &time_at_object : s_) {
