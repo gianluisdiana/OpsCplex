@@ -26,7 +26,7 @@ input_parser::Parser createParser() {
       return input_parser::SingleOption("-i", "--input")
         .addDescription("Path to the input file to be processed")
         .addDefaultValue(std::string())
-        .addConstraint<const std::string &>(
+        .addConstraint<std::string>(
           [](const auto &value) -> bool {
             return value.empty() ||
                    (!value.empty() && std::filesystem::exists(value));
@@ -65,7 +65,6 @@ void processInstance(const PathConfig &path_config, const double tolerance) {
   output_os << solve<emir::OpsCplexSolver>(
     path_config.input_path, tolerance, string_stream
   );
-  // NOTE: SEGFAULT TRYING TO ASSIGN TO VARIABLE AND PRINT IT
 }
 
 void processModelType(const std::string &model_type, const double tolerance) {
@@ -85,10 +84,10 @@ void processModelType(const std::string &model_type, const double tolerance) {
 
 void processFile(const std::string &input_path, const double tolerance) {
   std::string output_path = input_path;
-  const std::string instance_folder {"instances/"};
+  const std::string instance_folder {"instances"};
   const std::string input_folder {"input"};
   output_path.replace(
-    output_path.find(instance_folder), instance_folder.size(), ""
+    output_path.find(instance_folder), instance_folder.size() + 1, ""
   );
   output_path.replace(
     output_path.find(input_folder), input_folder.size(), "output"

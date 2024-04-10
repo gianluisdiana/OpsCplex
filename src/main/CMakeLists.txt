@@ -31,6 +31,16 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ${PROJECT_SOURCE_DIR}/include
 )
 
+# ----------------------------- Compile options ----------------------------- #
+
+# Add flags to the compiler
+target_compile_options(${PROJECT_NAME} PRIVATE
+    -Wall
+    -Wextra
+    -Wshadow
+    -O3
+)
+
 # Link the static libraries form the subprojects and cplex
 target_link_libraries(${PROJECT_NAME}
     sub::models

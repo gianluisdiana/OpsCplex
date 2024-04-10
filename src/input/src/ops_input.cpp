@@ -32,8 +32,6 @@
 
 namespace emir {
 
-OpsInput::OpsInput() = default;
-
 OpsInput::~OpsInput() {
   Arc::resetIdCounter();
 }

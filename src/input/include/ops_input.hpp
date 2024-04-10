@@ -31,12 +31,17 @@
 
 namespace emir {
 
-/** @brief Represents a OPS instance with the data structures needed to
- * represent the math model and the graphs */
+/**
+ * @brief Represents a OPS instance with the data structures needed to represent
+ * the math model and the graphs.
+ */
 class OpsInput : public OpsInstance {
  public:
   /** @brief Construct an empty input instance. */
-  OpsInput();
+  OpsInput() = default;
+
+  /** @brief Copies the input instance */
+  OpsInput(const OpsInput &) = default;
 
   /** @brief Resets the arc id counter. */
   ~OpsInput();

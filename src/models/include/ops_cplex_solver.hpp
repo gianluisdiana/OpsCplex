@@ -19,7 +19,15 @@ class OpsCplexSolver : public OpsSolver {
    * @param input The input of the solver with the instance data.
    * @param tolerance The tolerance to be used in the solver.
    */
-  OpsCplexSolver(const OpsInput &input, double tolerance);
+  OpsCplexSolver(const OpsInput &input, const double tolerance);
+
+  /**
+   * @brief Moves the input and assigns the max tolerance to the solver.
+   *
+   * @param input The input of the solver with the instance data.
+   * @param tolerance The tolerance to be used in the solver.
+   */
+  OpsCplexSolver(OpsInput &&input, const double tolerance);
 
   /** @brief Delete the environment of the solution. */
   ~OpsCplexSolver();

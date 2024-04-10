@@ -49,8 +49,7 @@ Solver solve(
 )
 requires std::is_base_of_v<emir::OpsSolver, Solver>
 {
-  const auto &instance = createFromFile<emir::OpsInput>(input_path);
-  Solver solver(instance, tolerance);
+  Solver solver(createFromFile<emir::OpsInput>(input_path), tolerance);
   solver.addLog(log_os);
   solver.solve();
   return solver;
@@ -59,15 +58,15 @@ requires std::is_base_of_v<emir::OpsSolver, Solver>
 /**
  *@brief Compare two floating point numbers.
  *
- * @param value1 The first value to be compared.
- * @param second_value The second value to be compared.
+ * @param first_number The first value to be compared.
+ * @param second_number The second value to be compared.
  * @param tolerance The maximum tolerance to be used in the comparison.
  */
 bool isEqual(
-  std::floating_point auto value1, std::floating_point auto second_value,
+  std::floating_point auto first_number, std::floating_point auto second_number,
   double tolerance = 1e-9
 ) {
-  return std::abs(value1 - second_value) < tolerance;
+  return std::abs(first_number - second_number) < tolerance;
 }
 
 #endif  // _FUNCTIONS_HPP_

@@ -11,9 +11,13 @@
 // NOLINTBEGIN(misc-include-cleaner)
 namespace emir {
 
-OpsCplexSolver::OpsCplexSolver(const OpsInput &input, double tolerance) :
+OpsCplexSolver::OpsCplexSolver(const OpsInput &input, const double tolerance) :
   OpsSolver(input, tolerance), cplex_(env_), model_(env_), x_(env_), y_(env_),
   s_(env_) {}
+
+OpsCplexSolver::OpsCplexSolver(OpsInput &&input, const double tolerance) :
+  OpsSolver(std::forward<OpsInput>(input), tolerance), cplex_(env_),
+  model_(env_), x_(env_), y_(env_), s_(env_) {}
 
 OpsCplexSolver::~OpsCplexSolver() {
   env_.end();

@@ -14,10 +14,20 @@ class OpsSolver {
   /**
    * @brief Assign the input and max tolerance to the solver.
    *
-   * @param input The input of the solver with the instance data.
+   * @param input A lvalue with the input of the solver that contains the
+   * instance data.
    * @param tolerance The tolerance to be used in the solver.
    */
-  OpsSolver(const OpsInput &input, double tolerance);
+  OpsSolver(const OpsInput &input, const double tolerance);
+
+  /**
+   * @brief Assign the input and max tolerance to the solver.
+   *
+   * @param input A rvalue with the input of the solver that contains the
+   * instance data.
+   * @param tolerance The tolerance to be used in the solver.
+   */
+  OpsSolver(OpsInput &&input, const double tolerance);
 
   /** @brief Empty destructor */
   virtual ~OpsSolver() {}
@@ -41,7 +51,7 @@ class OpsSolver {
 
  protected:
   // The input of the solver with the instance data.
-  const OpsInput &input_;
+  const OpsInput input_;
   // The output where the solution will be stored.
   OpsOutput output_;
   // The tolerance to be used in the solver.
