@@ -55,9 +55,6 @@ class OpsSolver {
    */
   OpsSolver(OpsInput &&input, const double tolerance);
 
-  /** @brief Empty destructor */
-  virtual ~OpsSolver() {}
-
   /**
    * @brief Solve the O.P.S. problem and store the solution in the output.
    */

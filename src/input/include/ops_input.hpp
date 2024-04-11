@@ -64,6 +64,14 @@ class OpsInput : public OpsInstance {
   // ------------------------------ Operators ------------------------------ //
 
   /**
+   * @brief Overload of the = operator to copy the input instance.
+   *
+   * @param ops_input The input instance to copy
+   * @return The copied input instance
+   */
+  OpsInput &operator=(const OpsInput &ops_input) = default;
+
+  /**
    * @brief Overload of the >> operator to read an input from a json file.
    * Calls OpsInstance::operator>> and then builds the input.
    *
