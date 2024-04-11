@@ -1,6 +1,10 @@
 #include <filesystem>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include <gtest/gtest.h>
+#include <nlohmann/json.hpp>
 
 #include <functions.hpp>
 #include <ops_cplex_solver.hpp>
@@ -23,11 +27,11 @@ void testFolder(const std::string &path) {
   }
 }
 
-TEST(OpsTest, TotalProfitAssertionsOneBandNeeded) {
+TEST(OpsTest, TotalProfitOneBandNeeded) {
   testFolder("A");
 }
 
-TEST(OpsTest, TotalProfitAssertionsTwoBandsNeeded) {
+TEST(OpsTest, TotalProfitTwoBandsNeeded) {
   testFolder("B");
 }
 
@@ -35,12 +39,16 @@ TEST(OpsTest, TotalProfitAssertionsTwoBandsNeeded) {
 //   testFolder("C");
 // }
 
-// TEST(OpsTest, TotalProfitAssertionsOneBandNeeded) {
-//   testFolder("LA");
-// }
+TEST(OpsTest, TotalProfitOneBandNeededLight) {
+  testFolder("LA");
+}
 
-// TEST(OpsTest, TotalProfitAssertionsTwoBandsNeeded) {
-//   testFolder("LB");
+TEST(OpsTest, TotalProfitTwoBandsNeededLight) {
+  testFolder("LB");
+}
+
+// TEST(OpsTest, TotalProfitThreeBandsNeededLight) {
+//   testFolder("LC");
 // }
 
 int main(int argc, char *argv[]) {
