@@ -54,11 +54,10 @@ void OpsCplexSolver::solve() {
   makeModel();
   setParameters();
   cplex_.extract(model_);
-  auto start_time = std::chrono::high_resolution_clock::now();
-  decltype(start_time) current_time;
   try {
+    timer_.reset();
     cplex_.solve();
-    current_time = std::chrono::high_resolution_clock::now();
+    setOutput(timer_.elapsed<std::chrono::milliseconds>());
   } catch (const IloException &ex) {
     std::cerr << "IloException: " << ex << '\n';
     return;
@@ -66,10 +65,6 @@ void OpsCplexSolver::solve() {
     std::cerr << "Error" << '\n';
     return;
   }
-  const auto &time_elapsed =
-    std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time)
-      .count();
-  setOutput(time_elapsed);
 }
 
 // ---------------------------- Private Methods ---------------------------- //

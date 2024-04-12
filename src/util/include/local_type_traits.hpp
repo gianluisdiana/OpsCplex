@@ -25,6 +25,8 @@
 #ifndef _LOCAL_TYPE_TRAITS_HPP_
 #define _LOCAL_TYPE_TRAITS_HPP_
 
+#include <chrono>
+
 /**
  * @brief Type trait to check if a type is readable from an input stream.
  * @details The `is_readable` class template provides a compile-time boolean
@@ -75,5 +77,55 @@ struct is_readable {
  */
 template <typename T>
 constexpr const bool is_readable_v = is_readable<T>::value;
+
+/**
+ * @brief Type trait to check if a type is a chrono defined time unit.
+ * @details The `is_time_unit` class template provides a compile-time boolean
+ * value indicating whether a given type `T` is a time unit defined in the
+ * `std::chrono` library.
+ *
+ * @see https://en.cppreference.com/w/cpp/chrono/duration
+ *
+ * @tparam T The type to check for being a time unit.
+ */
+template <class T>
+struct is_time_unit {
+ private:
+  /**
+   * @brief Match if a type is a time unit defined in the `std::chrono` library.
+   *
+   * @tparam TT The type to test for being a time unit.
+   * @param[in] Unused parameter used for SFINAE.
+   * @returns std::true_type if the type is a time unit.
+   */
+  template <typename TT>
+  static auto test(int
+  ) -> decltype(std::chrono::duration<typename T::rep, typename T::period>(), std::true_type());
+
+  /**
+   * @brief Fallback function for types that are not time units.
+   *
+   * @tparam Unused template parameter.
+   * @param[in] Unused parameter used for SFINAE.
+   * @return std::false_type indicating that the type is not a time unit.
+   */
+  template <typename>
+  static auto test(...) -> std::false_type;
+
+ public:
+  // The boolean value indicating if the type is a time unit.
+  static constexpr bool value = decltype(test<T>(0))::value;
+};
+
+/**
+ * @brief Shortcut variable to get the value of the `is_time_unit` type trait.
+ * @details The `is_time_unit_v` variable template provides a simple way to
+ * check if a given type `T` is a time unit defined in the `std::chrono`
+ * library.
+ *
+ * @tparam T The type to check for being a time unit.
+ */
+template <typename T>
+constexpr const bool is_time_unit_v = is_time_unit<T>::value;
 
 #endif  // _LOCAL_TYPE_TRAITS_HPP_

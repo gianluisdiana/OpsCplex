@@ -28,6 +28,7 @@
 #define _EMIR_OPS_SOLVER_HPP_
 
 #include <ops_output.hpp>
+#include <timer.hpp>
 
 namespace emir {
 
@@ -81,6 +82,8 @@ class OpsSolver {
   OpsOutput output_;
   // The tolerance to be used in the solver.
   const double tolerance_;
+  // The timer to measure the elapsed time.
+  Timer timer_;
 };
 
 }  // namespace emir
