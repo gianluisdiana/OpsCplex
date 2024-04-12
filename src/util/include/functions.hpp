@@ -46,9 +46,8 @@ std::time_t stringToDateStamp(const std::string &date_stamp);
  * @return The data from the file converted to the given type.
  */
 template <typename Readable>
-Readable createFromFile(const std::string &file_name)
 requires is_readable_v<Readable &> && std::default_initializable<Readable>
-{
+Readable createFromFile(const std::string &file_name) {
   std::ifstream file(file_name);
   Readable data;
   file >> data;
@@ -67,11 +66,10 @@ requires is_readable_v<Readable &> && std::default_initializable<Readable>
  * @param log_os The outflow where the logs will be stored.
  */
 template <typename Solver>
+requires std::is_base_of_v<emir::OpsSolver, Solver>
 Solver solve(
   const std::string &input_path, const double tolerance, std::ostream &log_os
-)
-requires std::is_base_of_v<emir::OpsSolver, Solver>
-{
+) {
   Solver solver(createFromFile<emir::OpsInput>(input_path), tolerance);
   solver.addLog(log_os);
   solver.solve();
