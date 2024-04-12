@@ -54,6 +54,8 @@ class OpsError : public std::exception {
   }
 
  private:
+  // ----------------------------- Attributes ------------------------------ //
+
   // The message to be shown.
   const std::string message_;
 };

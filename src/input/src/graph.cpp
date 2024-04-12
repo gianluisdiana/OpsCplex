@@ -31,7 +31,11 @@
 
 namespace emir {
 
-// Change to use std::view::keys
+// -------------------------------- Getters -------------------------------- //
+
+// auto Graph::getNodesId() const -> decltype(std::views::keys(nodes_)) {
+//   return std::views::keys(nodes_);
+// }
 std::vector<unsigned int> Graph::getNodesId() const {
   std::vector<unsigned int> nodes_id(nodes_.size());
   for (const auto &[idx, entry] : std::views::enumerate(nodes_)) {

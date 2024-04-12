@@ -26,6 +26,8 @@
 #ifndef _EMIR_GRAPH_HPP_
 #define _EMIR_GRAPH_HPP_
 
+#include <ranges>
+
 #include <arc.hpp>
 #include <node.hpp>
 
@@ -40,6 +42,10 @@ class Graph {
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the ids of the nodes of the graph */
+  // std::ranges::elements_view<
+  //   std::ranges::ref_view<
+  //     const std::map<unsigned int, std::shared_ptr<emir::Node>>>,
+  //   0UL>
   std::vector<unsigned int> getNodesId() const;
 
   /** @brief Gets the arcs of the graph */
@@ -85,10 +91,14 @@ class Graph {
   addArc(const unsigned int from_id, const unsigned int to_id, const int cost);
 
  private:
+  // ----------------------------- Attributes ------------------------------ //
+
   // The arcs of the graph
   std::vector<Arc> arcs_;
   // Nodes of the graph
   std::map<unsigned int, std::shared_ptr<Node>> nodes_;
+
+  // --------------------------- Private Methods --------------------------- //
 
   /**
    * @brief Gets the node from the map, if it doesn't exist it creates it and

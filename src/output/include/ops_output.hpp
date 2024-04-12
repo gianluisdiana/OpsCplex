@@ -92,6 +92,8 @@ class OpsOutput {
   // Maximum time margin for checking the feasibility of the solution
   static const double kMaxTimeMargin;
 
+  // ----------------------------- Attributes ------------------------------ //
+
   // The input of the O.P.S. problem.
   const OpsInput &input_;
   // The matrix that represents the arcs of the graph.

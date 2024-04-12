@@ -63,10 +63,14 @@ class OpsCplexSolver : public OpsSolver {
    */
   void solve() override;
 
+  // ------------------------------- Getters ------------------------------- //
+
   /** @brief Get the profit of the solution. */
   inline int getProfit() const {
     return cplex_.getObjValue();
   }
+
+  // -------------------------------- Adders ------------------------------- //
 
   /**
    * @brief Add a log stream to output the log of the solver.
@@ -78,6 +82,8 @@ class OpsCplexSolver : public OpsSolver {
   }
 
  private:
+  // ------------------------------ Attributes ----------------------------- //
+
   // An environment, manage the memory and identifiers for modeling objects.
   IloEnv environment_;
   // Algorithm used to solve the Linear Programming problem.
@@ -85,7 +91,7 @@ class OpsCplexSolver : public OpsSolver {
   // Model that represents the Linear Programming problem.
   IloModel model_;
 
-  // --------------------------- Model Variables --------------------------- //
+  // --------------------------- Model Attributes -------------------------- //
 
   // Binary vector (1 and 0) that indicates whether an arc is beeing used or
   // not.
@@ -97,8 +103,12 @@ class OpsCplexSolver : public OpsSolver {
   // the observation to the moment the object is observed.
   IloNumVarArray time_at_objects_;
 
+  // --------------------------- Private Methods ---------------------------- //
+
   /** @brief Creates the model for the problem, using the input data. */
   void makeModel();
+
+  // ------------------------------- Adders ------------------------------- //
 
   /**
    * @brief Add the 'y' variables to the model.
@@ -189,6 +199,8 @@ class OpsCplexSolver : public OpsSolver {
    */
   void addLimitConstraints(IloRangeArray &constraints);
 
+  // ------------------------------- Setters ------------------------------- //
+
   /**
    * @brief Set some configuration parameters to the CPLEX solver.
    * - The maximum time to solve the problem is 3600 seconds.
@@ -204,6 +216,8 @@ class OpsCplexSolver : public OpsSolver {
    * @param time_elapsed The time spent to solve the problem.
    */
   void setOutput(long time_elapsed);
+
+  // ------------------------------- Utility ------------------------------- //
 
   /**
    * @brief Gets the values from the cplex solver and converts them.

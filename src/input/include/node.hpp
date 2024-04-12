@@ -100,12 +100,16 @@ class Node {
   using NodeArcPairs =
     std::vector<std::pair<std::shared_ptr<Node>, std::shared_ptr<Arc>>>;
 
+  // ----------------------------- Attributes ------------------------------ //
+
   // Identifier of the node
   const unsigned int id_;
   // Successors of the node
   NodeArcPairs successors_;
   // Predecessors of the node
   NodeArcPairs predecessors_;
+
+  // ------------------------------- Getters ------------------------------- //
 
   /**
    * @brief Gets the id of the arcs that connect the node with its successors

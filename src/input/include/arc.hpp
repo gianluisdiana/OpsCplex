@@ -72,6 +72,8 @@ class Arc {
   // Keeps track of the amount of arcs created
   static unsigned int id_counter_;
 
+  // ----------------------------- Attributes ------------------------------ //
+
   // Identifier of the arc
   unsigned int id_;
   // Origin node of the arc

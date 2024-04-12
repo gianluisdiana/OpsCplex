@@ -48,18 +48,6 @@ OpsOutput::OpsOutput(const OpsInput &input) :
   observed_objects_(input.getAmountOfObjects(), false),
   time_at_objects_(input.getAmountOfObjects(), 0), time_elapsed_(-1) {}
 
-// ------------------------------- Operators ------------------------------- //
-
-std::ostream &operator<<(std::ostream &output_stream, const OpsOutput &output) {
-  output_stream << nlohmann::json({{"x", output.used_arcs_.data()},
-                                   {"y", output.observed_objects_},
-                                   {"s", output.time_at_objects_},
-                                   {"profit", output.getTotalProfit()},
-                                   {"time_elapsed", output.time_elapsed_}}
-  ).dump(2);
-  return output_stream;
-}
-
 // ------------------------------- Setters --------------------------------- //
 
 void OpsOutput::setUsedArcs(const std::vector<double> &used_arcs) {
@@ -112,6 +100,18 @@ void OpsOutput::setTimeAtObjects(const std::vector<double> &time_at_objects) {
     }
     time_at_objects_[idx] = value / input_.getScalingFactor();
   }
+}
+
+// ------------------------------- Operators ------------------------------- //
+
+std::ostream &operator<<(std::ostream &output_stream, const OpsOutput &output) {
+  output_stream << nlohmann::json({{"x", output.used_arcs_.data()},
+                                   {"y", output.observed_objects_},
+                                   {"s", output.time_at_objects_},
+                                   {"profit", output.getTotalProfit()},
+                                   {"time_elapsed", output.time_elapsed_}}
+  ).dump(2);
+  return output_stream;
 }
 
 // ------------------------------- Getters --------------------------------- //

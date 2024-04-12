@@ -73,6 +73,8 @@ class OpsSolver {
   operator<<(std::ostream &output_stream, const OpsSolver &solver);
 
  protected:
+  // ------------------------------ Attributes ----------------------------- //
+
   // The input of the solver with the instance data.
   const OpsInput input_;
   // The output where the solution will be stored.

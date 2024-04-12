@@ -72,9 +72,7 @@ void OpsCplexSolver::solve() {
   setOutput(time_elapsed);
 }
 
-// ------------------------------------------------------------------------- //
 // ---------------------------- Private Methods ---------------------------- //
-// ------------------------------------------------------------------------- //
 
 void OpsCplexSolver::makeModel() {
   addYVariable();
@@ -83,6 +81,8 @@ void OpsCplexSolver::makeModel() {
   addObjective();
   addConstraints();
 }
+
+// -------------------------------- Adders -------------------------------- //
 
 void OpsCplexSolver::addYVariable() {
   for (int j = 1; j < input_.getAmountOfObjects() - 1; ++j) {
@@ -218,6 +218,8 @@ void OpsCplexSolver::addLimitConstraints(IloRangeArray &constraints) {
   end_time_expression.end();
 }
 
+// -------------------------------- Setters -------------------------------- //
+
 void OpsCplexSolver::setParameters() {
   cplex_.setParam(IloCplex::Param::TimeLimit, 3600);
   cplex_.setParam(IloCplex::Param::MIP::Tolerances::AbsMIPGap, tolerance_);
@@ -237,6 +239,8 @@ void OpsCplexSolver::setOutput(long time_elapsed) {
   output_.setTimeSpent(time_elapsed);
 }
 
+// -------------------------------- Utility -------------------------------- //
+
 std::vector<double>
 OpsCplexSolver::IloNumVarArrayToVector(const IloNumVarArray &variable) const {
   IloNumArray values(environment_);
@@ -247,4 +251,5 @@ OpsCplexSolver::IloNumVarArrayToVector(const IloNumVarArray &variable) const {
 }
 
 }  // namespace emir
+
 // NOLINTEND(misc-include-cleaner)

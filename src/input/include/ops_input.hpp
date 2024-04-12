@@ -83,16 +83,12 @@ class OpsInput : public OpsInstance {
   operator>>(std::istream &input_stream, OpsInput &ops_input);
 
  private:
-  // ----------------------------------------------------------------------- //
   // ----------------------------- Attributes ------------------------------ //
-  // ----------------------------------------------------------------------- //
 
   // Graphs with the arcs that can be reached in the k-th sliding bar
   std::vector<Graph> graphs_;
 
-  // ----------------------------------------------------------------------- //
   // ------------------------------- Methods ------------------------------- //
-  // ----------------------------------------------------------------------- //
 
   /**
    * @brief Creates the arcs for each sliding bar, adding to each graph only the

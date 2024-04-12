@@ -116,10 +116,6 @@ class OpsInstance {
   operator>>(std::istream &input_stream, OpsInstance &ops_instance);
 
  private:
-  // ----------------------------------------------------------------------- //
-  // ----------------------------- Attributes ------------------------------ //
-  // ----------------------------------------------------------------------- //
-
   // ------------------------- Instance Attributes ------------------------- //
 
   // Name of the instance, typically the name of the file
@@ -149,9 +145,7 @@ class OpsInstance {
   double alpha_; /**< Percentage of the total tour */
   double scaling_factor_;
 
-  // ----------------------------------------------------------------------- //
   // ------------------------------- Methods ------------------------------- //
-  // ----------------------------------------------------------------------- //
 
   /**
    * @brief Set the OPS instance from a json file

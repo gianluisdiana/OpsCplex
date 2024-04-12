@@ -47,6 +47,8 @@ Arc::Arc(
   destination_->addPredecessor(origin_, arc);
 }
 
+// -------------------------------- Getters -------------------------------- //
+
 unsigned int Arc::getOriginId() const {
   return origin_->getId();
 }
