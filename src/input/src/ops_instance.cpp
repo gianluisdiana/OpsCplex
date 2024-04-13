@@ -41,7 +41,7 @@ OpsInstance::OpsInstance(double scaling_factor) :
 
 std::istream &
 operator>>(std::istream &input_stream, OpsInstance &ops_instance) {
-  nlohmann::json json_instance;
+  nlohmann::json json_instance;  // NOLINT(misc-include-cleaner)
   input_stream >> json_instance;
   ops_instance.setFromJson(json_instance);
   return input_stream;

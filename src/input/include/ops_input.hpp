@@ -43,6 +43,9 @@ class OpsInput : public OpsInstance {
   /** @brief Copies the input instance */
   OpsInput(const OpsInput &) = default;
 
+  /** @brief Moves the input instance */
+  OpsInput(OpsInput &&) = default;
+
   /** @brief Resets the arc id counter. */
   ~OpsInput();
 
@@ -66,10 +69,18 @@ class OpsInput : public OpsInstance {
   /**
    * @brief Overload of the = operator to copy the input instance.
    *
-   * @param ops_input The input instance to copy
+   * @param[in] unused The input instance to copy
    * @return The copied input instance
    */
-  OpsInput &operator=(const OpsInput &ops_input) = default;
+  OpsInput &operator=(const OpsInput &) = default;
+
+  /**
+   * @brief Overload of the = operator to move the input instance.
+   *
+   * @param[in] Unused The input instance to move
+   * @return The moved input instance
+   */
+  OpsInput &operator=(OpsInput &&) = default;
 
   /**
    * @brief Overload of the >> operator to read an input from a json file.
