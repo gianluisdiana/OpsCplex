@@ -31,11 +31,10 @@
 
 namespace emir {
 
-OpsSolver::OpsSolver(const OpsInput &input, const double tolerance) :
-  input_ {input}, output_ {input}, tolerance_ {tolerance} {}
+OpsSolver::OpsSolver(const OpsInput &input) : input_ {input}, output_(input) {}
 
-OpsSolver::OpsSolver(OpsInput &&input, const double tolerance) :
-  input_ {std::move(input)}, output_ {input_}, tolerance_ {tolerance} {}
+OpsSolver::OpsSolver(OpsInput &&input) :
+  input_ {std::move(input)}, output_(input_) {}
 
 // ------------------------------- Operators ------------------------------- //
 

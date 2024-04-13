@@ -34,7 +34,7 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ${CPX_PATH}/concert/include
 )
 
-# Include the subprojects gomautil, input and output
+# Include the subproject output
 target_link_libraries(${PROJECT_NAME}
     sub::output
     ${CON_LIBRARY}

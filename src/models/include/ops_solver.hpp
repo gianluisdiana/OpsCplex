@@ -27,6 +27,7 @@
 #ifndef _EMIR_OPS_SOLVER_HPP_
 #define _EMIR_OPS_SOLVER_HPP_
 
+#include <local_type_traits.hpp>
 #include <ops_output.hpp>
 #include <timer.hpp>
 
@@ -43,18 +44,21 @@ class OpsSolver {
    *
    * @param input A lvalue with the input of the solver that contains the
    * instance data.
-   * @param tolerance The tolerance to be used in the solver.
    */
-  OpsSolver(const OpsInput &input, const double tolerance);
+  OpsSolver(const OpsInput &input);
 
   /**
    * @brief Assign the input and max tolerance to the solver.
    *
    * @param input A rvalue with the input of the solver that contains the
    * instance data.
-   * @param tolerance The tolerance to be used in the solver.
    */
-  OpsSolver(OpsInput &&input, const double tolerance);
+  OpsSolver(OpsInput &&input);
+
+  /** @brief Destroy the OpsSolver object. */
+  virtual ~OpsSolver() = default;
+
+  // ------------------------------- Utility ------------------------------- //
 
   /**
    * @brief Solve the O.P.S. problem and store the solution in the output.
@@ -74,14 +78,79 @@ class OpsSolver {
   operator<<(std::ostream &output_stream, const OpsSolver &solver);
 
  protected:
+  // ---------------------------- Input Methods ---------------------------- //
+
+  /** @brief Get the input of the solver. */
+  inline const OpsInput &getInput() const {
+    return input_;
+  }
+
+  // --------------------------- Output Methods ---------------------------- //
+
+  /**
+   * @brief Assign the used arcs to the output.
+   *
+   * @param used_arcs The used arcs in the solution.
+   */
+  inline void setUsedArcsToOutput(const std::vector<double> &used_arcs) {
+    output_.setUsedArcs(used_arcs);
+  }
+
+  /**
+   * @brief Assign the observed objects to the output.
+   *
+   * @param observed_objects The observed objects in the solution.
+   */
+  inline void
+  setObservedObjectsToOutput(const std::vector<double> &observed_objects) {
+    output_.setObservedObjects(observed_objects);
+  }
+
+  /**
+   * @brief Assign the time spent at objects to the output.
+   *
+   * @param time_at_objects The time spent at objects in the solution.
+   */
+  inline void
+  setTimeAtObjectsToOutput(const std::vector<double> &time_at_objects) {
+    output_.setTimeAtObjects(time_at_objects);
+  }
+
+  /**
+   * @brief Assign the time spent to the output.
+   *
+   * @param time_spent The time spent in the solution.
+   */
+  inline void setTimeSpentToOutput(const long time_spent) {
+    output_.setTimeSpent(time_spent);
+  }
+
+  // ---------------------------- Timer Methods ---------------------------- //
+
+  /** @brief Reset the timer with the current time. */
+  inline void resetTimer() {
+    timer_.reset();
+  }
+
+  /**
+   * @brief Get the elapsed time since the last reset.
+   *
+   * @tparam TimeUnit The time unit to use for the elapsed time.
+   * @return The elapsed time in the specified time unit.
+   */
+  template <typename TimeUnit>
+  requires is_time_unit_v<TimeUnit>
+  inline auto getElapsedTime() const -> decltype(TimeUnit {}.count()) {
+    return timer_.elapsed<TimeUnit>();
+  }
+
+ private:
   // ------------------------------ Attributes ----------------------------- //
 
   // The input of the solver with the instance data.
   const OpsInput input_;
   // The output where the solution will be stored.
   OpsOutput output_;
-  // The tolerance to be used in the solver.
-  const double tolerance_;
   // The timer to measure the elapsed time.
   Timer timer_;
 };

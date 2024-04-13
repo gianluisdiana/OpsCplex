@@ -55,7 +55,7 @@ class OpsCplexSolver : public OpsSolver {
   OpsCplexSolver(OpsInput &&input, const double tolerance);
 
   /** @brief Delete the environment of the solution. */
-  ~OpsCplexSolver();
+  ~OpsCplexSolver() override;
 
   /**
    * @brief Solve the Linear Programming problem.
@@ -66,7 +66,7 @@ class OpsCplexSolver : public OpsSolver {
   // ------------------------------- Getters ------------------------------- //
 
   /** @brief Get the profit of the solution. */
-  inline int getProfit() const {
+  inline double getProfit() const {
     return cplex_.getObjValue();
   }
 
@@ -207,8 +207,10 @@ class OpsCplexSolver : public OpsSolver {
    * - The absolute tolerance on the gap between the best integer objective and
    * the objective of the best node remaining is 0.001.
    * - Emphasize optimality over feasibility.
+   *
+   * @param tolerance The tolerance to be used in the solver.
    */
-  void setParameters();
+  void setParameters(const double tolerance);
 
   /**
    * @brief Set the output with the models solution
