@@ -23,6 +23,7 @@
  */
 // clang-format on
 
+#include <exception>
 #include <iostream>
 #include <string>
 #include <vector>
