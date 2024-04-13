@@ -44,7 +44,7 @@ class OpsCplexSolver : public OpsSolver {
    * @param input The input of the solver with the instance data.
    * @param tolerance The tolerance to be used in the solver.
    */
-  OpsCplexSolver(const OpsInput &input, const double tolerance);
+  OpsCplexSolver(const OpsInput &input, double tolerance);
 
   /**
    * @brief Moves the input and assigns the max tolerance to the solver.
@@ -52,7 +52,10 @@ class OpsCplexSolver : public OpsSolver {
    * @param input The input of the solver with the instance data.
    * @param tolerance The tolerance to be used in the solver.
    */
-  OpsCplexSolver(OpsInput &&input, const double tolerance);
+  OpsCplexSolver(OpsInput &&input, double tolerance);
+
+  /** @brief Default copy constructor. */
+  OpsCplexSolver(const OpsCplexSolver &) = default;
 
   /** @brief Delete the environment of the solution. */
   ~OpsCplexSolver() override;
@@ -66,7 +69,7 @@ class OpsCplexSolver : public OpsSolver {
   // ------------------------------- Getters ------------------------------- //
 
   /** @brief Get the profit of the solution. */
-  inline double getProfit() const {
+  [[nodiscard]] double getProfit() const {
     return cplex_.getObjValue();
   }
 
@@ -77,7 +80,7 @@ class OpsCplexSolver : public OpsSolver {
    *
    * @param log_os The output stream to write the logs to.
    */
-  inline void addLog(std::ostream &log_os) {
+  void addLog(std::ostream &log_os) {
     cplex_.setOut(log_os);
   }
 
@@ -210,7 +213,7 @@ class OpsCplexSolver : public OpsSolver {
    *
    * @param tolerance The tolerance to be used in the solver.
    */
-  void setParameters(const double tolerance);
+  void setParameters(double tolerance);
 
   /**
    * @brief Set the output with the models solution
@@ -227,7 +230,7 @@ class OpsCplexSolver : public OpsSolver {
    * @param variable The variable to get the values from.
    * @return The values from the variable in a vector.
    */
-  std::vector<double>
+  [[nodiscard]] std::vector<double>
   IloNumVarArrayToVector(const IloNumVarArray &variable) const;
 };
 

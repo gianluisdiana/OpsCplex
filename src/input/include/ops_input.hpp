@@ -57,12 +57,12 @@ class OpsInput : public OpsInstance {
    * @param sliding_bar_index The index of the sliding bar
    * @return The graph that belongs to the k-th sliding bar
    */
-  inline const Graph &getGraph(const int sliding_bar_index) const {
+  [[nodiscard]] const Graph &getGraph(const int sliding_bar_index) const {
     return graphs_[sliding_bar_index];
   }
 
   /** @brief Gets the maximum cost of any arc in the graph */
-  unsigned int getMaxArc() const;
+  [[nodiscard]] unsigned int getMaxArc() const;
 
   // ------------------------------ Operators ------------------------------ //
 

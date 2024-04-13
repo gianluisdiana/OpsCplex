@@ -45,7 +45,7 @@ class OpsSolver {
    * @param input A lvalue with the input of the solver that contains the
    * instance data.
    */
-  OpsSolver(const OpsInput &input);
+  explicit OpsSolver(const OpsInput &input);
 
   /**
    * @brief Assign the input and max tolerance to the solver.
@@ -53,7 +53,7 @@ class OpsSolver {
    * @param input A rvalue with the input of the solver that contains the
    * instance data.
    */
-  OpsSolver(OpsInput &&input);
+  explicit OpsSolver(OpsInput &&input);
 
   /** @brief Destroy the OpsSolver object. */
   virtual ~OpsSolver() = default;
@@ -81,7 +81,7 @@ class OpsSolver {
   // ---------------------------- Input Methods ---------------------------- //
 
   /** @brief Get the input of the solver. */
-  inline const OpsInput &getInput() const {
+  [[nodiscard]] const OpsInput &getInput() const {
     return input_;
   }
 
@@ -92,7 +92,7 @@ class OpsSolver {
    *
    * @param used_arcs The used arcs in the solution.
    */
-  inline void setUsedArcsToOutput(const std::vector<double> &used_arcs) {
+  void setUsedArcsToOutput(const std::vector<double> &used_arcs) {
     output_.setUsedArcs(used_arcs);
   }
 
@@ -101,8 +101,7 @@ class OpsSolver {
    *
    * @param observed_objects The observed objects in the solution.
    */
-  inline void
-  setObservedObjectsToOutput(const std::vector<double> &observed_objects) {
+  void setObservedObjectsToOutput(const std::vector<double> &observed_objects) {
     output_.setObservedObjects(observed_objects);
   }
 
@@ -111,8 +110,7 @@ class OpsSolver {
    *
    * @param time_at_objects The time spent at objects in the solution.
    */
-  inline void
-  setTimeAtObjectsToOutput(const std::vector<double> &time_at_objects) {
+  void setTimeAtObjectsToOutput(const std::vector<double> &time_at_objects) {
     output_.setTimeAtObjects(time_at_objects);
   }
 
@@ -121,14 +119,14 @@ class OpsSolver {
    *
    * @param time_spent The time spent in the solution.
    */
-  inline void setTimeSpentToOutput(const long time_spent) {
+  void setTimeSpentToOutput(const long time_spent) {
     output_.setTimeSpent(time_spent);
   }
 
   // ---------------------------- Timer Methods ---------------------------- //
 
   /** @brief Reset the timer with the current time. */
-  inline void resetTimer() {
+  void resetTimer() {
     timer_.reset();
   }
 
@@ -140,7 +138,7 @@ class OpsSolver {
    */
   template <typename TimeUnit>
   requires is_time_unit_v<TimeUnit>
-  inline auto getElapsedTime() const -> decltype(TimeUnit {}.count()) {
+  [[nodiscard]] auto getElapsedTime() const -> decltype(TimeUnit {}.count()) {
     return timer_.elapsed<TimeUnit>();
   }
 
@@ -148,7 +146,7 @@ class OpsSolver {
   // ------------------------------ Attributes ----------------------------- //
 
   // The input of the solver with the instance data.
-  const OpsInput input_;
+  OpsInput input_;
   // The output where the solution will be stored.
   OpsOutput output_;
   // The timer to measure the elapsed time.

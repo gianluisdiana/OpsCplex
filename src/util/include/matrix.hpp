@@ -36,16 +36,20 @@
 template <typename T>
 class Matrix {
  public:
+  // --------------------------- Type definitions -------------------------- //
+
+  using difference_type = typename std::vector<T>::difference_type;
+  using value_type = typename std::vector<T>::value_type;
+  using pointer = typename std::vector<T>::pointer;
+  using reference = typename std::vector<T>::reference;
+  using const_reference = typename std::vector<T>::const_reference;
+
+  using iterator = typename std::vector<int>::iterator;
+  using vector_iterator = typename std::vector<std::vector<T>>::iterator;
+
   /** @brief Represents an iterator for the matrix. */
   struct Iterator {
     using iterator_category = std::forward_iterator_tag;
-    using difference_type = typename std::vector<T>::difference_type;
-    using value_type = typename std::vector<T>::value_type;
-    using pointer = typename std::vector<T>::pointer;
-    using reference = typename std::vector<T>::reference;
-
-    using iterator = typename std::vector<T>::iterator;
-    using vector_iterator = typename std::vector<std::vector<T>>::iterator;
 
    private:
     vector_iterator start_, sentinel_;
@@ -135,7 +139,7 @@ class Matrix {
    * @param rows_amount The amount of rows the matrix will have
    * @param cols_amount The amount of columns the matrix will have
    */
-  Matrix(const std::size_t rows_amount = 1, const std::size_t cols_amount = 1);
+  explicit Matrix(std::size_t rows_amount = 1, std::size_t cols_amount = 1);
 
   /**
    * @brief Initialize the matrix with an bidimensional array of the type.
@@ -145,17 +149,17 @@ class Matrix {
    * @param matrix The bidimensional array to get the data from.
    */
   template <std::size_t rows_amount, std::size_t cols_amount>
-  Matrix(T (&matrix)[rows_amount][cols_amount]);
+  explicit Matrix(T (&matrix)[rows_amount][cols_amount]);
 
   /** @brief Returns the data stored in the matrix. */
-  inline const std::vector<std::vector<T>> &data() const {
+  [[nodiscard]] const std::vector<std::vector<T>> &data() const {
     return data_;
   }
 
   // ------------------------------- Capacity ------------------------------ //
 
   /** @brief Checks if the matrix is empty. */
-  inline bool empty() const {
+  [[nodiscard]] bool empty() const {
     return data_.empty() || data_[0].empty();
   }
 
@@ -164,7 +168,7 @@ class Matrix {
    *
    * @return A pair containing the number of rows and columns in the matrix.
    */
-  inline const std::pair<std::size_t, std::size_t> size() const {
+  [[nodiscard]] std::pair<std::size_t, std::size_t> size() const {
     return {rows_amount_, cols_amount_};
   }
 
@@ -176,7 +180,7 @@ class Matrix {
    * @param rows_amount The amount of rows the matrix will have.
    * @param cols_amount The amount of columns the matrix will have.
    */
-  void resize(const std::size_t rows_amount, const std::size_t cols_amount);
+  void resize(std::size_t rows_amount, std::size_t cols_amount);
 
   // --------------------------- Data management --------------------------- //
 
@@ -185,7 +189,7 @@ class Matrix {
    *
    * @param data The data to initialize the matrix with.
    */
-  inline void init(const T data) {
+  void init(const T data) {
     for (auto &row : data_) { row.assign(cols_amount_, data); }
   }
 
@@ -196,7 +200,7 @@ class Matrix {
    *
    * @returns The begin iterator of the matrix.
    */
-  inline Iterator begin() {
+  [[nodiscard]] Iterator begin() {
     return Iterator(data_.begin(), data_.end());
   }
 
@@ -205,7 +209,7 @@ class Matrix {
    *
    * @returns The end iterator of the matrix.
    */
-  inline Iterator end() {
+  [[nodiscard]] Iterator end() {
     return Iterator(data_.end(), data_.end());
   }
 
@@ -218,7 +222,7 @@ class Matrix {
    * @param index The index of the row to access.
    * @returns The row selected of the matrix
    */
-  inline std::vector<T> &operator[](const std::size_t index) {
+  [[nodiscard]] std::vector<T> &operator[](const std::size_t index) {
     return data_[index];
   }
 
@@ -229,7 +233,8 @@ class Matrix {
    * @param index The index of the row to access.
    * @returns The row selected of the matrix
    */
-  inline const std::vector<T> &operator[](const std::size_t index) const {
+  [[nodiscard]] const std::vector<T> &
+  operator[](const std::size_t index) const {
     return data_[index];
   }
 
@@ -241,7 +246,7 @@ class Matrix {
    * @param col_index The index of the col to access.
    * @returns The element placed in the given row and column index.
    */
-  inline typename std::vector<T>::reference
+  [[nodiscard]] reference
   operator()(const std::size_t row_index, const std::size_t col_index) {
     return data_[row_index][col_index];
   }
@@ -254,7 +259,7 @@ class Matrix {
    * @param col_index The index of the col to access.
    * @returns The element placed in the given row and column index.
    */
-  inline typename std::vector<T>::const_reference
+  [[nodiscard]] const_reference
   operator()(const std::size_t row_index, const std::size_t col_index) const {
     return data_[row_index][col_index];
   }
@@ -343,7 +348,7 @@ std::ostream &operator<<(std::ostream &out_stream, const Matrix<C> &matrix) {
 template <typename T>
 void Matrix<T>::resize() {
   data_.resize(rows_amount_);
-  for (auto &row : data_) row.resize(cols_amount_);
+  for (auto &row : data_) { row.resize(cols_amount_); }
 }
 
 #endif  // _MATRIX_HPP_

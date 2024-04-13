@@ -44,26 +44,26 @@ class Node {
    *
    * @param node_id Id of the node
    */
-  Node(unsigned int node_id = 0);
+  explicit Node(unsigned int node_id = 0);
 
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the name of the node */
-  inline unsigned int getId() const {
+  [[nodiscard]] unsigned int getId() const {
     return id_;
   }
 
   /**
    * @brief Gets the id of the arcs that connect the node with its successors
    */
-  inline std::vector<unsigned int> getSuccessorsArcsId() const {
+  [[nodiscard]] std::vector<unsigned int> getSuccessorsArcsId() const {
     return Node::getArcsId(successors_);
   }
 
   /**
    * @brief Gets the id of the arcs that connect the node with its predecessors
    */
-  inline std::vector<unsigned int> getPredecessorsArcsId() const {
+  [[nodiscard]] std::vector<unsigned int> getPredecessorsArcsId() const {
     return Node::getArcsId(predecessors_);
   }
 
@@ -75,7 +75,7 @@ class Node {
    * @param successor Successor to add
    * @param arc The arc that connects them
    */
-  inline void addSuccessor(
+  void addSuccessor(
     const std::shared_ptr<Node> &successor, const std::shared_ptr<Arc> &arc
   ) {
     successors_.emplace_back(successor, arc);
@@ -87,7 +87,7 @@ class Node {
    * @param predecessor Predecessor to add
    * @param arc The arc that connects them
    */
-  inline void addPredecessor(
+  void addPredecessor(
     const std::shared_ptr<Node> &predecessor, const std::shared_ptr<Arc> &arc
   ) {
     predecessors_.emplace_back(predecessor, arc);
@@ -103,7 +103,7 @@ class Node {
   // ----------------------------- Attributes ------------------------------ //
 
   // Identifier of the node
-  const unsigned int id_;
+  unsigned int id_;
   // Successors of the node
   NodeArcPairs successors_;
   // Predecessors of the node
@@ -119,7 +119,7 @@ class Node {
    * @return The id of the arcs that connect the node with its successors or
    * predecessors
    */
-  static std::vector<unsigned int>
+  [[nodiscard]] static std::vector<unsigned int>
   getArcsId(const NodeArcPairs &nodes_with_arcs);
 };
 

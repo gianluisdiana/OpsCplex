@@ -46,10 +46,10 @@ class Graph {
   //   std::ranges::ref_view<
   //     const std::map<unsigned int, std::shared_ptr<emir::Node>>>,
   //   0UL>
-  std::vector<unsigned int> getNodesId() const;
+  [[nodiscard]] std::vector<unsigned int> getNodesId() const;
 
   /** @brief Gets the arcs of the graph */
-  inline const std::vector<Arc> &getArcs() const {
+  [[nodiscard]] const std::vector<Arc> &getArcs() const {
     return arcs_;
   }
 
@@ -57,25 +57,25 @@ class Graph {
    * @brief Gets the id of each arc that connects the given node to its
    * successors.
    *
-   * @param id Id of the node to search
+   * @param node_id Id of the node to search
    * @return The id of each arc that connects the given node to its successors.
    */
-  inline std::vector<unsigned int>
-  getSuccessorsArcsId(const unsigned int id) const {
-    return nodes_.at(id)->getSuccessorsArcsId();
+  [[nodiscard]] std::vector<unsigned int>
+  getSuccessorsArcsId(const unsigned int node_id) const {
+    return nodes_.at(node_id)->getSuccessorsArcsId();
   }
 
   /**
    * @brief Gets the id of each arc that connects the given node to its
    * predecessors.
    *
-   * @param id Id of the node to search
+   * @param node_id Id of the node to search
    * @return The id of each arc that connects the given node to its
    * predecessors.
    */
-  inline std::vector<unsigned int>
-  getPredecessorsArcsId(const unsigned int id) const {
-    return nodes_.at(id)->getPredecessorsArcsId();
+  [[nodiscard]] std::vector<unsigned int>
+  getPredecessorsArcsId(const unsigned int node_id) const {
+    return nodes_.at(node_id)->getPredecessorsArcsId();
   }
 
   // ------------------------------- Adders ------------------------------- //
@@ -87,8 +87,7 @@ class Graph {
    * @param to_id Id of the destination node
    * @param cost Cost of the arc
    */
-  void
-  addArc(const unsigned int from_id, const unsigned int to_id, const int cost);
+  void addArc(unsigned int from_id, unsigned int to_id, int cost);
 
  private:
   // ----------------------------- Attributes ------------------------------ //
@@ -107,7 +106,7 @@ class Graph {
    * @param node_id Id of the node to search
    * @return The node with the given id.
    */
-  const std::shared_ptr<Node> &searchNode(const unsigned int node_id);
+  [[nodiscard]] const std::shared_ptr<Node> &searchNode(unsigned int node_id);
 };
 
 }  // namespace emir

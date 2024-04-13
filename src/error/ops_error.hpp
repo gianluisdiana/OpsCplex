@@ -46,10 +46,10 @@ class OpsError : public std::exception {
    */
   template <typename... Args>
   explicit OpsError(std::format_string<Args...> format, Args &&...args) :
-    message_ {std::format(format, args...)} {}
+    message_ {std::format(format, std::forward<Args>(args)...)} {}
 
   /** @brief Returns the message to be shown. */
-  inline const char *what() const noexcept override {
+  [[nodiscard]] const char *what() const noexcept override {
     return message_.c_str();
   }
 
@@ -57,7 +57,7 @@ class OpsError : public std::exception {
   // ----------------------------- Attributes ------------------------------ //
 
   // The message to be shown.
-  const std::string message_;
+  std::string message_;
 };
 
 }  // namespace emir

@@ -26,6 +26,8 @@
 #ifndef _EMIR_OPS_OUTPUT_HPP_
 #define _EMIR_OPS_OUTPUT_HPP_
 
+#include <memory>
+
 #include <ops_input.hpp>
 
 namespace emir {
@@ -38,7 +40,16 @@ class OpsOutput {
    *
    * @param input The input of the O.P.S. problem.
    */
-  OpsOutput(const OpsInput &input);
+  explicit OpsOutput(const OpsInput &input);
+
+  /** @brief Copy constructor. */
+  OpsOutput(const OpsOutput &output);
+
+  /** @brief Default move constructor. */
+  OpsOutput(OpsOutput &&) = default;
+
+  /** @brief Destroy the OpsOutput object. */
+  ~OpsOutput() = default;
 
   // ------------------------------ Setters -------------------------------- //
 
@@ -71,11 +82,22 @@ class OpsOutput {
    *
    * @param time_spent The time spent to solve the problem.
    */
-  inline void setTimeSpent(const long time_spent) {
+  void setTimeSpent(const long time_spent) {
     time_elapsed_ = time_spent;
   }
 
   // ------------------------------ Operators ------------------------------ //
+
+  /**
+   * @brief Overload of the copy assignment operator.
+   *
+   * @param output The output to be copied.
+   * @return The output copied.
+   */
+  OpsOutput &operator=(const OpsOutput &output);
+
+  /** @brief Default move assignment. */
+  OpsOutput &operator=(OpsOutput &&) = default;
 
   /**
    * @brief Overload of the << operator to print a solution of the O.P.S.
@@ -95,7 +117,7 @@ class OpsOutput {
   // ----------------------------- Attributes ------------------------------ //
 
   // The input of the O.P.S. problem.
-  const OpsInput &input_;
+  std::unique_ptr<const OpsInput> input_;
   // The matrix that represents the arcs of the graph.
   Matrix<bool> used_arcs_;
   // Represents which nodes are visited in the solution.
@@ -103,35 +125,44 @@ class OpsOutput {
   // Represents the time spent in each node.
   std::vector<double> time_at_objects_;
   // The time elapsed to solve the problem.
-  long time_elapsed_;
-
-  // ------------------------------ Setters -------------------------------- //
-
-  /**
-   * @brief Set the value of the arc (i, j) of the graph k as true.
-   *
-   * @param k The index of the graph.
-   * @param i The origin of the arc.
-   * @param j The destination of the arc.
-   */
-  inline void
-  setXAsTrue(const unsigned int k, const unsigned int i, const unsigned int j) {
-    used_arcs_(k * input_.getAmountOfObjects() + i, j) = true;
-  }
+  long time_elapsed_ {-1};
 
   // ------------------------------ Getters -------------------------------- //
 
   /**
-   * @brief Gives readonly access to the x value in the given position.
+   * @brief Gives read-write access to the used arc in the given position.
    *
-   * @param k The index of the graph.
-   * @param i The origin of the arc.
-   * @param j The destination of the arc.
-   * @return The value of the arc (i, j) of the graph k.
+   * @param sliding_bar_idx The index of the graph.
+   * @param origin_idx The origin of the arc.
+   * @param destination_idx The destination of the arc.
+   * @return A reference to whether the arc is used or not.
    */
-  inline bool
-  getX(const unsigned int k, const unsigned int i, const unsigned int j) const {
-    return used_arcs_(k * input_.getAmountOfObjects() + i, j);
+  [[nodiscard]] Matrix<bool>::reference getUsedArc(
+    const unsigned int sliding_bar_idx, const unsigned int origin_idx,
+    const unsigned int destination_idx
+  ) {
+    return used_arcs_(
+      sliding_bar_idx * input_->getAmountOfObjects() + origin_idx,
+      destination_idx
+    );
+  }
+
+  /**
+   * @brief Gives read-only access to the used arc in the given position.
+   *
+   * @param sliding_bar_idx The index of the graph.
+   * @param origin_idx The origin of the arc.
+   * @param destination_idx The destination of the arc.
+   * @return A constant reference to whether the arc is used or not.
+   */
+  [[nodiscard]] Matrix<bool>::const_reference getUsedArc(
+    const unsigned int sliding_bar_idx, const unsigned int origin_idx,
+    const unsigned int destination_idx
+  ) const {
+    return used_arcs_(
+      sliding_bar_idx * input_->getAmountOfObjects() + origin_idx,
+      destination_idx
+    );
   }
 
   /**
@@ -141,7 +172,7 @@ class OpsOutput {
    *
    * @return The value of the solution.
    */
-  long getTotalProfit() const;
+  [[nodiscard]] long getTotalProfit() const;
 
   // --------------------------- Utility methods --------------------------- //
 
@@ -153,7 +184,8 @@ class OpsOutput {
    * @return A pair with the amount of arrival and departure arcs of each node,
    * in that order.
    */
-  std::pair<std::vector<int>, std::vector<int>> countArrivesAndDepartures(
+  [[nodiscard]] std::pair<std::vector<int>, std::vector<int>>
+  countArrivesAndDepartures(
     std::size_t amount_of_objects, std::size_t amount_of_sliding_bars
   ) const;
 

@@ -42,7 +42,7 @@ class OpsInstance {
    *
    * @param scaling_factor The scaling factor to use
    */
-  OpsInstance(double scaling_factor = 10);
+  explicit OpsInstance(double scaling_factor = 10);
 
   // ------------------------------ Getters -------------------------------- //
 
@@ -50,12 +50,12 @@ class OpsInstance {
    * @brief Get the amount of objects to visualize plus the origin and ending
    * objects (used as starting and ending points)
    */
-  inline std::size_t getAmountOfObjects() const {
+  [[nodiscard]] std::size_t getAmountOfObjects() const {
     return priorities_.size();
   }
 
   /** @brief Get the amount of sliding bars, normally 55 */
-  inline std::size_t getAmountOfSlidingBars() const {
+  [[nodiscard]] std::size_t getAmountOfSlidingBars() const {
     return objects_per_sliding_bar_.size();
   }
 
@@ -65,7 +65,7 @@ class OpsInstance {
    * @param sliding_bar_idx The index of the sliding bar
    * @return The objects that can be observed by the sliding bar selected
    */
-  inline const std::vector<int> &
+  [[nodiscard]] const std::vector<int> &
   getObjectsPerSlidingBar(const std::size_t sliding_bar_idx) const {
     return objects_per_sliding_bar_[sliding_bar_idx];
   }
@@ -76,12 +76,12 @@ class OpsInstance {
    * @param priority_idx The index of the object
    * @return The profit (or priority) for the object selected
    */
-  inline int getPriority(const std::size_t priority_idx) const {
+  [[nodiscard]] int getPriority(const std::size_t priority_idx) const {
     return priorities_[priority_idx];
   }
 
   /** @brief Returns the time limit to use the telescope */
-  inline int getTimeLimit() const {
+  [[nodiscard]] int getTimeLimit() const {
     return time_limit_;
   }
 
@@ -92,14 +92,14 @@ class OpsInstance {
    * @param origin_idx The index of the origin node
    * @param destiny_idx The index of the destiny node
    */
-  inline int getTimeToProcess(
+  [[nodiscard]] int getTimeToProcess(
     const std::size_t origin_idx, const std::size_t destiny_idx
   ) const {
     return time_to_process_(origin_idx, destiny_idx);
   }
 
   /** @brief Gives read-only access to the scaling factor */
-  inline double getScalingFactor() const {
+  [[nodiscard]] double getScalingFactor() const {
     return scaling_factor_;
   }
 
@@ -121,9 +121,9 @@ class OpsInstance {
   // Name of the instance, typically the name of the file
   std::string name_;
   // Date stamp of the instance creation
-  std::time_t date_stamp_;
+  std::time_t date_stamp_ {};
   // Type of instance generation @see instance_code_type.hpp
-  int type_;
+  int type_ {};
 
   // -------------------- Mathematical model attributes -------------------- //
 
@@ -138,11 +138,12 @@ class OpsInstance {
   // Profit (or priority) for each job
   std::vector<int> priorities_;
   // Time limit to use the telescope
-  int time_limit_;
+  int time_limit_ {0};
 
   // --------------------------- Extra attributes -------------------------- //
 
-  double alpha_; /**< Percentage of the total tour */
+  // Percentage of the total tour
+  double alpha_ {-1};
   double scaling_factor_;
 
   // ------------------------------- Methods ------------------------------- //

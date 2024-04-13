@@ -28,6 +28,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -41,19 +42,24 @@ namespace emir {
 const double OpsOutput::kMaxTimeMargin = 1e-2;
 
 OpsOutput::OpsOutput(const OpsInput &input) :
-  input_(input), used_arcs_(
-                   input.getAmountOfObjects() * input.getAmountOfSlidingBars(),
-                   input.getAmountOfObjects()
-                 ),
+  input_(std::make_unique<OpsInput>(input)),
+  used_arcs_(
+    input.getAmountOfObjects() * input.getAmountOfSlidingBars(),
+    input.getAmountOfObjects()
+  ),
   observed_objects_(input.getAmountOfObjects(), false),
-  time_at_objects_(input.getAmountOfObjects(), 0), time_elapsed_(-1) {}
+  time_at_objects_(input.getAmountOfObjects(), 0) {}
+
+OpsOutput::OpsOutput(const OpsOutput &output) {
+  this->operator=(output);
+}
 
 // ------------------------------- Setters --------------------------------- //
 
 void OpsOutput::setUsedArcs(const std::vector<double> &used_arcs) {
   used_arcs_.init(false);
-  for (int k = 0; k < input_.getAmountOfSlidingBars(); ++k) {
-    const auto &graph = input_.getGraph(k);
+  for (int k = 0; k < input_->getAmountOfSlidingBars(); ++k) {
+    const auto &graph = input_->getGraph(k);
     for (const auto &arc : graph.getArcs()) {
       const double value = std::round(used_arcs[arc.getId()]);
       if (!isEqual(value, 0.0) && !isEqual(value, 1.0)) {
@@ -64,14 +70,14 @@ void OpsOutput::setUsedArcs(const std::vector<double> &used_arcs) {
       if (isEqual(value, 0.0)) { continue; }
       const auto origin_id = arc.getOriginId();
       const auto destination_id = arc.getDestinationId();
-      setXAsTrue(k, origin_id, destination_id);
+      getUsedArc(k, origin_id, destination_id) = true;
     }
   }
 }
 
 void OpsOutput::setObservedObjects(const std::vector<double> &observed_objects
 ) {
-  const auto amount_of_objects = input_.getAmountOfObjects();
+  const auto amount_of_objects = input_->getAmountOfObjects();
   observed_objects_[0] = true;
   observed_objects_[amount_of_objects - 1] = true;
   if (observed_objects.empty()) { return; }
@@ -87,7 +93,7 @@ void OpsOutput::setObservedObjects(const std::vector<double> &observed_objects
 }
 
 void OpsOutput::setTimeAtObjects(const std::vector<double> &time_at_objects) {
-  const auto amount_of_objects = input_.getAmountOfObjects();
+  const auto amount_of_objects = input_->getAmountOfObjects();
   time_at_objects_[0] = 0;
   if (time_at_objects.empty()) { return; }
   for (auto idx = 1; idx < amount_of_objects; ++idx) {
@@ -98,11 +104,21 @@ void OpsOutput::setTimeAtObjects(const std::vector<double> &time_at_objects) {
         value, idx
       );
     }
-    time_at_objects_[idx] = value / input_.getScalingFactor();
+    time_at_objects_[idx] = value / input_->getScalingFactor();
   }
 }
 
 // ------------------------------- Operators ------------------------------- //
+
+OpsOutput &OpsOutput::operator=(const OpsOutput &output) {
+  if (this == &output) { return *this; }
+  input_ = std::make_unique<OpsInput>(*output.input_);
+  used_arcs_ = output.used_arcs_;
+  observed_objects_ = output.observed_objects_;
+  time_at_objects_ = output.time_at_objects_;
+  time_elapsed_ = output.time_elapsed_;
+  return *this;
+}
 
 std::ostream &operator<<(std::ostream &output_stream, const OpsOutput &output) {
   output_stream << nlohmann::json({{"x", output.used_arcs_.data()},
@@ -119,7 +135,7 @@ std::ostream &operator<<(std::ostream &output_stream, const OpsOutput &output) {
 long OpsOutput::getTotalProfit() const {
   long total_profit = 0;
   for (auto idx = 0; idx < observed_objects_.size(); ++idx) {
-    if (observed_objects_[idx]) { total_profit += input_.getPriority(idx); }
+    if (observed_objects_[idx]) { total_profit += input_->getPriority(idx); }
   }
   return total_profit;
 }
@@ -134,11 +150,11 @@ OpsOutput::countArrivesAndDepartures(
   std::vector<int> amount_of_departures(amount_of_objects, 0);
 
   for (int k = 0; k < amount_of_sliding_bars; k++) {
-    const auto &graph = input_.getGraph(k);
+    const auto &graph = input_->getGraph(k);
     for (const auto &arc : graph.getArcs()) {
       const auto &origin_id = arc.getOriginId();
       const auto &destination_id = arc.getDestinationId();
-      if (getX(k, origin_id, destination_id)) {
+      if (getUsedArc(k, origin_id, destination_id)) {
         amount_of_arrives[destination_id]++;
         amount_of_departures[origin_id]++;
       }
@@ -155,8 +171,8 @@ void OpsOutput::check() const {
 }
 
 void OpsOutput::checkArcs() const {
-  const auto amount_of_objects = input_.getAmountOfObjects();
-  const auto amount_of_sliding_bars = input_.getAmountOfSlidingBars();
+  const auto amount_of_objects = input_->getAmountOfObjects();
+  const auto amount_of_sliding_bars = input_->getAmountOfSlidingBars();
   auto [amount_of_arrives, amount_of_departures] =
     countArrivesAndDepartures(amount_of_objects, amount_of_sliding_bars);
 
@@ -195,7 +211,7 @@ void OpsOutput::checkTime() const {
     throw OpsError("The time spent at each node must be set.");
   }
   const double real_maximum_time =
-    double(input_.getTimeLimit()) / input_.getScalingFactor();
+    double(input_->getTimeLimit()) / input_->getScalingFactor();
   for (const auto &time_at_object : time_at_objects_) {
     if (time_at_object > real_maximum_time + OpsOutput::kMaxTimeMargin) {
       throw OpsError(

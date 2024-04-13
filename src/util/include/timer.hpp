@@ -2,7 +2,6 @@
 #define TIMER_HPP
 
 #include <chrono>
-#include <type_traits>
 
 #include <local_type_traits.hpp>
 
@@ -15,7 +14,7 @@ class Timer {
   }
 
   /** @brief Reset the timer to the current time. */
-  inline void reset() {
+  void reset() {
     start_ = now();
   }
 
@@ -27,7 +26,7 @@ class Timer {
    */
   template <typename TimeUnit>
   requires is_time_unit_v<TimeUnit>
-  inline auto elapsed() const -> decltype(TimeUnit {}.count()) {
+  [[nodiscard]] auto elapsed() const -> decltype(TimeUnit {}.count()) {
     return std::chrono::duration_cast<TimeUnit>(now() - start_).count();
   }
 

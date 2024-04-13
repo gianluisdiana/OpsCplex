@@ -34,7 +34,6 @@
 namespace emir {
 
 OpsInstance::OpsInstance(double scaling_factor) :
-  date_stamp_ {}, type_ {}, alpha_ {-1}, time_limit_ {0},
   scaling_factor_ {scaling_factor} {}
 
 // ------------------------------- Operators ------------------------------- //

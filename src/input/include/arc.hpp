@@ -46,27 +46,26 @@ class Arc {
    * @param to Destination node of the arc
    */
   Arc(
-    std::shared_ptr<Node> origin, const int cost,
-    std::shared_ptr<Node> destination
+    std::shared_ptr<Node> origin, int cost, std::shared_ptr<Node> destination
   );
 
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the id of the arc */
-  inline unsigned int getId() const {
+  [[nodiscard]] unsigned int getId() const {
     return id_;
   }
 
   /** @brief Gets the cost of the arc */
-  inline int getCost() const {
+  [[nodiscard]] int getCost() const {
     return cost_;
   }
 
   /** @brief Gets the id from the origin node of the arc */
-  unsigned int getOriginId() const;
+  [[nodiscard]] unsigned int getOriginId() const;
 
   /** @brief Gets the id from the destination node of the arc */
-  unsigned int getDestinationId() const;
+  [[nodiscard]] unsigned int getDestinationId() const;
 
  private:
   // Keeps track of the amount of arcs created
