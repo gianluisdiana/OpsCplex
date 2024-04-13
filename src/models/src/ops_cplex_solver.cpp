@@ -42,7 +42,7 @@ OpsCplexSolver::OpsCplexSolver(const OpsInput &input, const double tolerance) :
   time_at_objects_(environment_) {}
 
 OpsCplexSolver::OpsCplexSolver(OpsInput &&input, const double tolerance) :
-  OpsSolver(std::forward<OpsInput>(input), tolerance), cplex_(environment_),
+  OpsSolver(std::move(input), tolerance), cplex_(environment_),
   model_(environment_), used_arcs_(environment_),
   observed_objects_(environment_), time_at_objects_(environment_) {}
 
