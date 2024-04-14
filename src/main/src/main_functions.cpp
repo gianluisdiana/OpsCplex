@@ -76,7 +76,9 @@ input_parser::Parser createParser() {
     .addOption([] {
       return input_parser::SingleOption("-t", "--tolerance")
         .addDescription("Tolerance for the solver")
-        .addDefaultValue(1e-4)  // NOLINT
+        .addDefaultValue("1e-4")
+        .toDouble()
+        .transformBeforeCheck()
         .addConstraint<double>(
           [](const auto &value) -> bool { return value > 0; },
           "The tolerance must be greater than 0"

@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <iostream>
 
+#include <arc.hpp>
 #include <graph.hpp>
 #include <ops_input.hpp>
 #include <ops_instance.hpp>
