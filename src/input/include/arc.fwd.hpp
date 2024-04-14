@@ -22,8 +22,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_ARC_FWD_HPP_
-#define _EMIR_ARC_FWD_HPP_
+#ifndef EMIR_ARC_FWD_HPP_
+#define EMIR_ARC_FWD_HPP_
 
 namespace emir {
 
@@ -32,4 +32,4 @@ class Arc;
 
 }  // namespace emir
 
-#endif  // _EMIR_ARC_FWD_HPP_
+#endif  // EMIR_ARC_FWD_HPP_

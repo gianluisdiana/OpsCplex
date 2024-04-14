@@ -23,8 +23,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_OPS_CPLEX_SOLVER_HPP_
-#define _EMIR_OPS_CPLEX_SOLVER_HPP_
+#ifndef EMIR_OPS_CPLEX_SOLVER_HPP_
+#define EMIR_OPS_CPLEX_SOLVER_HPP_
 
 #include <ilcplex/ilocplex.h>
 
@@ -236,4 +236,4 @@ class OpsCplexSolver : public OpsSolver {
 
 }  // namespace emir
 
-#endif  // _EMIR_OPS_CPLEX_SOLVER_HPP_
+#endif  // EMIR_OPS_CPLEX_SOLVER_HPP_

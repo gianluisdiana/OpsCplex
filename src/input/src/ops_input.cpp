@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include <arc.hpp>
+#include <graph.hpp>
 #include <ops_input.hpp>
 #include <ops_instance.hpp>
 
@@ -59,26 +59,33 @@ std::istream &operator>>(std::istream &input_stream, OpsInput &ops_input) {
 // --------------------------- Private Methods --------------------------- //
 
 void OpsInput::createGraphArcs() {
-  const auto amount_of_objects = getAmountOfObjects();
+  const auto amount_of_objects = (unsigned int)getAmountOfObjects();
   const auto amount_of_sliding_bars = getAmountOfSlidingBars();
   graphs_.resize(amount_of_sliding_bars);
-  for (auto sliding_bar_idx = 0; sliding_bar_idx < amount_of_sliding_bars;
-       ++sliding_bar_idx) {
-    auto &graph = graphs_[sliding_bar_idx];
-    graph.addArc(0, amount_of_objects - 1, 0);
-    const auto &objects_in_sliding_bar =
-      getObjectsPerSlidingBar(sliding_bar_idx);
+  for (auto graph_idx = 0; graph_idx < amount_of_sliding_bars; ++graph_idx) {
+    auto &graph = graphs_[graph_idx];
+    graph.addArc(
+      ArcEndpoints {.origin_id = 0, .destination_id = amount_of_objects - 1}, 0
+    );
+    const auto &objects_in_sliding_bar = getObjectsPerSlidingBar(graph_idx);
     for (const auto &origin_id : objects_in_sliding_bar) {
-      graph.addArc(0, origin_id, getTimeToProcess(0, origin_id));
       graph.addArc(
-        origin_id, amount_of_objects - 1,
-        getTimeToProcess(origin_id, amount_of_objects - 1)
+        ArcEndpoints {.origin_id = 0, .destination_id = origin_id},
+        getTimeToProcess({0, origin_id})
+      );
+      graph.addArc(
+        ArcEndpoints {
+          .origin_id = origin_id, .destination_id = amount_of_objects - 1
+        },
+        getTimeToProcess({origin_id, amount_of_objects - 1})
       );
       for (const auto &destination_id : objects_in_sliding_bar) {
         if (origin_id != destination_id) {
           graph.addArc(
-            origin_id, destination_id,
-            getTimeToProcess(origin_id, destination_id)
+            ArcEndpoints {
+              .origin_id = origin_id, .destination_id = destination_id
+            },
+            getTimeToProcess({origin_id, destination_id})
           );
         }
       }

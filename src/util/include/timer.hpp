@@ -1,5 +1,30 @@
-#ifndef TIMER_HPP
-#define TIMER_HPP
+// clang-format off
+/**
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
+ *
+ * @file timer.hpp
+ * @author Gian Luis Bolivar Diana
+ * @version 1.0.0
+ * @date April 14, 2024
+ * @copyright Copyright (c) 2024
+ *
+ * @brief File containing the description and implementation of a basic timer to
+ * measure elapsed time.
+ * It uses the C++ standard library chrono to measure in a simple and efficient
+ * way.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
+ * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
+ */
+// clang-format on
+
+#ifndef TIMER_HPP_
+#define TIMER_HPP_
 
 #include <chrono>
 
@@ -44,4 +69,4 @@ class Timer {
   }
 };
 
-#endif  // TIMER_HPP
+#endif  // TIMER_HPP_

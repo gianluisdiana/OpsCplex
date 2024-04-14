@@ -22,8 +22,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_OPS_INSTANCE_HPP_
-#define _EMIR_OPS_INSTANCE_HPP_
+#ifndef EMIR_OPS_INSTANCE_HPP_
+#define EMIR_OPS_INSTANCE_HPP_
 
 #include <string>
 
@@ -65,7 +65,7 @@ class OpsInstance {
    * @param sliding_bar_idx The index of the sliding bar
    * @return The objects that can be observed by the sliding bar selected
    */
-  [[nodiscard]] const std::vector<int> &
+  [[nodiscard]] const std::vector<unsigned int> &
   getObjectsPerSlidingBar(const std::size_t sliding_bar_idx) const {
     return objects_per_sliding_bar_[sliding_bar_idx];
   }
@@ -89,13 +89,11 @@ class OpsInstance {
    * @brief Get the time spent to process the object 'origin' and go to the
    * object 'destiny'
    *
-   * @param origin_idx The index of the origin node
-   * @param destiny_idx The index of the destiny node
+   * @param indexes The indexes of the origin and destiny objects
    */
-  [[nodiscard]] int getTimeToProcess(
-    const std::size_t origin_idx, const std::size_t destiny_idx
-  ) const {
-    return time_to_process_(origin_idx, destiny_idx);
+  [[nodiscard]] int
+  getTimeToProcess(std::pair<std::size_t, std::size_t> indexes) const {
+    return time_to_process_(indexes);
   }
 
   /** @brief Gives read-only access to the scaling factor */
@@ -128,10 +126,10 @@ class OpsInstance {
   // -------------------- Mathematical model attributes -------------------- //
 
   // Objects that can be observed by the 'k' sliding bar
-  std::vector<std::vector<int>> objects_per_sliding_bar_;
+  std::vector<std::vector<unsigned int>> objects_per_sliding_bar_;
   // Necessary sliding bars to observe the object 'j' (inverse of
   // objects_per_sliding_bar_)
-  std::vector<std::vector<int>> sliding_bars_per_object_;
+  std::vector<std::vector<unsigned int>> sliding_bars_per_object_;
   // Time matrix to represent the time spent to process the object 'i'
   // and go to the object 'j'
   Matrix<int> time_to_process_;
@@ -163,4 +161,4 @@ class OpsInstance {
 
 }  // namespace emir
 
-#endif  // _EMIR_OPS_INSTANCE_HPP_
+#endif  // EMIR_OPS_INSTANCE_HPP_

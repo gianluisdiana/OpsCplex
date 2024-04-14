@@ -21,8 +21,8 @@
  */
 // clang-format on
 
-#ifndef _FUNCTIONS_HPP_
-#define _FUNCTIONS_HPP_
+#ifndef FUNCTIONS_HPP_
+#define FUNCTIONS_HPP_
 
 #include <ctime>
 #include <fstream>
@@ -90,4 +90,4 @@ bool isEqual(
   return std::abs(first_number - second_number) < tolerance;
 }
 
-#endif  // _FUNCTIONS_HPP_
+#endif  // FUNCTIONS_HPP_

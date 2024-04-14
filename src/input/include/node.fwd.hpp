@@ -22,8 +22,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_NODE_FWD_HPP_
-#define _EMIR_NODE_FWD_HPP_
+#ifndef EMIR_NODE_FWD_HPP_
+#define EMIR_NODE_FWD_HPP_
 
 namespace emir {
 
@@ -32,4 +32,4 @@ class Node;
 
 }  // namespace emir
 
-#endif  // _EMIR_NODE_FWD_HPP_
+#endif  // EMIR_NODE_FWD_HPP_

@@ -33,6 +33,7 @@
 #include <vector>
 
 #include <functions.hpp>
+#include <graph.hpp>
 #include <ops_error.hpp>
 #include <ops_input.hpp>
 #include <ops_output.hpp>
@@ -44,8 +45,8 @@ const double OpsOutput::kMaxTimeMargin = 1e-2;
 OpsOutput::OpsOutput(const OpsInput &input) :
   input_(std::make_unique<OpsInput>(input)),
   used_arcs_(
-    input.getAmountOfObjects() * input.getAmountOfSlidingBars(),
-    input.getAmountOfObjects()
+    {input.getAmountOfObjects() * input.getAmountOfSlidingBars(),
+     input.getAmountOfObjects()}
   ),
   observed_objects_(input.getAmountOfObjects(), false),
   time_at_objects_(input.getAmountOfObjects(), 0) {}
@@ -58,8 +59,9 @@ OpsOutput::OpsOutput(const OpsOutput &output) {
 
 void OpsOutput::setUsedArcs(const std::vector<double> &used_arcs) {
   used_arcs_.init(false);
-  for (int k = 0; k < input_->getAmountOfSlidingBars(); ++k) {
-    const auto &graph = input_->getGraph(k);
+  for (int graph_idx = 0; graph_idx < input_->getAmountOfSlidingBars();
+       ++graph_idx) {
+    const auto &graph = input_->getGraph(graph_idx);
     for (const auto &arc : graph.getArcs()) {
       const double value = std::round(used_arcs[arc.getId()]);
       if (!isEqual(value, 0.0) && !isEqual(value, 1.0)) {
@@ -68,9 +70,10 @@ void OpsOutput::setUsedArcs(const std::vector<double> &used_arcs) {
         );
       }
       if (isEqual(value, 0.0)) { continue; }
-      const auto origin_id = arc.getOriginId();
-      const auto destination_id = arc.getDestinationId();
-      getUsedArc(k, origin_id, destination_id) = true;
+      const ArcEndpoints arc_endpoints {
+        .origin_id = arc.getOriginId(), .destination_id = arc.getDestinationId()
+      };
+      getUsedArc(graph_idx, arc_endpoints) = true;
     }
   }
 }
@@ -143,20 +146,21 @@ long OpsOutput::getTotalProfit() const {
 // ---------------------------- Utility Methods ---------------------------- //
 
 std::pair<std::vector<int>, std::vector<int>>
-OpsOutput::countArrivesAndDepartures(
-  std::size_t amount_of_objects, std::size_t amount_of_sliding_bars
-) const {
+OpsOutput::countArrivesAndDepartures() const {
+  const auto amount_of_objects = input_->getAmountOfObjects();
+  const auto amount_of_sliding_bars = input_->getAmountOfSlidingBars();
   std::vector<int> amount_of_arrives(amount_of_objects, 0);
   std::vector<int> amount_of_departures(amount_of_objects, 0);
 
-  for (int k = 0; k < amount_of_sliding_bars; k++) {
-    const auto &graph = input_->getGraph(k);
+  for (int graph_idx = 0; graph_idx < amount_of_sliding_bars; ++graph_idx) {
+    const auto &graph = input_->getGraph(graph_idx);
     for (const auto &arc : graph.getArcs()) {
-      const auto &origin_id = arc.getOriginId();
-      const auto &destination_id = arc.getDestinationId();
-      if (getUsedArc(k, origin_id, destination_id)) {
-        amount_of_arrives[destination_id]++;
-        amount_of_departures[origin_id]++;
+      const ArcEndpoints arc_endpoints {
+        .origin_id = arc.getOriginId(), .destination_id = arc.getDestinationId()
+      };
+      if (arcWasUsed(graph_idx, arc_endpoints)) {
+        amount_of_arrives[arc_endpoints.destination_id]++;
+        amount_of_departures[arc_endpoints.origin_id]++;
       }
     }
   }
@@ -173,8 +177,8 @@ void OpsOutput::check() const {
 void OpsOutput::checkArcs() const {
   const auto amount_of_objects = input_->getAmountOfObjects();
   const auto amount_of_sliding_bars = input_->getAmountOfSlidingBars();
-  auto [amount_of_arrives, amount_of_departures] =
-    countArrivesAndDepartures(amount_of_objects, amount_of_sliding_bars);
+  const auto [amount_of_arrives, amount_of_departures] =
+    countArrivesAndDepartures();
 
   if (amount_of_departures[0] != amount_of_sliding_bars) {
     throw OpsError(

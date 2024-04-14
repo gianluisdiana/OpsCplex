@@ -23,8 +23,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_OPS_OUTPUT_HPP_
-#define _EMIR_OPS_OUTPUT_HPP_
+#ifndef EMIR_OPS_OUTPUT_HPP_
+#define EMIR_OPS_OUTPUT_HPP_
 
 #include <memory>
 
@@ -132,36 +132,31 @@ class OpsOutput {
   /**
    * @brief Gives read-write access to the used arc in the given position.
    *
-   * @param sliding_bar_idx The index of the graph.
-   * @param origin_idx The origin of the arc.
-   * @param destination_idx The destination of the arc.
+   * @param graph_idx The index of the graph.
+   * @param arc_endpoints The origin and destination of the arc.
    * @return A reference to whether the arc is used or not.
    */
-  [[nodiscard]] Matrix<bool>::reference getUsedArc(
-    const unsigned int sliding_bar_idx, const unsigned int origin_idx,
-    const unsigned int destination_idx
-  ) {
+  [[nodiscard]] Matrix<bool>::reference
+  getUsedArc(const unsigned int graph_idx, const ArcEndpoints arc_endpoints) {
     return used_arcs_(
-      sliding_bar_idx * input_->getAmountOfObjects() + origin_idx,
-      destination_idx
+      {graph_idx * input_->getAmountOfObjects() + arc_endpoints.origin_id,
+       arc_endpoints.destination_id}
     );
   }
 
   /**
    * @brief Gives read-only access to the used arc in the given position.
    *
-   * @param sliding_bar_idx The index of the graph.
-   * @param origin_idx The origin of the arc.
-   * @param destination_idx The destination of the arc.
+   * @param graph_idx The index of the graph.
+   * @param arc_endpoints The origin and destination of the arc.
    * @return A constant reference to whether the arc is used or not.
    */
-  [[nodiscard]] Matrix<bool>::const_reference getUsedArc(
-    const unsigned int sliding_bar_idx, const unsigned int origin_idx,
-    const unsigned int destination_idx
+  [[nodiscard]] Matrix<bool>::const_reference arcWasUsed(
+    const unsigned int graph_idx, const ArcEndpoints arc_endpoints
   ) const {
     return used_arcs_(
-      sliding_bar_idx * input_->getAmountOfObjects() + origin_idx,
-      destination_idx
+      {graph_idx * input_->getAmountOfObjects() + arc_endpoints.origin_id,
+       arc_endpoints.destination_id}
     );
   }
 
@@ -179,15 +174,11 @@ class OpsOutput {
   /**
    * @brief Count the number of arrival and departure arcs of each node.
    *
-   * @param amount_of_objects The amount of objects in the problem.
-   * @param amount_of_sliding_bars The amount of sliding bars in the problem.
    * @return A pair with the amount of arrival and departure arcs of each node,
    * in that order.
    */
   [[nodiscard]] std::pair<std::vector<int>, std::vector<int>>
-  countArrivesAndDepartures(
-    std::size_t amount_of_objects, std::size_t amount_of_sliding_bars
-  ) const;
+  countArrivesAndDepartures() const;
 
   // ------------------------------- Checks ------------------------------- //
 
@@ -217,4 +208,4 @@ class OpsOutput {
 
 }  // namespace emir
 
-#endif  // _EMIR_OPS_OUTPUT_HPP_
+#endif  // EMIR_OPS_OUTPUT_HPP_

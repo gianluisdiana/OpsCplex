@@ -96,10 +96,10 @@ void OpsCplexSolver::addYVariable() {
 
 void OpsCplexSolver::addSVariable() {
   const auto &input = getInput();
-  for (int j = 0; j < input.getAmountOfObjects(); j++) {
+  for (int node_idx = 0; node_idx < input.getAmountOfObjects(); ++node_idx) {
     time_at_objects_.add(IloNumVar(
       environment_, 0, IloInfinity, IloNumVar::Float,
-      std::format("s_{}", j).c_str()
+      std::format("s_{}", node_idx).c_str()
     ));
   }
   model_.add(time_at_objects_);
@@ -199,7 +199,7 @@ void OpsCplexSolver::addMTZConstraints(IloRangeArray &constraints) {
                    time_at_objects_[destination_id];
       constraints.add(IloRange(
         environment_, -IloInfinity, expression,
-        BIG_M - input.getTimeToProcess(origin_id, destination_id),
+        BIG_M - input.getTimeToProcess({origin_id, destination_id}),
         std::format("MTZ_{}_{}_{}", k + 1, origin_id, destination_id).c_str()
       ));
       expression.end();

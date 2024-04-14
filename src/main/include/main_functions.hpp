@@ -23,8 +23,8 @@
  */
 // clang-format on
 
-#ifndef _MAIN_FUNCTIONS_HPP_
-#define _MAIN_FUNCTIONS_HPP_
+#ifndef MAIN_FUNCTIONS_HPP_
+#define MAIN_FUNCTIONS_HPP_
 
 #include <string>
 
@@ -69,4 +69,4 @@ void processModelType(const std::string &model_type, double tolerance);
  */
 void processFile(const std::string &input_path, double tolerance);
 
-#endif  // _MAIN_FUNCTIONS_HPP_
+#endif  // MAIN_FUNCTIONS_HPP_

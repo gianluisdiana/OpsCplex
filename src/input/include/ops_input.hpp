@@ -23,8 +23,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_OPS_INPUT_HPP_
-#define _EMIR_OPS_INPUT_HPP_
+#ifndef EMIR_OPS_INPUT_HPP_
+#define EMIR_OPS_INPUT_HPP_
 
 #include <graph.hpp>
 #include <ops_instance.hpp>
@@ -54,11 +54,11 @@ class OpsInput : public OpsInstance {
   /**
    * @brief Gets the graph that belongs to the k-th sliding bar.
    *
-   * @param sliding_bar_index The index of the sliding bar
+   * @param graph_idx The index of the sliding bar
    * @return The graph that belongs to the k-th sliding bar
    */
-  [[nodiscard]] const Graph &getGraph(const int sliding_bar_index) const {
-    return graphs_[sliding_bar_index];
+  [[nodiscard]] const Graph &getGraph(const int graph_idx) const {
+    return graphs_[graph_idx];
   }
 
   /** @brief Gets the maximum cost of any arc in the graph */
@@ -114,4 +114,4 @@ class OpsInput : public OpsInstance {
 
 }  // namespace emir
 
-#endif  // _EMIR_OPS_INPUT_HPP_
+#endif  // EMIR_OPS_INPUT_HPP_

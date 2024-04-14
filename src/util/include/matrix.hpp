@@ -22,10 +22,11 @@
  */
 // clang-format on
 
-#ifndef _MATRIX_HPP_
-#define _MATRIX_HPP_
+#ifndef MATRIX_HPP_
+#define MATRIX_HPP_
 
 #include <iostream>
+#include <utility>
 #include <vector>
 
 /**
@@ -136,10 +137,10 @@ class Matrix {
   /**
    * @brief Empty constructor, only reserve the size of the matrix
    *
-   * @param rows_amount The amount of rows the matrix will have
-   * @param cols_amount The amount of columns the matrix will have
+   * @param size The size of the matrix. The first element is the amount of rows
+   * and the second element is the amount of columns.
    */
-  explicit Matrix(std::size_t rows_amount = 1, std::size_t cols_amount = 1);
+  explicit Matrix(std::pair<std::size_t, std::size_t> size = {1, 1});
 
   /**
    * @brief Initialize the matrix with an bidimensional array of the type.
@@ -177,10 +178,10 @@ class Matrix {
   /**
    * @brief Resize the matrix with the given amount of rows and columns.
    *
-   * @param rows_amount The amount of rows the matrix will have.
-   * @param cols_amount The amount of columns the matrix will have.
+   * @param size The new size of the matrix. The first element is the amount of
+   * rows and the second element is the amount of columns.
    */
-  void resize(std::size_t rows_amount, std::size_t cols_amount);
+  void resize(std::pair<std::size_t, std::size_t> size);
 
   // --------------------------- Data management --------------------------- //
 
@@ -242,26 +243,26 @@ class Matrix {
    * @brief Overload of the () operator to give write access to the element in
    * the given row and column index.
    *
-   * @param row_index The index of the row to access.
-   * @param col_index The index of the col to access.
+   * @param coords The pair containing the row and column index (in that order)
+   * to access.
    * @returns The element placed in the given row and column index.
    */
   [[nodiscard]] reference
-  operator()(const std::size_t row_index, const std::size_t col_index) {
-    return data_[row_index][col_index];
+  operator()(const std::pair<std::size_t, std::size_t> coords) {
+    return data_[coords.first][coords.second];
   }
 
   /**
    * @brief Overload of the () operator to give read access to the element in
    * the given row and column index.
    *
-   * @param row_index The index of the row to access.
-   * @param col_index The index of the col to access.
+   * @param coords The pair containing the row and column index (in that order)
+   * to access.
    * @returns The element placed in the given row and column index.
    */
   [[nodiscard]] const_reference
-  operator()(const std::size_t row_index, const std::size_t col_index) const {
-    return data_[row_index][col_index];
+  operator()(const std::pair<std::size_t, std::size_t> coords) const {
+    return data_[coords.first][coords.second];
   }
 
   /**
@@ -300,9 +301,8 @@ class Matrix {
 };
 
 template <typename T>
-Matrix<T>::Matrix(
-  const std::size_t rows_amount, const std::size_t cols_amount
-) : rows_amount_ {rows_amount}, cols_amount_ {cols_amount} {
+Matrix<T>::Matrix(const std::pair<std::size_t, std::size_t> size) :
+  rows_amount_ {size.first}, cols_amount_ {size.second} {
   resize();
 }
 
@@ -316,11 +316,8 @@ Matrix<T>::Matrix(T (&matrix)[rows_amount][cols_amount]) :
 }
 
 template <typename T>
-void Matrix<T>::resize(
-  const std::size_t rows_amount, const std::size_t cols_amount
-) {
-  rows_amount_ = rows_amount;
-  cols_amount_ = cols_amount;
+void Matrix<T>::resize(const std::pair<std::size_t, std::size_t> size) {
+  std::tie(rows_amount_, cols_amount_) = size;
   resize();
 }
 
@@ -351,4 +348,4 @@ void Matrix<T>::resize() {
   for (auto &row : data_) { row.resize(cols_amount_); }
 }
 
-#endif  // _MATRIX_HPP_
+#endif  // MATRIX_HPP_

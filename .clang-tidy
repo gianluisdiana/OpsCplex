@@ -13,6 +13,7 @@ Checks:
   performance-*,
   portability-*,
   readability-*,
+HeaderFilterRegex: '/src/.*'
 FormatStyle: file
 UseColor: true
 User: gianluisdiana

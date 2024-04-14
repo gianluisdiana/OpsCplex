@@ -55,7 +55,7 @@ void OpsInstance::setFromJson(const nlohmann::json &json_instance) {
   type_ = json_instance["type"].get<int>();
   priorities_ = json_instance["b"].get<std::vector<int>>();
   objects_per_sliding_bar_ =
-    json_instance["Jk"].get<std::vector<std::vector<int>>>();
+    json_instance["Jk"].get<std::vector<std::vector<unsigned int>>>();
   resetSlidingBarsPerObject();
   alpha_ = json_instance["alpha"].get<double>();
   time_limit_ = json_instance["L"].get<int>();

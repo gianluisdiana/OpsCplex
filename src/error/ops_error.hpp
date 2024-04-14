@@ -24,8 +24,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_OPS_ERROR_HPP_
-#define _EMIR_OPS_ERROR_HPP_
+#ifndef EMIR_OPS_ERROR_HPP_
+#define EMIR_OPS_ERROR_HPP_
 
 #include <exception>
 #include <format>
@@ -62,4 +62,4 @@ class OpsError : public std::exception {
 
 }  // namespace emir
 
-#endif  // _EMIR_OPS_ERROR_HPP_
+#endif  // EMIR_OPS_ERROR_HPP_

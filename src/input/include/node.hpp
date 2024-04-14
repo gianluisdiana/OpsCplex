@@ -24,8 +24,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_NODE_HPP_
-#define _EMIR_NODE_HPP_
+#ifndef EMIR_NODE_HPP_
+#define EMIR_NODE_HPP_
 
 #include <map>
 #include <memory>
@@ -125,4 +125,4 @@ class Node {
 
 }  // namespace emir
 
-#endif  // _EMIR_NODE_HPP_
+#endif  // EMIR_NODE_HPP_

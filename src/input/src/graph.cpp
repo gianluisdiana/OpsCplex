@@ -46,11 +46,9 @@ std::vector<unsigned int> Graph::getNodesId() const {
 
 // -------------------------------- Adders -------------------------------- //
 
-void Graph::addArc(
-  const unsigned int from_id, const unsigned int to_id, const int cost
-) {
-  const auto &from_node = searchNode(from_id);
-  const auto &to_node = searchNode(to_id);
+void Graph::addArc(const ArcEndpoints end_points, const int cost) {
+  const auto &from_node = searchNode(end_points.origin_id);
+  const auto &to_node = searchNode(end_points.destination_id);
   arcs_.emplace_back(from_node, cost, to_node);
 }
 

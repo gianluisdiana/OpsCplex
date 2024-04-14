@@ -22,8 +22,8 @@
  */
 // clang-format on
 
-#ifndef _LOCAL_TYPE_TRAITS_HPP_
-#define _LOCAL_TYPE_TRAITS_HPP_
+#ifndef LOCAL_TYPE_TRAITS_HPP_
+#define LOCAL_TYPE_TRAITS_HPP_
 
 #include <chrono>
 
@@ -128,4 +128,4 @@ struct is_time_unit {
 template <typename T>
 constexpr const bool is_time_unit_v = is_time_unit<T>::value;
 
-#endif  // _LOCAL_TYPE_TRAITS_HPP_
+#endif  // LOCAL_TYPE_TRAITS_HPP_

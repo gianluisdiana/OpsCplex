@@ -24,8 +24,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_OPS_SOLVER_HPP_
-#define _EMIR_OPS_SOLVER_HPP_
+#ifndef EMIR_OPS_SOLVER_HPP_
+#define EMIR_OPS_SOLVER_HPP_
 
 #include <local_type_traits.hpp>
 #include <ops_output.hpp>
@@ -155,4 +155,4 @@ class OpsSolver {
 
 }  // namespace emir
 
-#endif  // _EMIR_OPS_SOLVER_HPP_
+#endif  // EMIR_OPS_SOLVER_HPP_

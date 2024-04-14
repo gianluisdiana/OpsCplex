@@ -23,8 +23,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_ARC_HPP_
-#define _EMIR_ARC_HPP_
+#ifndef EMIR_ARC_HPP_
+#define EMIR_ARC_HPP_
 
 #include <memory>
 
@@ -85,4 +85,4 @@ class Arc {
 
 }  // namespace emir
 
-#endif  // _EMIR_ARC_HPP_
+#endif  // EMIR_ARC_HPP_

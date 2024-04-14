@@ -23,8 +23,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_GRAPH_HPP_
-#define _EMIR_GRAPH_HPP_
+#ifndef EMIR_GRAPH_HPP_
+#define EMIR_GRAPH_HPP_
 
 #include <ranges>
 
@@ -32,6 +32,16 @@
 #include <node.hpp>
 
 namespace emir {
+
+// ASK: Should I put the struct ArcEndpoints in some section of the class?
+// ASK: The struct should be in the same file as the class?
+/** @brief Represents the endpoints of an arc */
+struct ArcEndpoints {
+  // Id of the origin node
+  unsigned int origin_id;
+  // Id of the destination node
+  unsigned int destination_id;
+};
 
 /** @brief Represents a digraph */
 class Graph {
@@ -42,10 +52,13 @@ class Graph {
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the ids of the nodes of the graph */
+  // TODO: Ask if I should put the return type as:
   // std::ranges::elements_view<
   //   std::ranges::ref_view<
   //     const std::map<unsigned int, std::shared_ptr<emir::Node>>>,
   //   0UL>
+  // or:
+  // auto getNodesId() const -> decltype(std::views::keys(nodes_));
   [[nodiscard]] std::vector<unsigned int> getNodesId() const;
 
   /** @brief Gets the arcs of the graph */
@@ -83,11 +96,10 @@ class Graph {
   /**
    * @brief Adds a new arc to the graph
    *
-   * @param from_id Id of the origin node
-   * @param to_id Id of the destination node
+   * @param arc_endpoints Endpoints of the arc.
    * @param cost Cost of the arc
    */
-  void addArc(unsigned int from_id, unsigned int to_id, int cost);
+  void addArc(ArcEndpoints end_points, int cost);
 
  private:
   // ----------------------------- Attributes ------------------------------ //
@@ -111,4 +123,4 @@ class Graph {
 
 }  // namespace emir
 
-#endif  // _EMIR_GRAPH_HPP_
+#endif  // EMIR_GRAPH_HPP_
