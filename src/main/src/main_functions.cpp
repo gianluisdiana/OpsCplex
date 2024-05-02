@@ -76,7 +76,7 @@ input_parser::Parser createParser() {
     .addOption([] {
       return input_parser::SingleOption("-t", "--tolerance")
         .addDescription("Tolerance for the solver")
-        .addDefaultValue("1e-4")
+        .addDefaultValue(std::string("1e-4"))
         .toDouble()
         .transformBeforeCheck()
         .addConstraint<double>(
