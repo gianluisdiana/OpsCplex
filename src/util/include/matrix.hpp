@@ -183,6 +183,13 @@ class Matrix {
    */
   void resize(std::pair<std::size_t, std::size_t> size);
 
+  /**
+   * @brief Resize the matrix with the given size, making it a square matrix.
+   *
+   * @param size The new size of the matrix.
+   */
+  void resize(std::size_t size);
+
   // --------------------------- Data management --------------------------- //
 
   /**
@@ -318,6 +325,12 @@ Matrix<T>::Matrix(T (&matrix)[rows_amount][cols_amount]) :
 template <typename T>
 void Matrix<T>::resize(const std::pair<std::size_t, std::size_t> size) {
   std::tie(rows_amount_, cols_amount_) = size;
+  resize();
+}
+
+template <typename T>
+void Matrix<T>::resize(const std::size_t size) {
+  rows_amount_ = cols_amount_ = size;
   resize();
 }
 
