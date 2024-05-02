@@ -29,8 +29,12 @@ jobs:
 
     - name: Install clang-format
       run: |
+        sudo wget https://apt.llvm.org/llvm.sh
+        sudo chmod +x llvm.sh;
+        sudo ./llvm.sh 19;
         sudo apt-get update
-        sudo apt-get install -y clang-format-19
+        sudo apt update
+        sudo apt install -y clang-format-19
 
     - name: Format code
       run: |
