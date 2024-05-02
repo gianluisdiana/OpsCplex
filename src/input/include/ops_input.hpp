@@ -23,18 +23,28 @@
  */
 // clang-format on
 
+#ifndef EMIR_OPS_INPUT_HPP_
+#define EMIR_OPS_INPUT_HPP_
+
 #include <graph.hpp>
 #include <ops_instance.hpp>
-#include <stats.hpp>
 
 namespace emir {
 
-/** @brief Represents a OPS instance with the data structures needed to
- * represent the math model and the graphs */
+/**
+ * @brief Represents a OPS instance with the data structures needed to represent
+ * the math model and the graphs.
+ */
 class OpsInput : public OpsInstance {
  public:
   /** @brief Construct an empty input instance. */
-  OpsInput();
+  OpsInput() = default;
+
+  /** @brief Copies the input instance */
+  OpsInput(const OpsInput &) = default;
+
+  /** @brief Moves the input instance */
+  OpsInput(OpsInput &&) = default;
 
   /** @brief Resets the arc id counter. */
   ~OpsInput();
@@ -44,50 +54,52 @@ class OpsInput : public OpsInstance {
   /**
    * @brief Gets the graph that belongs to the k-th sliding bar.
    *
-   * @param sliding_bar_index The index of the sliding bar
+   * @param graph_idx The index of the sliding bar
    * @return The graph that belongs to the k-th sliding bar
    */
-  inline const Graph &getGraph(const int sliding_bar_index) const {
-    return graphs_[sliding_bar_index];
+  [[nodiscard]] const Graph &getGraph(const int graph_idx) const {
+    return graphs_[graph_idx];
   }
 
   /** @brief Gets the maximum cost of any arc in the graph */
-  unsigned int getMaxArc() const;
-
-  // ---------------------------- Stats Getters ---------------------------- //
-
-  // TODO: ERASE
-  const std::string getStatistics() const;
-
-  inline const std::string getStatisticsHdr() const {
-    return /*OpsInput::getStatisticsHdr()*/
-      "$n$\t$m$\t$\\max|J_k|$\t$\\bar{|J_k|}$\tnsync\t"
-      "$\\max\\partial\\mbox{sync}$\t$\\bar{\\partial\\mbox{sync}$\t$L$\t";
-  }
+  [[nodiscard]] unsigned int getMaxArc() const;
 
   // ------------------------------ Operators ------------------------------ //
+
+  /**
+   * @brief Overload of the = operator to copy the input instance.
+   *
+   * @param[in] unused The input instance to copy
+   * @return The copied input instance
+   */
+  OpsInput &operator=(const OpsInput &) = default;
+
+  /**
+   * @brief Overload of the = operator to move the input instance.
+   *
+   * @param[in] Unused The input instance to move
+   * @return The moved input instance
+   */
+  OpsInput &operator=(OpsInput &&) = default;
 
   /**
    * @brief Overload of the >> operator to read an input from a json file.
    * Calls OpsInstance::operator>> and then builds the input.
    *
-   * @param is Represents the inflow
+   * @param input_stream Represents the inflow
    * @param ops_input The OPS input to read from the inflow
    * @return The inflow with the input read
    */
-  friend std::istream &operator>>(std::istream &is, OpsInput &ops_input);
+  friend std::istream &
+  operator>>(std::istream &input_stream, OpsInput &ops_input);
 
  private:
-  // ----------------------------------------------------------------------- //
   // ----------------------------- Attributes ------------------------------ //
-  // ----------------------------------------------------------------------- //
 
   // Graphs with the arcs that can be reached in the k-th sliding bar
   std::vector<Graph> graphs_;
 
-  // ----------------------------------------------------------------------- //
   // ------------------------------- Methods ------------------------------- //
-  // ----------------------------------------------------------------------- //
 
   /**
    * @brief Creates the arcs for each sliding bar, adding to each graph only the
@@ -98,29 +110,8 @@ class OpsInput : public OpsInstance {
    * - No node can go to itself.
    */
   void createGraphArcs();
-
-  // ---------------------- Private Statistics Getters ---------------------- //
-
-  /**
-   * @brief Gets statistics about the graph. Specifically:
-   * - The amount of objects that can be reached in by any sliding bar
-   * - The maximum amount of bars needed to reach an object
-   * - The minimum amount of bars needed to reach an object
-   * - The average amount of bars needed to reach an object
-   *
-   * @return The statistics described above.
-   */
-  const Stats getBarsStats() const;
-
-  /**
-   * @brief Gets statistics about the graph. Specifically:
-   * - The maximum amount of nodes reached by a sliding bar
-   * - The minimum amount of nodes reached by a sliding bar
-   * - The average amount of nodes reached by the sliding bars
-   *
-   * @return The statistics described above.
-   */
-  const Stats getNodesStats() const;
 };
 
 }  // namespace emir
+
+#endif  // EMIR_OPS_INPUT_HPP_

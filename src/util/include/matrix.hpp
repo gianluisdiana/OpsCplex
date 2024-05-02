@@ -1,23 +1,33 @@
+// clang-format off
 /**
- * @author Gian Luis Bolivar Diana (gianluisbolivar1@gmail.com)
- * @date November 7, 2022
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
  *
  * @file matrix.hpp
- * @version 0.2
- * @brief
- *
- *
+ * @author Gian Luis Bolivar Diana
+ * @version 1.0.0
+ * @date April 10, 2024
  * @copyright Copyright (c) 2024
  *
+ * @brief File containing the description of a bidimensional array class.
+ * It implements the basic operations of a matrix like resize, access to the
+ * elements, and iterators.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
+ * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
  */
+// clang-format on
 
-#ifndef _MATRIX_HPP_
-#define _MATRIX_HPP_
+#ifndef MATRIX_HPP_
+#define MATRIX_HPP_
 
 #include <iostream>
+#include <utility>
 #include <vector>
-
-#include <json_interface.hpp>
 
 /**
  * @brief Represents a bidimensional array
@@ -25,18 +35,22 @@
  * @tparam T The data type contained in the matrix.
  */
 template <typename T>
-class Matrix : public JsonInterface {
+class Matrix {
  public:
+  // --------------------------- Type definitions -------------------------- //
+
+  using difference_type = typename std::vector<T>::difference_type;
+  using value_type = typename std::vector<T>::value_type;
+  using pointer = typename std::vector<T>::pointer;
+  using reference = typename std::vector<T>::reference;
+  using const_reference = typename std::vector<T>::const_reference;
+
+  using iterator = typename std::vector<int>::iterator;
+  using vector_iterator = typename std::vector<std::vector<T>>::iterator;
+
   /** @brief Represents an iterator for the matrix. */
   struct Iterator {
     using iterator_category = std::forward_iterator_tag;
-    using difference_type = typename std::vector<T>::difference_type;
-    using value_type = typename std::vector<T>::value_type;
-    using pointer = typename std::vector<T>::pointer;
-    using reference = typename std::vector<T>::reference;
-
-    using iterator = typename std::vector<T>::iterator;
-    using vector_iterator = typename std::vector<std::vector<T>>::iterator;
 
    private:
     vector_iterator start_, sentinel_;
@@ -123,10 +137,10 @@ class Matrix : public JsonInterface {
   /**
    * @brief Empty constructor, only reserve the size of the matrix
    *
-   * @param rows_amount The amount of rows the matrix will have
-   * @param cols_amount The amount of columns the matrix will have
+   * @param size The size of the matrix. The first element is the amount of rows
+   * and the second element is the amount of columns.
    */
-  Matrix(const std::size_t rows_amount = 1, const std::size_t cols_amount = 1);
+  explicit Matrix(std::pair<std::size_t, std::size_t> size = {1, 1});
 
   /**
    * @brief Initialize the matrix with an bidimensional array of the type.
@@ -136,12 +150,17 @@ class Matrix : public JsonInterface {
    * @param matrix The bidimensional array to get the data from.
    */
   template <std::size_t rows_amount, std::size_t cols_amount>
-  Matrix(T (&matrix)[rows_amount][cols_amount]);
+  explicit Matrix(T (&matrix)[rows_amount][cols_amount]);
+
+  /** @brief Returns the data stored in the matrix. */
+  [[nodiscard]] const std::vector<std::vector<T>> &data() const {
+    return data_;
+  }
 
   // ------------------------------- Capacity ------------------------------ //
 
   /** @brief Checks if the matrix is empty. */
-  inline bool empty() const {
+  [[nodiscard]] bool empty() const {
     return data_.empty() || data_[0].empty();
   }
 
@@ -150,7 +169,7 @@ class Matrix : public JsonInterface {
    *
    * @return A pair containing the number of rows and columns in the matrix.
    */
-  inline const std::pair<std::size_t, std::size_t> size() const {
+  [[nodiscard]] std::pair<std::size_t, std::size_t> size() const {
     return {rows_amount_, cols_amount_};
   }
 
@@ -159,14 +178,17 @@ class Matrix : public JsonInterface {
   /**
    * @brief Resize the matrix with the given amount of rows and columns.
    *
-   * @param rows_amount The amount of rows the matrix will have.
-   * @param cols_amount The amount of columns the matrix will have.
+   * @param size The new size of the matrix. The first element is the amount of
+   * rows and the second element is the amount of columns.
    */
-  void resize(const std::size_t rows_amount, const std::size_t cols_amount) {
-    rows_amount_ = rows_amount;
-    cols_amount_ = cols_amount;
-    resize();
-  }
+  void resize(std::pair<std::size_t, std::size_t> size);
+
+  /**
+   * @brief Resize the matrix with the given size, making it a square matrix.
+   *
+   * @param size The new size of the matrix.
+   */
+  void resize(std::size_t size);
 
   // --------------------------- Data management --------------------------- //
 
@@ -176,7 +198,7 @@ class Matrix : public JsonInterface {
    * @param data The data to initialize the matrix with.
    */
   void init(const T data) {
-    for (auto &row : data_) row.assign(cols_amount_, data);
+    for (auto &row : data_) { row.assign(cols_amount_, data); }
   }
 
   // ----------------------------- Iterators ------------------------------ //
@@ -186,7 +208,7 @@ class Matrix : public JsonInterface {
    *
    * @returns The begin iterator of the matrix.
    */
-  inline Iterator begin() {
+  [[nodiscard]] Iterator begin() {
     return Iterator(data_.begin(), data_.end());
   }
 
@@ -195,7 +217,7 @@ class Matrix : public JsonInterface {
    *
    * @returns The end iterator of the matrix.
    */
-  inline Iterator end() {
+  [[nodiscard]] Iterator end() {
     return Iterator(data_.end(), data_.end());
   }
 
@@ -208,7 +230,7 @@ class Matrix : public JsonInterface {
    * @param index The index of the row to access.
    * @returns The row selected of the matrix
    */
-  inline std::vector<T> &operator[](const std::size_t index) {
+  [[nodiscard]] std::vector<T> &operator[](const std::size_t index) {
     return data_[index];
   }
 
@@ -219,7 +241,8 @@ class Matrix : public JsonInterface {
    * @param index The index of the row to access.
    * @returns The row selected of the matrix
    */
-  inline const std::vector<T> &operator[](const std::size_t index) const {
+  [[nodiscard]] const std::vector<T> &
+  operator[](const std::size_t index) const {
     return data_[index];
   }
 
@@ -227,54 +250,48 @@ class Matrix : public JsonInterface {
    * @brief Overload of the () operator to give write access to the element in
    * the given row and column index.
    *
-   * @param row_index The index of the row to access.
-   * @param col_index The index of the col to access.
+   * @param coords The pair containing the row and column index (in that order)
+   * to access.
    * @returns The element placed in the given row and column index.
    */
-  inline typename std::vector<T>::reference
-  operator()(const std::size_t row_index, const std::size_t col_index) {
-    return data_[row_index][col_index];
+  [[nodiscard]] reference
+  operator()(const std::pair<std::size_t, std::size_t> coords) {
+    return data_[coords.first][coords.second];
   }
 
   /**
    * @brief Overload of the () operator to give read access to the element in
    * the given row and column index.
    *
-   * @param row_index The index of the row to access.
-   * @param col_index The index of the col to access.
+   * @param coords The pair containing the row and column index (in that order)
+   * to access.
    * @returns The element placed in the given row and column index.
    */
-  inline typename std::vector<T>::const_reference
-  operator()(const std::size_t row_index, const std::size_t col_index) const {
-    return data_[row_index][col_index];
+  [[nodiscard]] const_reference
+  operator()(const std::pair<std::size_t, std::size_t> coords) const {
+    return data_[coords.first][coords.second];
   }
+
+  /**
+   * @brief Overload of the = operator to assign the data of the given matrix to
+   * the current matrix.
+   *
+   * @param matrix The matrix to assign the data from.
+   * @returns The matrix with the data assigned.
+   */
+  Matrix &operator=(const std::vector<std::vector<T>> &matrix);
 
   /**
    * @brief Overload of the << operator to print the matrix.
    *
-   * @param os Represents the outflow.
+   * @param out_stream Represents the outflow.
    * @param matrix The matrix to print.
    * @tparam C The data type stored in the matrix.
    * @return The outflow with the matrix formatted.
    */
   template <typename C>
-  friend std::ostream &operator<<(std::ostream &os, const Matrix<C> &matrix);
-
-  // ----------------------------- Json methods ---------------------------- //
-
-  /**
-   * @brief Get the json representation of the matrix.
-   */
-  inline const nlohmann::json toJson() const override {
-    return nlohmann::json(data_);
-  }
-
-  /**
-   * @brief Set the matrix from a json representation.
-   *
-   * @param json_object The json representation of the matrix.
-   */
-  void setFromJson(const nlohmann::json &json_object) override;
+  friend std::ostream &
+  operator<<(std::ostream &out_stream, const Matrix<C> &matrix);
 
  private:
   // The amount of rows the matrix has
@@ -291,11 +308,8 @@ class Matrix : public JsonInterface {
 };
 
 template <typename T>
-Matrix<T>::Matrix(
-  const std::size_t rows_amount, const std::size_t cols_amount
-) :
-  rows_amount_(rows_amount),
-  cols_amount_(cols_amount), data_(rows_amount) {
+Matrix<T>::Matrix(const std::pair<std::size_t, std::size_t> size) :
+  rows_amount_ {size.first}, cols_amount_ {size.second} {
   resize();
 }
 
@@ -309,29 +323,42 @@ Matrix<T>::Matrix(T (&matrix)[rows_amount][cols_amount]) :
 }
 
 template <typename T>
-void Matrix<T>::resize() {
-  data_.resize(rows_amount_);
-  for (auto &row : data_) row.resize(cols_amount_);
+void Matrix<T>::resize(const std::pair<std::size_t, std::size_t> size) {
+  std::tie(rows_amount_, cols_amount_) = size;
+  resize();
 }
 
 template <typename T>
-void Matrix<T>::setFromJson(const nlohmann::json &json_object) {
-  data_ = json_object.get<std::vector<std::vector<T>>>();
-  rows_amount_ = data_.size();
-  cols_amount_ = data_[0].size();
+void Matrix<T>::resize(const std::size_t size) {
+  rows_amount_ = cols_amount_ = size;
+  resize();
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator=(const std::vector<std::vector<T>> &matrix) {
+  data_ = matrix;
+  rows_amount_ = matrix.size();
+  cols_amount_ = matrix[0].size();
+  return *this;
 }
 
 template <typename C>
-std::ostream &operator<<(std::ostream &os, const Matrix<C> &matrix) {
-  os << "[\n";
+std::ostream &operator<<(std::ostream &out_stream, const Matrix<C> &matrix) {
+  out_stream << "[\n";
   for (const auto &row : matrix.data_) {
-    os << "\t[";
-    for (std::size_t idx = 0; idx < row.size() - 1; ++idx)
-      os << row[idx] << ", ";
-    os << row[row.size() - 1] << "]\n";
+    out_stream << "\t[";
+    for (std::size_t idx = 0; idx < row.size() - 1; ++idx) {
+      out_stream << row[idx] << ", ";
+    }
+    out_stream << row[row.size() - 1] << "]\n";
   }
-  os << "]";
-  return os;
+  return out_stream << "]";
 }
 
-#endif  // _MATRIX_HPP_
+template <typename T>
+void Matrix<T>::resize() {
+  data_.resize(rows_amount_);
+  for (auto &row : data_) { row.resize(cols_amount_); }
+}
+
+#endif  // MATRIX_HPP_

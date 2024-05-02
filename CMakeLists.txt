@@ -11,7 +11,18 @@ project(root
 
 # --------------------------------- Options --------------------------------- #
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# -------------------------- Clang-Tidy Integration ------------------------- #
+
+find_program(CLANG_TIDY_COMMAND NAMES "clang-tidy")
+if(CLANG_TIDY_COMMAND AND (NOT BUILD_TESTS))
+  set(CMAKE_CXX_CLANG_TIDY
+    ${CLANG_TIDY_COMMAND}-19;
+    -config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
+  )
+endif()
 
 # ----------------------------- Subdirectories ------------------------------ #
 

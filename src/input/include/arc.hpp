@@ -23,11 +23,10 @@
  */
 // clang-format on
 
-#ifndef _EMIR_ARC_HPP_
-#define _EMIR_ARC_HPP_
+#ifndef EMIR_ARC_HPP_
+#define EMIR_ARC_HPP_
 
 #include <memory>
-#include <string>
 
 #include <node.fwd.hpp>
 
@@ -36,50 +35,54 @@ namespace emir {
 /** @brief Represents an arc in the graph */
 class Arc {
  public:
-  // Keeps track of the amount of arcs created
-  static unsigned int id_counter_;
+  /** @brief Resets the arc id counter */
+  static void resetIdCounter();
 
   /**
    * @brief Creates a new arc (from_node -> to_node) with an unique id
    *
    * @param from Origin node of the arc
-   * @param to Destination node of the arc
    * @param cost The cost of the arc
+   * @param to Destination node of the arc
    */
   Arc(
-    const std::shared_ptr<Node> &from, const std::shared_ptr<Node> &to,
-    const int cost
+    std::shared_ptr<Node> origin, int cost, std::shared_ptr<Node> destination
   );
 
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the id of the arc */
-  inline unsigned int getId() const {
+  [[nodiscard]] unsigned int getId() const {
     return id_;
   }
 
   /** @brief Gets the cost of the arc */
-  inline int getCost() const {
+  [[nodiscard]] int getCost() const {
     return cost_;
   }
 
   /** @brief Gets the id from the origin node of the arc */
-  const std::string &getOriginId() const;
+  [[nodiscard]] unsigned int getOriginId() const;
 
   /** @brief Gets the id from the destination node of the arc */
-  const std::string &getDestinationId() const;
+  [[nodiscard]] unsigned int getDestinationId() const;
 
  private:
+  // Keeps track of the amount of arcs created
+  static unsigned int id_counter_;
+
+  // ----------------------------- Attributes ------------------------------ //
+
   // Identifier of the arc
-  const unsigned int id_;
+  unsigned int id_;
   // Origin node of the arc
-  std::shared_ptr<Node> from_;
-  // Destination node of the arc
-  std::shared_ptr<Node> to_;
+  std::shared_ptr<Node> origin_;
   // The cost of the arc
   int cost_;
+  // Destination node of the arc
+  std::shared_ptr<Node> destination_;
 };
 
 }  // namespace emir
 
-#endif  // _EMIR_ARC_HPP_
+#endif  // EMIR_ARC_HPP_

@@ -7,14 +7,14 @@
  * Course: Fifth
  * Institutional email: gian.diana.28@ull.edu.es
  *
- * @file OPS_input_t.hpp
+ * @file ops_input.cpp
  * @author Gian Luis Bolivar Diana
- * @version 0.2.0
- * @date January 21, 2024
+ * @version 1.0.0
+ * @date April 10, 2024
  * @copyright Copyright (c) 2024
  *
  * @brief File containing the implementation of the input instance for the
- *  O.P.S. problem, representing the math model with a graph for each sliding bar.
+ *  O.P.S. problem, with a graph for each sliding bar.
  *
  * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex @endlink
  * @see Selective routing problem with synchronization: @link https://www.sciencedirect.com/science/article/pii/S0305054821002161?ref=cra_js_challenge&fr=RR-1 @endlink
@@ -23,14 +23,18 @@
  */
 // clang-format on
 
+#include <algorithm>
+#include <iostream>
+
+#include <arc.hpp>
+#include <graph.hpp>
 #include <ops_input.hpp>
+#include <ops_instance.hpp>
 
 namespace emir {
 
-OpsInput::OpsInput() : OpsInstance(), graphs_() {}
-
 OpsInput::~OpsInput() {
-  Arc::id_counter_ = 0;
+  Arc::resetIdCounter();
 }
 
 // -------------------------------- Getters -------------------------------- //
@@ -45,86 +49,49 @@ unsigned int OpsInput::getMaxArc() const {
   return max_arc;
 }
 
-// ----------------------------- Stats Getters ----------------------------- //
-
-const std::string OpsInput::getStatistics() const {
-  auto bars_stats = getBarsStats();
-  auto nodes_stats = getNodesStats();
-  std::stringstream ss;
-
-  // ss << OpsInstance::getStatistics()
-  ss << std::setw(4) << getN() << '\t' << std::setw(4) << getM() << '\t'
-     << std::setw(4) << nodes_stats.max_amount << '\t' << std::setw(6)
-     << std::fixed << std::setprecision(1) << nodes_stats.getAvgAmount() << '\t'
-     << std::setw(4) << bars_stats.amount << '\t' << std::setw(4)
-     << bars_stats.max_amount << '\t' << std::setw(6) << std::fixed
-     << std::setprecision(1) << bars_stats.getAvgAmount() << '\t'
-     << std::setw(6) << getL() << "\t\t";
-  return ss.str();
-}
-
 // ------------------------------ Operators ------------------------------ //
 
-std::istream &operator>>(std::istream &is, OpsInput &ops_input) {
-  is >> static_cast<OpsInstance &>(ops_input);
+std::istream &operator>>(std::istream &input_stream, OpsInput &ops_input) {
+  input_stream >> static_cast<OpsInstance &>(ops_input);
   ops_input.createGraphArcs();
-  return is;
+  return input_stream;
 }
 
 // --------------------------- Private Methods --------------------------- //
 
 void OpsInput::createGraphArcs() {
-  const auto n = getN();
-  const auto m = getM();
-  for (auto k = 0; k < m; ++k) {
-    auto graph = Graph();
-    graph.addArc(0, n - 1, 0);
-    const auto &Jk = getJk(k);
-    for (const auto &Ji : Jk) {
-      graph.addArc(0, Ji, getT(0, Ji));
-      graph.addArc(Ji, n - 1, getT(Ji, n - 1));
-      for (const auto &Jj : Jk) {
-        if (Ji != Jj) graph.addArc(Ji, Jj, getT(Jj, Ji));
+  const auto amount_of_objects = (unsigned int)getAmountOfObjects();
+  const auto amount_of_sliding_bars = getAmountOfSlidingBars();
+  graphs_.resize(amount_of_sliding_bars);
+  for (auto graph_idx = 0; graph_idx < amount_of_sliding_bars; ++graph_idx) {
+    auto &graph = graphs_[graph_idx];
+    graph.addArc(
+      ArcEndpoints {.origin_id = 0, .destination_id = amount_of_objects - 1}, 0
+    );
+    const auto &objects_in_sliding_bar = getObjectsPerSlidingBar(graph_idx);
+    for (const auto &origin_id : objects_in_sliding_bar) {
+      graph.addArc(
+        ArcEndpoints {.origin_id = 0, .destination_id = origin_id},
+        getTimeToProcess({0, origin_id})
+      );
+      graph.addArc(
+        ArcEndpoints {
+          .origin_id = origin_id, .destination_id = amount_of_objects - 1
+        },
+        getTimeToProcess({origin_id, amount_of_objects - 1})
+      );
+      for (const auto &destination_id : objects_in_sliding_bar) {
+        if (origin_id != destination_id) {
+          graph.addArc(
+            ArcEndpoints {
+              .origin_id = origin_id, .destination_id = destination_id
+            },
+            getTimeToProcess({origin_id, destination_id})
+          );
+        }
       }
     }
-    graphs_.push_back(graph);
   }
-}
-
-// ----------------------- Private Statistics Getters ----------------------- //
-
-const Stats OpsInput::getBarsStats() const {
-  const int n = getN();
-  std::vector<unsigned int> bars_needed_per_object(n, 0);
-  Stats stats(getM());
-
-  for (const auto &graph : graphs_) {
-    for (const auto &id : graph.getNodesId())
-      bars_needed_per_object[std::stoi(id)]++;
-  }
-
-  for (auto i = 1; i < getN() - 1; i++) {
-    auto bars_needed = bars_needed_per_object[i];
-    if (bars_needed == 1) continue;
-    stats.updateMax(bars_needed);
-    stats.updateMin(bars_needed);
-    stats.amount_sum += bars_needed;
-    stats.amount++;
-  }
-
-  return stats;
-}
-
-const Stats OpsInput::getNodesStats() const {
-  Stats stats(getN());
-  for (const auto &graph : graphs_) {
-    auto amount_of_nodes = graph.getAmountOfNodes();
-    stats.updateMax(amount_of_nodes);
-    stats.updateMin(amount_of_nodes);
-    stats.amount_sum += amount_of_nodes;
-  }
-  stats.amount = getM();
-  return stats;
 }
 
 }  // namespace emir

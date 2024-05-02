@@ -23,32 +23,46 @@
  */
 // clang-format on
 
-#ifndef _EMIR_GRAPH_HPP_
-#define _EMIR_GRAPH_HPP_
+#ifndef EMIR_GRAPH_HPP_
+#define EMIR_GRAPH_HPP_
+
+#include <ranges>
 
 #include <arc.hpp>
 #include <node.hpp>
 
 namespace emir {
 
+// ASK: Should I put the struct ArcEndpoints in some section of the class?
+// ASK: The struct should be in the same file as the class?
+/** @brief Represents the endpoints of an arc */
+struct ArcEndpoints {
+  // Id of the origin node
+  unsigned int origin_id;
+  // Id of the destination node
+  unsigned int destination_id;
+};
+
 /** @brief Represents a digraph */
 class Graph {
  public:
   /** @brief Creates a new empty graph */
-  Graph();
+  Graph() = default;
 
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the ids of the nodes of the graph */
-  const std::vector<std::string> getNodesId() const;
-
-  /** @brief Gets the amount of nodes of the graph */
-  inline const std::size_t getAmountOfNodes() const {
-    return nodes_.size();
-  }
+  // TODO: Ask if I should put the return type as:
+  // std::ranges::elements_view<
+  //   std::ranges::ref_view<
+  //     const std::map<unsigned int, std::shared_ptr<emir::Node>>>,
+  //   0UL>
+  // or:
+  // auto getNodesId() const -> decltype(std::views::keys(nodes_));
+  [[nodiscard]] std::vector<unsigned int> getNodesId() const;
 
   /** @brief Gets the arcs of the graph */
-  inline const std::vector<Arc> &getArcs() const {
+  [[nodiscard]] const std::vector<Arc> &getArcs() const {
     return arcs_;
   }
 
@@ -56,25 +70,25 @@ class Graph {
    * @brief Gets the id of each arc that connects the given node to its
    * successors.
    *
-   * @param id Id of the node to search
+   * @param node_id Id of the node to search
    * @return The id of each arc that connects the given node to its successors.
    */
-  inline const std::vector<unsigned int>
-  getSuccessorsArcsId(const std::string &id) const {
-    return nodes_.at(id)->getSuccessorsArcsId();
+  [[nodiscard]] std::vector<unsigned int>
+  getSuccessorsArcsId(const unsigned int node_id) const {
+    return nodes_.at(node_id)->getSuccessorsArcsId();
   }
 
   /**
    * @brief Gets the id of each arc that connects the given node to its
    * predecessors.
    *
-   * @param id Id of the node to search
+   * @param node_id Id of the node to search
    * @return The id of each arc that connects the given node to its
    * predecessors.
    */
-  inline const std::vector<unsigned int>
-  getPredecessorsArcsId(const std::string &id) const {
-    return nodes_.at(id)->getPredecessorsArcsId();
+  [[nodiscard]] std::vector<unsigned int>
+  getPredecessorsArcsId(const unsigned int node_id) const {
+    return nodes_.at(node_id)->getPredecessorsArcsId();
   }
 
   // ------------------------------- Adders ------------------------------- //
@@ -82,40 +96,31 @@ class Graph {
   /**
    * @brief Adds a new arc to the graph
    *
-   * @param from_id Id of the origin node
-   * @param to_id Id of the destination node
+   * @param arc_endpoints Endpoints of the arc.
    * @param cost Cost of the arc
    */
-  inline void addArc(const int from_id, const int to_id, const int cost) {
-    addArc(std::to_string(from_id), std::to_string(to_id), cost);
-  }
-
-  /**
-   * @brief Adds a new arc to the graph
-   *
-   * @param from_id Id of the origin node
-   * @param to_id Id of the destination node
-   * @param cost Cost of the arc
-   */
-  void
-  addArc(const std::string &from_id, const std::string &to_id, const int cost);
+  void addArc(ArcEndpoints end_points, int cost);
 
  private:
+  // ----------------------------- Attributes ------------------------------ //
+
   // The arcs of the graph
   std::vector<Arc> arcs_;
   // Nodes of the graph
-  std::map<std::string, std::shared_ptr<Node>> nodes_;
+  std::map<unsigned int, std::shared_ptr<Node>> nodes_;
+
+  // --------------------------- Private Methods --------------------------- //
 
   /**
    * @brief Gets the node from the map, if it doesn't exist it creates it and
    * returns it.
    *
-   * @param id Id of the node to search
+   * @param node_id Id of the node to search
    * @return The node with the given id.
    */
-  const std::shared_ptr<Node> &searchNode(const std::string &id);
+  [[nodiscard]] const std::shared_ptr<Node> &searchNode(unsigned int node_id);
 };
 
 }  // namespace emir
 
-#endif  // _EMIR_GRAPH_HPP_
+#endif  // EMIR_GRAPH_HPP_

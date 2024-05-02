@@ -1,9 +1,13 @@
 #include <filesystem>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include <gtest/gtest.h>
+#include <nlohmann/json.hpp>
 
 #include <functions.hpp>
-#include <ops_bc.hpp>
+#include <ops_cplex_solver.hpp>
 
 namespace fs = std::filesystem;
 
@@ -11,25 +15,23 @@ void testFolder(const std::string &path) {
   const auto &input_folder = "data/input/" + path + "/instances";
   const auto &solution_folder = "data/output/" + path + "/";
   nlohmann::json solution;
-  std::ofstream log_os("data/test_log.txt");
+  std::stringstream string_stream;
   for (const auto &entry : fs::directory_iterator(input_folder)) {
-    const auto instance = createFromFile<emir::OpsInput>(entry.path());
-    emir::OpsCplexSolver solver(instance, 1e-4);
-    solver.addLog(log_os);
-    solver.solve();
     std::ifstream solution_file(
       solution_folder + entry.path().filename().string()
     );
+    const auto solver =
+      solve<emir::OpsCplexSolver>(entry.path().string(), 1e-4, string_stream);
     solution_file >> solution;
     EXPECT_EQ(solver.getProfit(), solution["profit"].get<int>());
   }
 }
 
-TEST(OpsTest, TotalProfitAssertionsOneBandNeeded) {
+TEST(OpsTest, TotalProfitOneBandNeeded) {
   testFolder("A");
 }
 
-TEST(OpsTest, TotalProfitAssertionsTwoBandsNeeded) {
+TEST(OpsTest, TotalProfitTwoBandsNeeded) {
   testFolder("B");
 }
 
@@ -37,12 +39,16 @@ TEST(OpsTest, TotalProfitAssertionsTwoBandsNeeded) {
 //   testFolder("C");
 // }
 
-// TEST(OpsTest, TotalProfitAssertionsOneBandNeeded) {
-//   testFolder("LA");
-// }
+TEST(OpsTest, TotalProfitOneBandNeededLight) {
+  testFolder("LA");
+}
 
-// TEST(OpsTest, TotalProfitAssertionsTwoBandsNeeded) {
-//   testFolder("LB");
+TEST(OpsTest, TotalProfitTwoBandsNeededLight) {
+  testFolder("LB");
+}
+
+// TEST(OpsTest, TotalProfitThreeBandsNeededLight) {
+//   testFolder("LC");
 // }
 
 int main(int argc, char *argv[]) {

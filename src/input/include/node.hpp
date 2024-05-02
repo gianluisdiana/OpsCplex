@@ -24,8 +24,8 @@
  */
 // clang-format on
 
-#ifndef _EMIR_NODE_HPP_
-#define _EMIR_NODE_HPP_
+#ifndef EMIR_NODE_HPP_
+#define EMIR_NODE_HPP_
 
 #include <map>
 #include <memory>
@@ -42,29 +42,29 @@ class Node {
   /**
    * @brief Creates a new node with the given id
    *
-   * @param id Id of the node
+   * @param node_id Id of the node
    */
-  Node(const std::string &id = "");
+  explicit Node(unsigned int node_id = 0);
 
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the name of the node */
-  inline const std::string &getId() const {
+  [[nodiscard]] unsigned int getId() const {
     return id_;
   }
 
   /**
    * @brief Gets the id of the arcs that connect the node with its successors
    */
-  inline const std::vector<unsigned int> getSuccessorsArcsId() const {
-    return getArcsId(successors_);
+  [[nodiscard]] std::vector<unsigned int> getSuccessorsArcsId() const {
+    return Node::getArcsId(successors_);
   }
 
   /**
    * @brief Gets the id of the arcs that connect the node with its predecessors
    */
-  inline const std::vector<unsigned int> getPredecessorsArcsId() const {
-    return getArcsId(predecessors_);
+  [[nodiscard]] std::vector<unsigned int> getPredecessorsArcsId() const {
+    return Node::getArcsId(predecessors_);
   }
 
   // ------------------------------- Adders -------------------------------- //
@@ -75,7 +75,7 @@ class Node {
    * @param successor Successor to add
    * @param arc The arc that connects them
    */
-  inline void addSuccessor(
+  void addSuccessor(
     const std::shared_ptr<Node> &successor, const std::shared_ptr<Arc> &arc
   ) {
     successors_.emplace_back(successor, arc);
@@ -87,7 +87,7 @@ class Node {
    * @param predecessor Predecessor to add
    * @param arc The arc that connects them
    */
-  inline void addPredecessor(
+  void addPredecessor(
     const std::shared_ptr<Node> &predecessor, const std::shared_ptr<Arc> &arc
   ) {
     predecessors_.emplace_back(predecessor, arc);
@@ -100,25 +100,29 @@ class Node {
   using NodeArcPairs =
     std::vector<std::pair<std::shared_ptr<Node>, std::shared_ptr<Arc>>>;
 
+  // ----------------------------- Attributes ------------------------------ //
+
   // Identifier of the node
-  const std::string id_;
+  unsigned int id_;
   // Successors of the node
   NodeArcPairs successors_;
   // Predecessors of the node
   NodeArcPairs predecessors_;
 
+  // ------------------------------- Getters ------------------------------- //
+
   /**
    * @brief Gets the id of the arcs that connect the node with its successors
    * or predecessors.
    *
-   * @param nodesWithArcs Map of nodes with their respective arcs
+   * @param nodes_with_arcs Map of nodes with their respective arcs
    * @return The id of the arcs that connect the node with its successors or
    * predecessors
    */
-  const std::vector<unsigned int>
-  getArcsId(const NodeArcPairs &nodesWithArcs) const;
+  [[nodiscard]] static std::vector<unsigned int>
+  getArcsId(const NodeArcPairs &nodes_with_arcs);
 };
 
 }  // namespace emir
 
-#endif  // _EMIR_NODE_HPP_
+#endif  // EMIR_NODE_HPP_

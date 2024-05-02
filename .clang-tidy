@@ -1,15 +1,20 @@
 ---
 Checks:
-  bugprone-*,
+  bugprone-*
   clang-analyzer-*,
   cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-c-arrays,
   hicpp-*,
+  -hicpp-avoid-c-arrays,
   misc-*,
   modernize-*,
+  -modernize-avoid-c-arrays,
+  -modernize-use-trailing-return-type,
   performance-*,
   portability-*,
-  readability-*
-FormatStyle: 'file'
+  readability-*,
+HeaderFilterRegex: '/src/.*'
+FormatStyle: file
 UseColor: true
 User: gianluisdiana
 WarningsAsErrors: true

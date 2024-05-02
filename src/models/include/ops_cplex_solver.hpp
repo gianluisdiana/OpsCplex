@@ -1,5 +1,30 @@
-#ifndef _EMIR_OPS_BC1_HPP_
-#define _EMIR_OPS_BC1_HPP_
+// clang-format off
+/**
+ * University: Universidad de La Laguna
+ * Center: Escuela Superior de Ingeniería y Tecnología
+ * Grade: Ingeniería Informática
+ * Subject: T.F.G.
+ * Course: Fifth
+ * Institutional email: gian.diana.28@ull.edu.es
+ *
+ * @file ops_cplex_solver.hpp
+ * @author Gian Luis Bolivar Diana
+ * @version 1.0.0
+ * @date April 10, 2024
+ * @copyright Copyright (c) 2024
+ *
+ * @brief File containing the description of the solver for the O.P.S. problem
+ * using CPLEX library from IBM.
+ *
+ * @see GitHub repository: @link https://github.com/gianluisdiana/OpsCplex * @endlink
+ * @see Selective routing problem with synchronization @link https://www.sciencedirect.com/science/article/pii/S0305054821002161?ref=cra_js_challenge&fr=RR-1 @endlink
+ * @see EMIR Telescope @link https://www.gtc.iac.es/instruments/emir/ @endlink
+ * @see Google style guide: @link https://google.github.io/styleguide/cppguide.html @endlink
+ */
+// clang-format on
+
+#ifndef EMIR_OPS_CPLEX_SOLVER_HPP_
+#define EMIR_OPS_CPLEX_SOLVER_HPP_
 
 #include <ilcplex/ilocplex.h>
 
@@ -21,8 +46,19 @@ class OpsCplexSolver : public OpsSolver {
    */
   OpsCplexSolver(const OpsInput &input, double tolerance);
 
+  /**
+   * @brief Moves the input and assigns the max tolerance to the solver.
+   *
+   * @param input The input of the solver with the instance data.
+   * @param tolerance The tolerance to be used in the solver.
+   */
+  OpsCplexSolver(OpsInput &&input, double tolerance);
+
+  /** @brief Default copy constructor. */
+  OpsCplexSolver(const OpsCplexSolver &) = default;
+
   /** @brief Delete the environment of the solution. */
-  ~OpsCplexSolver();
+  ~OpsCplexSolver() override;
 
   /**
    * @brief Solve the Linear Programming problem.
@@ -30,42 +66,52 @@ class OpsCplexSolver : public OpsSolver {
    */
   void solve() override;
 
+  // ------------------------------- Getters ------------------------------- //
+
   /** @brief Get the profit of the solution. */
-  inline int getProfit() const {
+  [[nodiscard]] double getProfit() const {
     return cplex_.getObjValue();
   }
+
+  // -------------------------------- Adders ------------------------------- //
 
   /**
    * @brief Add a log stream to output the log of the solver.
    *
    * @param log_os The output stream to write the logs to.
    */
-  inline void addLog(std::ostream &log_os) {
+  void addLog(std::ostream &log_os) {
     cplex_.setOut(log_os);
   }
 
  private:
+  // ------------------------------ Attributes ----------------------------- //
+
   // An environment, manage the memory and identifiers for modeling objects.
-  IloEnv env_;
+  IloEnv environment_;
   // Algorithm used to solve the Linear Programming problem.
   IloCplex cplex_;
   // Model that represents the Linear Programming problem.
   IloModel model_;
 
-  // --------------------------- Model Variables --------------------------- //
+  // --------------------------- Model Attributes -------------------------- //
 
   // Binary vector (1 and 0) that indicates whether an arc is beeing used or
   // not.
-  IloNumVarArray x_;
+  IloNumVarArray used_arcs_;
   // Binary vector (1 and 0) that indicates whether an object is beeing observed
   // or not.
-  IloNumVarArray y_;
+  IloNumVarArray observed_objects_;
   // Float vector that stores how much time has passed since the beginning of
   // the observation to the moment the object is observed.
-  IloNumVarArray s_;
+  IloNumVarArray time_at_objects_;
+
+  // --------------------------- Private Methods ---------------------------- //
 
   /** @brief Creates the model for the problem, using the input data. */
   void makeModel();
+
+  // ------------------------------- Adders ------------------------------- //
 
   /**
    * @brief Add the 'y' variables to the model.
@@ -156,14 +202,18 @@ class OpsCplexSolver : public OpsSolver {
    */
   void addLimitConstraints(IloRangeArray &constraints);
 
+  // ------------------------------- Setters ------------------------------- //
+
   /**
    * @brief Set some configuration parameters to the CPLEX solver.
    * - The maximum time to solve the problem is 3600 seconds.
    * - The absolute tolerance on the gap between the best integer objective and
    * the objective of the best node remaining is 0.001.
    * - Emphasize optimality over feasibility.
+   *
+   * @param tolerance The tolerance to be used in the solver.
    */
-  void setParameters();
+  void setParameters(double tolerance);
 
   /**
    * @brief Set the output with the models solution
@@ -172,16 +222,18 @@ class OpsCplexSolver : public OpsSolver {
    */
   void setOutput(long time_elapsed);
 
+  // ------------------------------- Utility ------------------------------- //
+
   /**
    * @brief Gets the values from the cplex solver and converts them.
    *
    * @param variable The variable to get the values from.
    * @return The values from the variable in a vector.
    */
-  const std::vector<double>
+  [[nodiscard]] std::vector<double>
   IloNumVarArrayToVector(const IloNumVarArray &variable) const;
 };
 
 }  // namespace emir
 
-#endif  // _EMIR_OPS_BC1_HPP_
+#endif  // EMIR_OPS_CPLEX_SOLVER_HPP_

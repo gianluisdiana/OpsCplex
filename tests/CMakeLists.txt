@@ -28,8 +28,7 @@ add_executable(
 target_link_libraries(
   ${PROJECT_NAME}
   GTest::gtest_main
-  sub::models
-  sub::gomautil
+  sub::util
 )
 
 include(GoogleTest)
