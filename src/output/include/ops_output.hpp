@@ -118,8 +118,8 @@ class OpsOutput {
 
   // The input of the O.P.S. problem.
   std::unique_ptr<const OpsInput> input_;
-  // The matrix that represents the arcs of the graph.
-  Matrix<bool> used_arcs_;
+  // Represents the connections between the nodes for each graph.
+  std::vector<std::vector<unsigned int>> used_arcs_;
   // Represents which nodes are visited in the solution.
   std::vector<bool> observed_objects_;
   // Represents the time spent in each node.
@@ -130,34 +130,17 @@ class OpsOutput {
   // ------------------------------ Getters -------------------------------- //
 
   /**
-   * @brief Gives read-write access to the used arc in the given position.
-   *
-   * @param graph_idx The index of the graph.
-   * @param arc_endpoints The origin and destination of the arc.
-   * @return A reference to whether the arc is used or not.
-   */
-  [[nodiscard]] Matrix<bool>::reference
-  getUsedArc(const unsigned int graph_idx, const ArcEndpoints arc_endpoints) {
-    return used_arcs_(
-      {graph_idx * input_->getAmountOfObjects() + arc_endpoints.origin_id,
-       arc_endpoints.destination_id}
-    );
-  }
-
-  /**
    * @brief Gives read-only access to the used arc in the given position.
    *
    * @param graph_idx The index of the graph.
    * @param arc_endpoints The origin and destination of the arc.
    * @return A constant reference to whether the arc is used or not.
    */
-  [[nodiscard]] Matrix<bool>::const_reference arcWasUsed(
+  [[nodiscard]] bool arcWasUsed(
     const unsigned int graph_idx, const ArcEndpoints arc_endpoints
   ) const {
-    return used_arcs_(
-      {graph_idx * input_->getAmountOfObjects() + arc_endpoints.origin_id,
-       arc_endpoints.destination_id}
-    );
+    return used_arcs_[graph_idx][arc_endpoints.origin_id] ==
+           arc_endpoints.destination_id;
   }
 
   /**

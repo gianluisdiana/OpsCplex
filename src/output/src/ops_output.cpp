@@ -44,12 +44,13 @@ const double OpsOutput::kMaxTimeMargin = 1e-2;
 
 OpsOutput::OpsOutput(const OpsInput &input) :
   input_(std::make_unique<OpsInput>(input)),
-  used_arcs_(
-    {input.getAmountOfObjects() * input.getAmountOfSlidingBars(),
-     input.getAmountOfObjects()}
-  ),
+  used_arcs_(input.getAmountOfSlidingBars()),
   observed_objects_(input.getAmountOfObjects(), false),
-  time_at_objects_(input.getAmountOfObjects(), 0) {}
+  time_at_objects_(input.getAmountOfObjects(), 0) {
+  for (auto &used_arc : used_arcs_) {
+    used_arc.resize(input.getAmountOfObjects());
+  }
+}
 
 OpsOutput::OpsOutput(const OpsOutput &output) {
   this->operator=(output);
@@ -58,22 +59,18 @@ OpsOutput::OpsOutput(const OpsOutput &output) {
 // ------------------------------- Setters --------------------------------- //
 
 void OpsOutput::setUsedArcs(const std::vector<double> &used_arcs) {
-  used_arcs_.init(false);
   for (int graph_idx = 0; graph_idx < input_->getAmountOfSlidingBars();
        ++graph_idx) {
     const auto &graph = input_->getGraph(graph_idx);
     for (const auto &arc : graph.getArcs()) {
       const double value = std::round(used_arcs[arc.getId()]);
-      if (!isEqual(value, 0.0) && !isEqual(value, 1.0)) {
+      if (isEqual(value, 0.0)) { continue; }
+      if (!isEqual(value, 1.0)) {
         throw OpsError(
           "Invalid value for used arc: {}. It must be 1 or 0.", value
         );
       }
-      if (isEqual(value, 0.0)) { continue; }
-      const ArcEndpoints arc_endpoints {
-        .origin_id = arc.getOriginId(), .destination_id = arc.getDestinationId()
-      };
-      getUsedArc(graph_idx, arc_endpoints) = true;
+      used_arcs_[graph_idx][arc.getOriginId()] = arc.getDestinationId();
     }
   }
 }
@@ -124,7 +121,7 @@ OpsOutput &OpsOutput::operator=(const OpsOutput &output) {
 }
 
 std::ostream &operator<<(std::ostream &output_stream, const OpsOutput &output) {
-  output_stream << nlohmann::json({{"x", output.used_arcs_.data()},
+  output_stream << nlohmann::json({{"x", output.used_arcs_},
                                    {"y", output.observed_objects_},
                                    {"s", output.time_at_objects_},
                                    {"profit", output.getTotalProfit()},
