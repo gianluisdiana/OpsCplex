@@ -56,20 +56,8 @@ void OpsInstance::setFromJson(const nlohmann::json &json_instance) {
   priorities_ = json_instance["b"].get<std::vector<int>>();
   objects_per_sliding_bar_ =
     json_instance["Jk"].get<std::vector<std::vector<unsigned int>>>();
-  resetSlidingBarsPerObject();
   alpha_ = json_instance["alpha"].get<double>();
   time_limit_ = json_instance["L"].get<int>();
-}
-
-void OpsInstance::resetSlidingBarsPerObject() {
-  sliding_bars_per_object_.clear();
-  sliding_bars_per_object_.resize(getAmountOfObjects());
-  for (auto sliding_bar_idx = 0; sliding_bar_idx < getAmountOfSlidingBars();
-       ++sliding_bar_idx) {
-    for (const auto node_id : getObjectsPerSlidingBar(sliding_bar_idx)) {
-      sliding_bars_per_object_[node_id].push_back(sliding_bar_idx);
-    }
-  }
 }
 
 }  // namespace emir
