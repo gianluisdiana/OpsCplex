@@ -123,6 +123,11 @@ class OpsSolver {
     output_.setTimeSpent(time_spent);
   }
 
+  /** @brief Checks if the output contains a valid solution. */
+  void checkOutput() const {
+    output_.check();
+  }
+
   // ---------------------------- Timer Methods ---------------------------- //
 
   /** @brief Reset the timer with the current time. */

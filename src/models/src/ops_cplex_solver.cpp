@@ -63,11 +63,9 @@ void OpsCplexSolver::solve() {
     resetTimer();
     cplex_.solve();
     setOutput(getElapsedTime<std::chrono::milliseconds>());
+    checkOutput();
   } catch (const IloException &ex) {
     std::cerr << "IloException: " << ex << '\n';
-    return;
-  } catch (...) {
-    std::cerr << "Error" << '\n';
     return;
   }
 }
@@ -227,7 +225,7 @@ void OpsCplexSolver::addLimitConstraints(IloRangeArray &constraints) {
 // -------------------------------- Setters -------------------------------- //
 
 void OpsCplexSolver::setParameters(const double tolerance) {
-  cplex_.setParam(IloCplex::Param::TimeLimit, 3600);
+  cplex_.setParam(IloCplex::Param::TimeLimit, OpsCplexSolver::kTimeLimit);
   cplex_.setParam(IloCplex::Param::MIP::Tolerances::AbsMIPGap, tolerance);
   cplex_.setParam(IloCplex::Param::Emphasis::MIP, CPX_MIPEMPHASIS_OPTIMALITY);
 }

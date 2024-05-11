@@ -85,6 +85,11 @@ class OpsCplexSolver : public OpsSolver {
   }
 
  private:
+  // --------------------------- Static Constants --------------------------- //
+
+  // The maximum time to solve the problem (1 hour).
+  static constexpr double kTimeLimit = 3600.0;
+
   // ------------------------------ Attributes ----------------------------- //
 
   // An environment, manage the memory and identifiers for modeling objects.
