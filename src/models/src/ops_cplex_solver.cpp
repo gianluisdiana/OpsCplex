@@ -84,9 +84,10 @@ void OpsCplexSolver::makeModel() {
 
 void OpsCplexSolver::addYVariable() {
   const auto &input = getInput();
-  for (int j = 1; j < input.getAmountOfObjects() - 1; ++j) {
+  for (int node_idx = 1; node_idx < input.getAmountOfObjects() - 1;
+       ++node_idx) {
     observed_objects_.add(IloNumVar(
-      environment_, 0, 1, IloNumVar::Bool, std::format("y_{}", j).c_str()
+      environment_, 0, 1, IloNumVar::Bool, std::format("y_{}", node_idx).c_str()
     ));
   }
   model_.add(observed_objects_);
