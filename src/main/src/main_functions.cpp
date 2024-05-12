@@ -39,11 +39,6 @@
 
 namespace fs = std::filesystem;
 
-struct PathConfig {
-  std::string input_path;
-  std::string output_path;
-};
-
 input_parser::Parser createParser() {
   return input_parser::Parser()
     .addHelpOption()
@@ -53,15 +48,15 @@ input_parser::Parser createParser() {
         .addDefaultValue(std::string())
         .addConstraint<std::string>(
           [](const auto &value) -> bool {
-            return value.empty() ||
-                   (!value.empty() && std::filesystem::exists(value));
+            return value.empty() || std::filesystem::exists(value);
           },
           "The file must exist!"
         );
     })
     .addOption([] {
-      return input_parser::CompoundOption("-m", "--models")
-        .addDescription("List of models type to be processed")
+      return input_parser::CompoundOption("-c", "--classes")
+        .addDescription("List of class to be processed")
+        .addDefaultValue(std::vector<std::string>())
         .addConstraint<std::vector<std::string>>(
           [](const auto &values) -> bool {
             return std::ranges::all_of(values, [](const auto &value) {
@@ -69,9 +64,19 @@ input_parser::Parser createParser() {
                      value == "LA" || value == "LB" || value == "LC";
             });
           },
-          "The model types must be one of the following: A, B, C, LA, LB, LC"
+          "The classes must be one of the following: A, B, C, LA, LB, LC"
         )
-        .addDefaultValue(std::vector<std::string>());
+        .addConstraint<std::vector<std::string>>(
+          [](const auto &values) -> bool {
+            return std::ranges::all_of(
+              values,
+              [values](const auto &value) -> bool {
+                return std::ranges::count(values, value) == 1;
+              }
+            );
+          },
+          "The classes cannot be specified more than once"
+        );
     })
     .addOption([] {
       return input_parser::SingleOption("-t", "--tolerance")
@@ -94,32 +99,16 @@ void processInstance(const PathConfig &path_config, const double tolerance) {
   );
 }
 
-void processModelType(const std::string &model_type, const double tolerance) {
-  const auto &input_folder = "data/input/" + model_type + "/instances";
-  const auto &output_folder = "data/output/" + model_type + "/";
+void processModelClass(const std::string &model_class, const double tolerance) {
+  const auto &input_folder = "data/" + model_class + "/instances/";
+  const auto &output_folder = "data/" + model_class + "/outputs/";
+  if (!fs::exists(output_folder)) { fs::create_directory(output_folder); }
   for (const auto &file : fs::directory_iterator(input_folder)) {
     std::cout << file.path() << '\n';
     processInstance(
-      PathConfig {
-        .input_path = file.path(),
-        .output_path = output_folder + file.path().filename().string()
-      },
+      {.input_path = file.path(),
+       .output_path = output_folder + file.path().filename().string()},
       tolerance
     );
   }
-}
-
-void processFile(const std::string &input_path, const double tolerance) {
-  std::string output_path = input_path;
-  const std::string instance_folder {"instances"};
-  const std::string input_folder {"input"};
-  output_path.replace(
-    output_path.find(instance_folder), instance_folder.size() + 1, ""
-  );
-  output_path.replace(
-    output_path.find(input_folder), input_folder.size(), "output"
-  );
-  processInstance(
-    PathConfig {.input_path = input_path, .output_path = output_path}, tolerance
-  );
 }
