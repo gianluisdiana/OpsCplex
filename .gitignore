@@ -6,3 +6,9 @@ build
 
 # Cplex directory
 lib/CplexStudio2211
+
+# Instances
+data
+
+# Solution generated
+solution.txt
