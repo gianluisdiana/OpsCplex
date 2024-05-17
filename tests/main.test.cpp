@@ -41,27 +41,27 @@ void testModelClass(const std::string &model_class) {
   }
 }
 
-TEST(OpsTest_FamilyH, TotalProfitOneBandNeeded) {
+TEST(OpsTest_FamilyH, OneBandNeeded) {
   testModelClass("A");
 }
 
-TEST(OpsTest_FamilyH, TotalProfitTwoBandsNeeded) {
+TEST(OpsTest_FamilyH, TwoBandsNeeded) {
   testModelClass("B");
 }
 
-TEST(OpsTest_FamilyH, TotalProfitThreeBandsNeeded) {
+TEST(OpsTest_FamilyH, ThreeBandsNeeded) {
   testModelClass("C");
 }
 
-TEST(OpsTest_FamilyE, TotalProfitOneBandNeeded) {
+TEST(OpsTest_FamilyE, OneBandNeeded) {
   testModelClass("LA");
 }
 
-TEST(OpsTest_FamilyE, TotalProfitTwoBandsNeeded) {
+TEST(OpsTest_FamilyE, TwoBandsNeeded) {
   testModelClass("LB");
 }
 
-TEST(OpsTest_FamilyE, TotalProfitThreeBandsNeeded) {
+TEST(OpsTest_FamilyE, ThreeBandsNeeded) {
   testModelClass("LC");
 }
 
