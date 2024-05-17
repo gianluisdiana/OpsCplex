@@ -100,8 +100,8 @@ void processInstance(const PathConfig &path_config, const double tolerance) {
 }
 
 void processModelClass(const std::string &model_class, const double tolerance) {
-  const auto &input_folder = "data/" + model_class + "/instances/";
-  const auto &output_folder = "data/" + model_class + "/outputs/";
+  const auto input_folder = std::format("data/{}/instances", model_class);
+  const auto output_folder = std::format("data/{}/outputs/", model_class);
   if (!fs::exists(output_folder)) { fs::create_directory(output_folder); }
   for (const auto &file : fs::directory_iterator(input_folder)) {
     std::cout << file.path() << '\n';
