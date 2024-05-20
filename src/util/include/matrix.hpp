@@ -316,7 +316,7 @@ Matrix<T>::Matrix(const std::pair<std::size_t, std::size_t> size) :
 template <typename T>
 template <std::size_t rows_amount, std::size_t cols_amount>
 Matrix<T>::Matrix(T (&matrix)[rows_amount][cols_amount]) :
-  rows_amount_(rows_amount), cols_amount_(cols_amount), data_(rows_amount) {
+  rows_amount_ {rows_amount}, cols_amount_ {cols_amount}, data_(rows_amount) {
   for (std::size_t idx = 0; idx < rows_amount_; ++idx) {
     data_[idx].assign(matrix[idx], matrix[idx] + cols_amount_);
   }
