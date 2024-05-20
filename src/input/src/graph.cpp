@@ -23,26 +23,12 @@
 // clang-format on
 
 #include <memory>
-#include <ranges>
 #include <vector>
 
 #include <graph.hpp>
 #include <node.hpp>
 
 namespace emir {
-
-// -------------------------------- Getters -------------------------------- //
-
-// auto Graph::getNodesId() const -> decltype(std::views::keys(nodes_)) {
-//   return std::views::keys(nodes_);
-// }
-std::vector<unsigned int> Graph::getNodesId() const {
-  std::vector<unsigned int> nodes_id(nodes_.size());
-  for (const auto &[idx, entry] : std::views::enumerate(nodes_)) {
-    nodes_id[idx] = entry.first;
-  }
-  return nodes_id;
-}
 
 // -------------------------------- Adders -------------------------------- //
 
