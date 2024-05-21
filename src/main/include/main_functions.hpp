@@ -34,7 +34,7 @@
  * @brief Creates a parser for the input arguments.
  * The parser is created with the following options:
  * `--input`: The path to the input file to be processed.
- * `--models`: The model types to be processed.
+ * `--classes`: The model classes to be processed.
  * `--tolerance`: The tolerance for the solver.
  * `--help`: Shows the usage of the program.
  *
@@ -43,7 +43,12 @@
 input_parser::Parser createParser();
 
 /** @brief Configuration with the input and output paths. */
-struct PathConfig;
+struct PathConfig {
+  // The path to the input file.
+  std::string input_path;
+  // The path to the output file.
+  std::string output_path;
+};
 
 /**
  * @brief Creates an output file with the solution of the given input file.
@@ -54,19 +59,11 @@ struct PathConfig;
 void processInstance(const PathConfig &path_config, double tolerance);
 
 /**
- * @brief Process the model type and generates the output and log files.
+ * @brief Process the model class and generates the output and log files.
  *
- * @param model_type The model type to be processed.
+ * @param model_class The model class to be processed.
  * @param tolerance The tolerance for the solver.
  */
-void processModelType(const std::string &model_type, double tolerance);
-
-/**
- * @brief Process the input file and generates the output and log files.
- *s
- * @param input_path The path to the input file to be processed.
- * @param tolerance The tolerance for the solver.
- */
-void processFile(const std::string &input_path, double tolerance);
+void processModelClass(const std::string &model_class, double tolerance);
 
 #endif  // MAIN_FUNCTIONS_HPP_

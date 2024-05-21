@@ -127,9 +127,6 @@ class OpsInstance {
 
   // Objects that can be observed by the 'k' sliding bar
   std::vector<std::vector<unsigned int>> objects_per_sliding_bar_;
-  // Necessary sliding bars to observe the object 'j' (inverse of
-  // objects_per_sliding_bar_)
-  std::vector<std::vector<unsigned int>> sliding_bars_per_object_;
   // Time matrix to represent the time spent to process the object 'i'
   // and go to the object 'j'
   Matrix<int> time_to_process_;
@@ -140,7 +137,7 @@ class OpsInstance {
 
   // --------------------------- Extra attributes -------------------------- //
 
-  // Percentage of the total tour
+  // Percentage of the total time
   double alpha_ {-1};
   double scaling_factor_;
 
@@ -152,11 +149,6 @@ class OpsInstance {
    * @param json_instance The json file with the ops information
    */
   void setFromJson(const nlohmann::json &json_instance);
-
-  /**
-   * @brief Resets the Kj matrix and fills it with the correct values
-   */
-  void resetSlidingBarsPerObject();
 };
 
 }  // namespace emir

@@ -53,43 +53,40 @@ unsigned int OpsInput::getMaxArc() const {
 
 std::istream &operator>>(std::istream &input_stream, OpsInput &ops_input) {
   input_stream >> static_cast<OpsInstance &>(ops_input);
-  ops_input.createGraphArcs();
+  ops_input.createGraphs();
   return input_stream;
 }
 
 // --------------------------- Private Methods --------------------------- //
 
-void OpsInput::createGraphArcs() {
-  const auto amount_of_objects = (unsigned int)getAmountOfObjects();
+void OpsInput::createGraphs() {
   const auto amount_of_sliding_bars = getAmountOfSlidingBars();
   graphs_.resize(amount_of_sliding_bars);
   for (auto graph_idx = 0; graph_idx < amount_of_sliding_bars; ++graph_idx) {
-    auto &graph = graphs_[graph_idx];
+    addGraphArcs(graph_idx);
+  }
+}
+
+void OpsInput::addGraphArcs(const int graph_idx) {
+  auto &graph = graphs_[graph_idx];
+  const auto amount_of_objects = (unsigned int)getAmountOfObjects();
+  const auto &objects_in_sliding_bar = getObjectsPerSlidingBar(graph_idx);
+  graph.addArc({.origin_id = 0, .destination_id = amount_of_objects - 1}, 0);
+  for (const auto &origin_id : objects_in_sliding_bar) {
     graph.addArc(
-      ArcEndpoints {.origin_id = 0, .destination_id = amount_of_objects - 1}, 0
+      {.origin_id = 0, .destination_id = origin_id},
+      getTimeToProcess({0, origin_id})
     );
-    const auto &objects_in_sliding_bar = getObjectsPerSlidingBar(graph_idx);
-    for (const auto &origin_id : objects_in_sliding_bar) {
+    graph.addArc(
+      {.origin_id = origin_id, .destination_id = amount_of_objects - 1},
+      getTimeToProcess({origin_id, amount_of_objects - 1})
+    );
+    for (const auto &destination_id : objects_in_sliding_bar) {
+      if (origin_id == destination_id) { continue; }
       graph.addArc(
-        ArcEndpoints {.origin_id = 0, .destination_id = origin_id},
-        getTimeToProcess({0, origin_id})
+        {.origin_id = origin_id, .destination_id = destination_id},
+        getTimeToProcess({origin_id, destination_id})
       );
-      graph.addArc(
-        ArcEndpoints {
-          .origin_id = origin_id, .destination_id = amount_of_objects - 1
-        },
-        getTimeToProcess({origin_id, amount_of_objects - 1})
-      );
-      for (const auto &destination_id : objects_in_sliding_bar) {
-        if (origin_id != destination_id) {
-          graph.addArc(
-            ArcEndpoints {
-              .origin_id = origin_id, .destination_id = destination_id
-            },
-            getTimeToProcess({origin_id, destination_id})
-          );
-        }
-      }
     }
   }
 }

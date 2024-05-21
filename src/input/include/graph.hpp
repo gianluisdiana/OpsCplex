@@ -33,8 +33,6 @@
 
 namespace emir {
 
-// ASK: Should I put the struct ArcEndpoints in some section of the class?
-// ASK: The struct should be in the same file as the class?
 /** @brief Represents the endpoints of an arc */
 struct ArcEndpoints {
   // Id of the origin node
@@ -52,14 +50,9 @@ class Graph {
   // ------------------------------ Getters -------------------------------- //
 
   /** @brief Gets the ids of the nodes of the graph */
-  // TODO: Ask if I should put the return type as:
-  // std::ranges::elements_view<
-  //   std::ranges::ref_view<
-  //     const std::map<unsigned int, std::shared_ptr<emir::Node>>>,
-  //   0UL>
-  // or:
-  // auto getNodesId() const -> decltype(std::views::keys(nodes_));
-  [[nodiscard]] std::vector<unsigned int> getNodesId() const;
+  [[nodiscard]] auto getNodesId() const {
+    return std::views::keys(nodes_);
+  }
 
   /** @brief Gets the arcs of the graph */
   [[nodiscard]] const std::vector<Arc> &getArcs() const {

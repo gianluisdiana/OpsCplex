@@ -101,15 +101,17 @@ class OpsInput : public OpsInstance {
 
   // ------------------------------- Methods ------------------------------- //
 
+  /** @brief Create all the graphs and add the arcs to each one. */
+  void createGraphs();
+
   /**
    * @brief Creates the arcs for each sliding bar, adding to each graph only the
-   * nodes that can be reached. An arc is created if:
-   * - The time doesn't exceed the time limit
-   * - No node can go to the first node.
-   * - No node can be reached from the last node.
-   * - No node can go to itself.
+   * nodes that can be reached. The arcs created are the following:
+   * - The first node goes to all the nodes in the sliding bar.
+   * - All the nodes in the sliding bar go to the last node.
+   * - Each node goes to all the other nodes in the sliding bar.
    */
-  void createGraphArcs();
+  void addGraphArcs(int graph_idx);
 };
 
 }  // namespace emir

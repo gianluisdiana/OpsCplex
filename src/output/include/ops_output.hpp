@@ -86,6 +86,19 @@ class OpsOutput {
     time_elapsed_ = time_spent;
   }
 
+  // ------------------------------- Checks ------------------------------- //
+
+  /**
+   * @brief Checks if the constraints of the mathematical model are beeing
+   * satisfied.
+   * @details The constraints are:
+   *  - The first and last node is visited in each sliding bar.
+   *  - Each node must have the same number of arrival and departure arcs.
+   *  - The time spent at moment of visiting each node is less than the
+   *  maximum time.
+   */
+  void check() const;
+
   // ------------------------------ Operators ------------------------------ //
 
   /**
@@ -112,7 +125,7 @@ class OpsOutput {
 
  private:
   // Maximum time margin for checking the feasibility of the solution
-  static const double kMaxTimeMargin;
+  static constexpr double kMaxTimeMargin = 1e-2;
 
   // ----------------------------- Attributes ------------------------------ //
 
@@ -130,11 +143,10 @@ class OpsOutput {
   // ------------------------------ Getters -------------------------------- //
 
   /**
-   * @brief Gives read-only access to the used arc in the given position.
+   * @brief Tells if the arc was used in the solution.
    *
    * @param graph_idx The index of the graph.
    * @param arc_endpoints The origin and destination of the arc.
-   * @return A constant reference to whether the arc is used or not.
    */
   [[nodiscard]] bool arcWasUsed(
     const unsigned int graph_idx, const ArcEndpoints arc_endpoints
@@ -164,17 +176,6 @@ class OpsOutput {
   countArrivesAndDepartures() const;
 
   // ------------------------------- Checks ------------------------------- //
-
-  /**
-   * @brief Checks if the constraints of the mathematical model are beeing
-   * satisfied.
-   * @details The constraints are:
-   *  - The first and last node is visited in each sliding bar.
-   *  - Each node must have the same number of arrival and departure arcs.
-   *  - The time spent at moment of visiting each node is less than the
-   *  maximum time.
-   */
-  void check() const;
 
   /**
    * @brief Checks if the first and last node is visited in each sliding bar and

@@ -10,19 +10,18 @@ add_library(${PROJECT_NAME} STATIC
 # Add an alias to the project
 add_library(sub::models ALIAS ${PROJECT_NAME})
 
-# ----------------------- Path variable (for cplex) ------------------------ #
+# ----------------------- Path variables (for cplex) ------------------------ #
 
 # Set the path to the cplex library
 set(CPX_PATH ${CMAKE_SOURCE_DIR}/lib/CplexStudio2211/)
 set(CPX_LIB_PATH ${CPX_PATH}/cplex/lib/x86-64_linux/static_pic/)
-set(ILO_LIB_PATH ${CPX_PATH}/cplex/lib/x86-64_linux/static_pic/)
 set(CON_LIB_PATH ${CPX_PATH}/concert/lib/x86-64_linux/static_pic/)
 
 # -------------------------------- Libraries -------------------------------- #
 
 # Help CMake find the static libraries from cplex
 find_library(CPX_LIBRARY libcplex.a HINTS ${CPX_LIB_PATH})
-find_library(ILO_LIBRARY libilocplex.a HINTS ${ILO_LIB_PATH})
+find_library(ILO_LIBRARY libilocplex.a HINTS ${CPX_LIB_PATH})
 find_library(CON_LIBRARY libconcert.a HINTS ${CON_LIB_PATH})
 
 # ----------------------------- Header files ----------------------------- #

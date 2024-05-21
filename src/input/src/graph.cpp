@@ -23,26 +23,12 @@
 // clang-format on
 
 #include <memory>
-#include <ranges>
 #include <vector>
 
 #include <graph.hpp>
 #include <node.hpp>
 
 namespace emir {
-
-// -------------------------------- Getters -------------------------------- //
-
-// auto Graph::getNodesId() const -> decltype(std::views::keys(nodes_)) {
-//   return std::views::keys(nodes_);
-// }
-std::vector<unsigned int> Graph::getNodesId() const {
-  std::vector<unsigned int> nodes_id(nodes_.size());
-  for (const auto &[idx, entry] : std::views::enumerate(nodes_)) {
-    nodes_id[idx] = entry.first;
-  }
-  return nodes_id;
-}
 
 // -------------------------------- Adders -------------------------------- //
 
@@ -55,7 +41,9 @@ void Graph::addArc(const ArcEndpoints end_points, const int cost) {
 // ---------------------------- Private Methods ---------------------------- //
 
 const std::shared_ptr<Node> &Graph::searchNode(const unsigned int node_id) {
-  if (nodes_.find(node_id) != nodes_.end()) { return nodes_.at(node_id); }
+  if (const auto &iterator = nodes_.find(node_id); iterator != nodes_.end()) {
+    return iterator->second;
+  }
   nodes_[node_id] = std::make_shared<Node>(node_id);
   return nodes_[node_id];
 }

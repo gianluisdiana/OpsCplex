@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <format>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -11,45 +12,58 @@
 
 namespace fs = std::filesystem;
 
-void testFolder(const std::string &path) {
-  const auto &input_folder = "data/input/" + path + "/instances";
-  const auto &solution_folder = "data/output/" + path + "/";
+/**
+ * @brief Test the given model class.
+ * Ensures that the profit obtained by the solver is the same as the one
+ * obtained by the solution file and that the solver does not throw any
+ * exceptions during the process.
+ *
+ * @param model_class The model class to be tested.
+ */
+void testModelClass(const std::string &model_class) {
+  const auto input_folder = std::format("data/{}/instances", model_class);
+  const auto solution_folder = std::format("data/{}/outputs/", model_class);
+  const double tolerance = 1e-4;
   nlohmann::json solution;
   std::stringstream string_stream;
   for (const auto &entry : fs::directory_iterator(input_folder)) {
     std::ifstream solution_file(
       solution_folder + entry.path().filename().string()
     );
-    const auto solver =
-      solve<emir::OpsCplexSolver>(entry.path().string(), 1e-4, string_stream);
+    emir::OpsCplexSolver solver(
+      createFromFile<emir::OpsInput>(entry.path()), tolerance
+    );
+    solver.addLog(string_stream);
+    ASSERT_NO_THROW(solver.solve());
     solution_file >> solution;
-    EXPECT_EQ(solver.getProfit(), solution["profit"].get<int>());
+    EXPECT_EQ(solver.getProfit(), solution["profit"].get<double>());
+    string_stream.str(std::string());
   }
 }
 
-TEST(OpsTest, TotalProfitOneBandNeeded) {
-  testFolder("A");
+TEST(OpsTest_FamilyH, OneBandNeeded) {
+  testModelClass("A");
 }
 
-TEST(OpsTest, TotalProfitTwoBandsNeeded) {
-  testFolder("B");
+TEST(OpsTest_FamilyH, TwoBandsNeeded) {
+  testModelClass("B");
 }
 
-// TEST(OpsTest, TotalProfitAssertionsThreeBandsNeeded) {
-//   testFolder("C");
-// }
-
-TEST(OpsTest, TotalProfitOneBandNeededLight) {
-  testFolder("LA");
+TEST(OpsTest_FamilyH, ThreeBandsNeeded) {
+  testModelClass("C");
 }
 
-TEST(OpsTest, TotalProfitTwoBandsNeededLight) {
-  testFolder("LB");
+TEST(OpsTest_FamilyE, OneBandNeeded) {
+  testModelClass("LA");
 }
 
-// TEST(OpsTest, TotalProfitThreeBandsNeededLight) {
-//   testFolder("LC");
-// }
+TEST(OpsTest_FamilyE, TwoBandsNeeded) {
+  testModelClass("LB");
+}
+
+TEST(OpsTest_FamilyE, ThreeBandsNeeded) {
+  testModelClass("LC");
+}
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

@@ -85,6 +85,11 @@ class OpsCplexSolver : public OpsSolver {
   }
 
  private:
+  // --------------------------- Static Constants --------------------------- //
+
+  // The maximum time to solve the problem (1 hour).
+  static constexpr double kTimeLimit = 3600.0;
+
   // ------------------------------ Attributes ----------------------------- //
 
   // An environment, manage the memory and identifiers for modeling objects.
@@ -117,8 +122,6 @@ class OpsCplexSolver : public OpsSolver {
    * @brief Add the 'y' variables to the model.
    * Y is a binary vector of length n (number of objects in the problem), that
    * indicates whether an object is beeing observed or not.
-   *
-   * @param model The model to add the variables to.
    */
   void addYVariable();
 
@@ -127,8 +130,6 @@ class OpsCplexSolver : public OpsSolver {
    * S is a float vector of length n + 2 (number of objects in the problem plus
    * the initial and final nodes), that stores how much time has passed since
    * the beginning of the observation to the moment the object is observed.
-   *
-   * @param model The model to add the variables to.
    */
   void addSVariable();
 
@@ -136,8 +137,6 @@ class OpsCplexSolver : public OpsSolver {
    * @brief Add the 'x' variables to the model.
    * X is a binary vector which length depends on the number of arcs in the
    * problem. It indicates whether an arc is beeing used or not.
-   *
-   * @param model The model to add the variables to.
    */
   void addXVariable();
 
@@ -145,8 +144,6 @@ class OpsCplexSolver : public OpsSolver {
    * @brief Add what is the objective equation to the model.
    * In this case, the objective is to maximize the number of objects observed
    * (based on its priority).
-   *
-   * @param model The model to add the constraints to.
    */
   void addObjective();
 
@@ -160,8 +157,6 @@ class OpsCplexSolver : public OpsSolver {
    * 4. Only one arc can enter / leave a node.
    * 5. The time spent to process an object minus the time spent to process the
    * previous object must be lower than the total time available.
-   *
-   * @param model The model to add the constraints to.
    */
   void addConstraints();
 

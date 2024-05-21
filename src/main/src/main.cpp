@@ -49,12 +49,16 @@ int secureMain(int argc, char *argv[]) {
   }
 
   const auto &input_path = parser.getValue<std::string>("--input");
-  const auto &models = parser.getValue<std::vector<std::string>>("--models");
+  const auto &classes = parser.getValue<std::vector<std::string>>("--classes");
   const auto tolerance = parser.getValue<double>("--tolerance");
   if (!input_path.empty()) {
-    processFile(input_path, tolerance);
-  } else if (!models.empty()) {
-    for (const auto &model : models) { processModelType(model, tolerance); }
+    processInstance(
+      {.input_path = input_path, .output_path = "solution.txt"}, tolerance
+    );
+  } else if (!classes.empty()) {
+    for (const auto &model_class : classes) {
+      processModelClass(model_class, tolerance);
+    }
   }
   return 0;
 }

@@ -64,6 +64,7 @@ Readable createFromFile(const std::string &file_name) {
  * O.P.S input.
  * @param tolerance The maximum tolerance to be used in the solver.
  * @param log_os The outflow where the logs will be stored.
+ * @return The solver used to solve the problem.
  */
 template <typename Solver>
 requires std::is_base_of_v<emir::OpsSolver, Solver>
@@ -82,6 +83,7 @@ Solver solve(
  * @param first_number The first value to be compared.
  * @param second_number The second value to be compared.
  * @param tolerance The maximum tolerance to be used in the comparison.
+ * @return True if the numbers are equal, false otherwise.
  */
 bool isEqual(
   const std::floating_point auto first_number,
