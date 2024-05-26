@@ -60,11 +60,10 @@ input_parser::Parser createParser() {
         .addConstraint<std::vector<std::string>>(
           [](const auto &values) -> bool {
             return std::ranges::all_of(values, [](const auto &value) {
-              return value == "A" || value == "B" || value == "C" ||
-                     value == "LA" || value == "LB" || value == "LC";
+              return value == "A" || value == "B" || value == "C";
             });
           },
-          "The classes must be one of the following: A, B, C, LA, LB, LC"
+          "The classes must be one of the following: A, B, C"
         )
         .addConstraint<std::vector<std::string>>(
           [](const auto &values) -> bool {
